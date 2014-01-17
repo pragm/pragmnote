@@ -1,0 +1,153 @@
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: filesystem.js[out]
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+
+var http = require('http');
+
+// #######################################################
+// Muss Wieder Raus
+// #######################################################
+
+var filesystem_typ = function filesystem_typ(){
+
+	this.getUserDir = function (clientID, userID){
+		var fileserver = new Object();
+		fileserver.port = sURL.fileserver.port;
+  		fileserver.hostname = sURL.fileserver.hostname;
+ 		fileserver.path = sURL.fileserver.path;
+  		fileserver.method = sURL.fileserver.method;
+		fileserver.path += '?job=getUserDir&userID='+userID+'&clientID='+clientID;
+		reqa = http.get(fileserver, function(res) {
+  			res.setEncoding('utf8');
+  			res.on('data', function (chunk) {
+    			L2x1.send(clientID, sID.fileList, chunk);
+    			//console.log(clientID+' '+sID.fileList+' '+chunk);
+  			});
+		});
+		reqa.on('error', function(e) {
+  			log('problem with request: ' + e.message);
+		});
+	};
+
+
+	this.checkLogin = function (clientID, username, password){
+		var fileserver = new Object();
+		fileserver.port = sURL.fileserver.port;
+  		fileserver.hostname = sURL.fileserver.hostname;
+ 		fileserver.path = sURL.fileserver.path;
+  		fileserver.method = sURL.fileserver.method;
+		fileserver.path += '?job=login&username='+username+'&password='+password;
+		reqb = http.get(fileserver, function(res) {
+  			res.setEncoding('utf8');
+  			res.on('data', function (chunk) {
+    			var jsObject = JSON.parse(chunk);
+    			secure.loginData(clientID, jsObject);
+    			//console.log(clientID+' '+jsObject.userID+' '+jsObject.userRight);
+  			});
+		});
+		reqb.on('error', function(e) {
+  			error.report(2, 'problem with request: ' + e.message);
+		});
+	};
+
+	this.addFile = function (clientID, userID, name, dir, type){
+		var fileserver = new Object();
+		fileserver.port = sURL.fileserver.port;
+  		fileserver.hostname = sURL.fileserver.hostname;
+ 		fileserver.path = sURL.fileserver.path;
+  		fileserver.method = sURL.fileserver.method;
+		fileserver.path += '?job=addFile&userID='+userID+'&name='+name+'&dir='+dir+'&type='+type;
+		reqc = http.get(fileserver, function(res) {
+  			res.setEncoding('utf8');
+  			res.on('data', function (chunk) {
+    			//L2x1.send(clientID, sID.fileList, chunk);
+    			//console.log(clientID+' '+sID.fileList+' '+chunk);
+    			if(chunk == "1"){
+    				filesystem.getUserDir(clientID, userID);
+    			} else {
+    				L2x1.send(clientID, sID.message, 'Konnte Datei nicht erstellen! Bitte neu Laden!');
+    			}
+  			});
+		});
+		reqc.on('error', function(e) {
+  			log('problem with request: ' + e.message);
+		});
+	};
+
+	this.deleteFile = function (clientID, userID, id){
+		var fileserver = new Object();
+		fileserver.port = sURL.fileserver.port;
+  		fileserver.hostname = sURL.fileserver.hostname;
+ 		fileserver.path = sURL.fileserver.path;
+  		fileserver.method = sURL.fileserver.method;
+		fileserver.path += '?job=deleteFile&userID='+userID+'&id='+id;
+		reqd = http.get(fileserver, function(res) {
+  			res.setEncoding('utf8');
+  			res.on('data', function (chunk) {
+    			//L2x1.send(clientID, sID.fileList, chunk);
+    			//console.log(clientID+' '+sID.fileList+' '+chunk);
+    			if(chunk == "1"){
+    				filesystem.getUserDir(clientID, userID);
+    			} else {
+    				L2x1.send(clientID, sID.message, 'Konnte Datei nicht löschen! Bitte neu Laden!');
+    			}
+  			});
+		});
+		reqd.on('error', function(e) {
+  			log('problem with request: ' + e.message);
+		});
+	};
+
+	this.getTest = function (){
+		var fileserver = new Object();
+		fileserver.port = sURL.fileserver.port;
+  		fileserver.hostname = sURL.fileserver.hostname;
+ 		fileserver.path = sURL.fileserver.path;
+  		fileserver.method = sURL.fileserver.method;
+		fileserver.path += '?job=test';
+		reqx = http.get(fileserver, function(res) {
+  			res.setEncoding('utf8');
+  			res.on('data', function (chunk) {
+    			//var jsObject = JSON.parse(chunk);
+    			//secure.loginData(clientID, jsObject);
+    			//console.log(clientID+' '+jsObject.userID+' '+jsObject.userRight);
+    			dlog(chunk);
+    			L2x1.send(clientID, sID.message, 'MESSAGE => '+chunk);
+  			});
+		});
+		reqx.on('error', function(e) {
+  			error.report(2, 'problem with request: ' + e.message);
+		});
+	};
+};
+
+var filesystem = new filesystem_typ();
+
+//filesystem.getUserDir('1111111111', '5000000001');
+//filesystem.getUserDir('2222222222', '5000000001');
+
+
+//console.log('test');
+//var i = 0;
+//while (i<1000000000){i++;}

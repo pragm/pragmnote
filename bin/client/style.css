@@ -1,0 +1,1607 @@
+@charset "ISO-8859-1";/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: login.css
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+.loginTop{position: absolute; top: 0px; left: 0px; right: 0px; height: 50px; background: #222;}
+.loginLogo{
+    position: absolute; 
+    top: 13px; 
+    left: 50%; 
+    height: 24px; 
+    width: 81px; 
+    margin-left: -40px;
+    background: url("img/doc/pragm_1_white.png");
+}
+	.welcome{position: absolute; top: 0px; left: 245px; font-family: 'Open Sans'; font-size: 36px; color: #E9E9E9;}
+.centerPic{
+    position: relative;  
+    left: 50%; 
+    margin-left: -60px;
+    width: 120px; 
+    height: 120px; 
+    background: url("img/doc/solo.png");
+}
+.loginLine{
+    position: absolute; 
+    bottom: 0px; 
+    left: 0px; 
+    height: 30px; 
+    right: 0px; 
+    background: #fafafa; 
+    box-shadow: 0 0 1px 1px #808080; 
+    font-family: 'Open Sans'; 
+    font-size: 14px; 
+    color: #555; 
+    font-weight: lighter; 
+    padding-left: 10px; 
+    padding-right: 10px; 
+    padding-top: 8px; 
+    text-align: right;
+}
+	.loginContent{position: absolute; background: url("img/doc/bg.png"); top: 0px; left: 0px; right: 0px; bottom: 50px; z-index: 10;}
+	.loginText{position: absolute; top: 60px; left: 250px; width: 500px; font-family: 'Open Sans'; font-size: 14px; color: #707070; font-weight: lighter;}
+.loginForm{
+    position:relative;
+    top: 10px; 
+    font-family: 'Open Sans'; 
+    font-size: 12px; 
+    color: #333; 
+    font-weight: lighter; 
+}
+	.uName{outline: none;}
+	.uPass{outline: none;}
+	.uSubm{outline: none;}
+	.alertinput{
+		outline:none;
+		border-radius:3px;
+    	-webkit-border-radius:3px;
+    	-moz-border-radius:3px;
+		padding: 6px;
+		background-color: #f3f3f3;
+		border: 0px solid #9a9a9a;
+		color: #808080;
+		font-family: 'Open Sans';
+		cursor: text;
+		font-size: 14px;
+		font-weight: bold;
+		-webkit-transition: all 0.03s ease-in-out;
+		}
+	.alertinput:hover{
+		color: #333333;
+		-webkit-box-shadow: 0 0 3px #808080;
+		}
+	.alertinput:focus{
+		background-color: #FFFFFF;
+		color: #333333;
+		-webkit-box-shadow: 0 0 3px #808080;
+	}
+	.loginSubmit{
+		outline:none;
+    	border-radius:3px;
+		padding: 6px;
+		background-color: #f3f3f3;
+		border: 0px solid #9a9a9a;
+		color: #808080;
+		font-family: 'Open Sans';
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: bold;
+		-webkit-transition: all 0.03s ease-in-out;
+		}
+	.loginSubmit:hover{
+		color: #333333;
+		-webkit-box-shadow: 0 0 3px #808080;
+		}
+	.loginSubmit:focus{
+		background-color: #FFFFFF;
+		color: #333333;
+		box-shadow: 0 0 3px #808080;
+	}
+	.loginSubmit:focus{
+		background-color: #FFFFFF;
+		color: #333333;
+		box-shadow: inset 0 0 3px #808080;
+	}
+	h1{ font-family: 'Open Sans'; font-size: 38px; color: #000; font-weight: lighter; margin-left: -5px;}
+	h2{ font-family: 'Open Sans'; font-size: 24px; color: #333; font-weight: bold; margin-left: -5px;}
+	.loginbody{
+		position: absolute;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 0px;
+		background: #e5e5e5;
+		z-index: 99;
+	}
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: newstyle.css
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+.displayBlocker{
+    position: absolute;
+	top: 50px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: white;
+	z-index: 16;
+	overflow:auto;
+    display: block;
+    opacity: 0.7;
+}
+
+.fileTabs{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 10px;
+    right: 0px;
+    background: #333;
+    z-index: 10;
+    -webkit-transition: all 0.3s ease-in-out;
+    /*overflow: hidden;*/
+}
+.fileTabs:hover{
+    height: 50px;
+}
+.fileTabsPragm{
+    position: absolute;
+    left: 12px;
+    bottom: 13px;
+    background-image: url('img/doc/pragm_1_white.png');
+    width: 81px;
+    height: 24px;
+}
+.fileTabButton{
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    left: 0px;
+    width: 108px;
+    -webkit-transition: all 0.1s ease-in-out;
+    z-index:13;
+    cursor: pointer;
+}
+.fileTabButton:hover{
+    background: #222222;
+}
+.searcharea0{
+	position:absolute;
+	top: 20px;
+	left: 0px;
+	right: 0px;
+	height: 45px;
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+	background: transparent;
+}
+.searcharea1{
+	position:absolute;
+	top: 20px;
+	left: 0px;
+	right: 0px;
+	height: 45px;
+	border-bottom: 1px solid #666;
+	border-top: 1px solid #111;
+	background: #333;
+}
+.search{
+	position: absolute;
+	top: 10px;
+	left: 16px;
+	right: 16px;
+	height: 25px;
+	border: 1px solid black;
+	background: #f5f5f5;
+	-webkit-border-radius: 5px;
+	outline:none;
+	padding-left: 25px;
+	background-image: url("img/search.png");
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+.search:hover{
+	background-color: #ffffff;
+	
+}
+.search:focus{
+	background-color: #ffffff;
+}
+.searchimg{
+	position: relative;
+	top: 5px;
+	left: 5px;
+	width: 15px;
+	height: 15px;
+	background: url("img/search.png");
+}
+.overview{
+	position:fixed;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	width: 215px;
+	background: whitesmoke; /*3F4343*/
+}
+.background{
+    position:fixed;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    background: whitesmoke;
+}
+.notenew{
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	margin-left: -25px;
+	width: 50px;
+	height: 75px;
+	background: url("img/notenew.png");
+}
+.oline{
+	position: absolute;
+	top: 105px;
+	left: 20px;
+	right: 20px;
+	height: 1px;
+	/*background: #1a1a1a;*/
+}
+.listul{
+	position: absolute;
+	list-style-image:url('img/filesys/ar_r.png');
+	margin: 0;
+	padding-left: 2px;
+	top: 88px;
+	height: 29px;
+	left: 14px;
+	right: 0px;
+	-webkit-user-select: none;
+	-webkit-transition: all 0.3s ease-in-out;
+	cursor: pointer;
+}
+.listul li{
+	position: relative;
+	padding: 3px;
+	color: #898989;
+	font-family: SourceSans, Helvetica;
+	font-size: 12px;
+	font-weight: normal;
+	left: 10px;
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+	/*text-shadow: 1px 1px 1px #000;*/
+}
+/*.listul li:hover{
+	border-bottom: 1px solid #666;
+	border-top: 1px solid #111;
+	background: #333;
+	color: #EEE;
+}*/
+.ulactive{
+	position:absolute;
+	top: 87px;
+	left: 0px;
+	right: 14px;
+	height: 23px;
+	border-bottom: 1px solid #666;
+	border-top: 1px solid #111;
+	background-color: #333;
+	/*background-image: url("img/shower.png");
+	background-repeat: no-repeat;
+	background-position: 207px 0px;*/
+	-webkit-transition: all 0.2s ease-in-out;
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2));*/
+}
+.shower{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 0px;
+	height: 1px;
+	border-right: 10px solid #f5f5f5;
+	border-bottom: 11px solid transparent;
+	border-top: 11px solid transparent;
+	border-left: 10px solid transparent;
+	/*background: #f5f5f5;*/
+}
+.editul{
+	position: absolute;
+	list-style-type:none;
+	margin: 0;
+	padding-left: 2px;
+	top: 10px;
+	left: 0px;
+	-webkit-user-select: none;
+	z-index: 9;
+	/*border-bottom: 1px solid #D4D4D4;*/
+	/*box-shadow: 0 0 2px #d4d4d4;*/
+	-webkit-transition: all 0.3s ease-in-out;
+	/*background: #f9f8f8;*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2));*/
+    background: #f5f5f5;
+	}
+.editli{
+	position: relative;
+	float: left;
+	left: 0px;
+	margin-left:-2px;
+	padding: 7px;
+	/*min-width: 31px;*/
+	padding-top: 13px;
+    padding-bottom: 13px;
+	/*height: 19px;
+	
+	/*background: #f9f8f8;  F7F4F4 */
+	z-index: 6;
+	cursor: pointer;
+	text-align: center;
+	
+	-webkit-user-select: none;
+	}
+.editli:hover{
+	/*border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	box-shadow: 0 0 6px #bbbbbb;
+	z-index: 8;*/
+    
+    background: #e3e3e3; /*  #ffffff */
+	z-index: 7;
+	}
+.editli:active{
+	/*background: #f9f8f8; /*  #ffffff 
+	box-shadow: inset 0 0 6px #cccccc;
+	border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	z-index: 7;*/
+    
+   
+	/*background: #f9f8f8; /*  #ffffff 
+	box-shadow: inset 0 0 6px #bbbbbb;*/
+	z-index: 7;
+    
+    background: #c3c3c3; 
+	}
+.editlidown{
+	position: relative;
+	float: left;
+	left: 0px;
+	margin-left:-2px;
+	padding: 7px;
+	/*min-width: 31px;*/
+	padding-top: 13px;
+	height: 19px;
+	/*background: #f9f8f8; /*  #ffffff *
+	box-shadow: inset 0 0 6px #cccccc;
+	border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;*/
+	z-index: 7;
+	cursor: pointer;
+	text-align: center;
+	background: #c3c3c3;
+	-webkit-user-select: none;
+	}
+.cut {
+	padding: 0;
+	background: #999999;
+	width: 3px;
+	height: 29px;
+	position: relative;
+	float: left;
+	left: 0px;
+	}
+.unselectinput{
+	position: absolute;
+	top: -3px;
+	left: -3px;
+	border: 0px;
+	background: transparent;
+	right: -3px;
+	bottom: -3px;
+	cursor: pointer;
+	z-index: 11;
+	outline: none;
+	}
+.draweditul{
+	position: absolute;
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	bottom: 9px;
+	right: 8px;
+	-webkit-user-select: none;
+	z-index: 28;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.draweditli{
+	opacity: 0.5;
+	position: relative;
+	float: left;
+	margin-left:-2px;
+	padding: 7px;
+	/*min-width: 31px;*/ /* F7F4F4 */
+	cursor: pointer;
+	text-align: center;
+	-webkit-transition: all 0.1s ease-in-out;
+	-webkit-user-select: none;
+	}
+.draweditli:hover{
+    opacity: 1.0;
+	/*border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	box-shadow: 0 0 6px #bbbbbb;
+	z-index: 8;*/
+	}
+.draweditli:active{
+	background: rgb(0, 0, 0); /*  #ffffff */
+	}
+.foot{
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 21px;
+	/*border-top: 1px solid #D4D4D4;
+	/*box-shadow: 0 0 2px #d4d4d4;*/
+	-webkit-transition: all 0.3s ease-in-out;
+	background: #f5f5f5;
+	/*z-index: 11;*/
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	text-align: center;
+	color: #333333;
+	}
+.colorshemer{
+	position:absolute;
+	left: 150px;
+	bottom: 0px;
+	height: 21px;
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	z-index: 14;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.colorshemer li{
+	position: relative;
+	float: left;
+	width: 12px;
+	height: 12px;
+	margin-top: 4px;
+	/*margin-left: 2px;*/
+	border: 1px solid #f9f8f8;
+	left: 0px;
+	-webkit-transition: all 0.1s ease-in-out;
+	}
+.colorshemer li:hover{
+	position: relative;
+	float: left;
+	width: 30px;
+	height: 30px;
+	bottom: 11px;
+	border: 1px solid #000000;
+	cursor: pointer;
+	margin-top: -3px;
+	}
+.inbutton{
+	position: relative;
+	}
+.colornote{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 140px;
+	height: 21px;
+	margin: 0;
+	font-family: Helvetica;
+	font-size: 13px;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 10px;
+	padding-top: 2px;
+	color: #333333;
+	cursor: pointer;
+	}
+
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+::-webkit-scrollbar-thumb {
+    background: #999999; 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
+
+.messagebox {
+    position:fixed;
+    top: 10px;
+    right: 10px;
+    height: 30px;
+    width: 200px;
+    background: #fff111;
+    z-index: 999;
+}
+
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: note.css
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+.body{
+    background: #ff0000;
+	-webkit-user-select: none;
+	min-width: 580px;
+	overflow: hidden;
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	margin: 0;
+	}
+.Tabs{
+	position: absolute;
+    bottom: 0px;
+    left: 68px;
+    height: 50px;
+    list-style-type:none;
+	margin: 0;
+}
+.Tabs li{
+    position: relative;
+    padding: 16px;
+    float: left;
+    color: #ffffff;
+    font-family: Helvetica;
+    border-top: 10px solid #0070FF;
+    padding-left: 11px;
+    padding-right: 11px;
+    bottom: 0px;
+    margin-top: -10px;
+    -webkit-transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+.Tabs li:hover{
+    background: #222222;
+}
+.Tabs li:active{
+   /*padding: 11px;
+    margin-top: 0px;
+    background: #222222;*/
+}
+.TabsIn1{
+    position: absolute;
+    height: 60px;
+    bottom: -40px;
+    width: 93px;
+    left: 0px;
+    background: transparent;
+}
+.TabsIn2{
+    position: absolute;
+    height: 60px;
+    bottom: -40px;
+    width: 100px;
+    right: 0px;
+    background: transparent;
+}
+#TabActive{
+    padding: 11px;
+    margin-top: 0px;
+    background: #222222;
+    height: 18px;
+}
+.fileListUl{
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    min-width: 500px;
+    left: 0px;
+    top: 40px;
+    bottom: 0px;
+    right: 0px;
+    list-style-type: none;
+    border-top: 1px solid #C7C7C7;
+    margin: 0;
+    box-shadow: inset 0px 6px 6px -6px #BDBDBD;
+    padding-top: 20px;
+}
+.fileListUl li{
+    text-align: left;
+    cursor: pointer;
+    font-size: 12px;
+    position: relative;
+    margin-left: -40px;
+    list-style-type: none;
+    border-bottom: 1px solid #eeeeee;
+    font-family: Helvetica;
+    padding: 15px;
+    color: black;
+    max-height: 46px;
+    opacity: 0.6;
+    /*-webkit-transition: ease-in-out 0.1s;*/
+}
+.fileListUl li:hover{
+    background: rgba(230, 230, 230, 0.3);
+    color: black;
+    box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222;
+    opacity: 1;
+}
+.fileListUl li:active{
+    background: rgba(230, 230, 230, 0.3);
+    color: black;
+    box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;
+    opacity: 1;
+}
+.fileListOverlay{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background: #f8f8f8;
+    border-radius: 4px;
+    overflow: auto;
+    
+    
+    /*
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    bottom: 30px;
+    left: 30px;
+    background: #f8f8f8;
+    box-shadow: 0px 0px 5px #424242;
+    border-radius: 4px;
+    overflow: auto;
+    */
+}
+.fileListCut{
+    position: absolute;
+    top: 0px;
+    left: 400px;
+    width: 1px;
+    bottom: 0px;
+    background: #BEBEBE;
+    display: none;
+}
+.fileOperationsBar{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 40px;
+}
+.dirShow{
+    bottom: 0px;
+    -webkit-padding-start: 0px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    list-style-type: none;
+    margin: 0;
+}
+.dirShow li{
+    z-index: 1;
+    font-weight: bold;
+    border-right: 1px solid #CFCFCF;
+    text-align: left;
+    float: left;
+    cursor: pointer;
+    -webkit-transition: 0.2s ease-in-out;
+    font-size: 12px;
+    position: relative;
+    list-style-type: none;
+    font-family: Helvetica;
+    padding: 13px;
+    color: #5c5c5c;
+    height: 14px;
+}
+.dirShow li:hover{
+    z-index: 2;
+    box-shadow: 0px 0px 5px #B8B8B8;
+    background: whitesmoke;
+}
+.dirShow li:active{
+    z-index: 1;
+    box-shadow: inset 0px 0px 4px #D1D1D1;
+}
+.dirButtons{
+    bottom: 0px;
+    -webkit-padding-start: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    list-style-type: none;
+    margin: 0;
+    overflow: hidden;
+}
+.dirButtonsLi{
+    z-index: 3;
+    border-left: 1px solid #CFCFCF;
+    text-align: left;
+    float: right;
+    cursor: pointer;
+    -webkit-transition: 0.2s ease-in-out;
+    position: relative;
+    list-style-type: none;
+    padding: 13px;
+    height: 14px;
+    width: 21px;
+    overflow: hidden;
+    background: #f8f8f8;
+}
+.dirButtonsLi:hover{
+    z-index: 4;
+    box-shadow: 0px 0px 5px #B8B8B8;
+    background: whitesmoke;
+}
+.dirButtonsLi:active{
+    z-index: 1;
+    box-shadow: inset 0px 0px 4px #D1D1D1;
+}
+.dirButtonsLiAdd{
+    z-index: 1;
+    border-left: 1px solid #CFCFCF;
+    text-align: left;
+    float: right;
+    cursor: pointer;
+    -webkit-transition: 0.2s ease-in-out;
+    position: relative;
+    list-style-type: none;
+    padding: 13px;
+    height: 14px;
+    box-shadow: inset 0px 0px 4px #D1D1D1;
+    background: whitesmoke;
+    width: 210px;
+    /*overflow: hidden;*/
+}
+.AddFileInput{
+    border: 0px;
+    background: transparent;
+    position: relative;
+    border-bottom: 1px solid #333;
+    outline: none;
+    top: -5px;
+    font-size: 16px;
+    left: 4px;
+    width: 150px;
+}
+.AddFileOverlay{
+    position: absolute;
+    top:0px;
+    left:0px;
+    bottom: 0px;
+    width: 47px;
+    background: transparent;
+}
+.folderIcon{
+    position: absolute;
+    top: 16px;
+}
+.fileIcon{
+    position: absolute;
+    top: 12px;
+}
+.notecon{
+	position: absolute;
+	top: 50px;
+	left: 0px;
+	right: 0px;
+	bottom: 21px;
+	background: #ffffff;
+	z-index: 13;
+	overflow:auto;
+    /*-webkit-border-bottom-left-radius: 4px;*/
+    -webkit-box-shadow: inset 0 0 10px #9c9c9c;  /*b4b4b4*/
+	}
+.noteconBackground{
+    position: absolute;
+	top: 50px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: #d6d6d6;
+	z-index: 15;
+	overflow:auto;
+    display: block;
+    /*-webkit-transition: all 0.3s ease-in-out;*/
+}
+.editarea{
+	position:absolute;
+	width: 500px;
+	background: white; /*fff095*/
+	border: 1px solid #c7c7c7;
+	/*-webkit-border-radius: 4px;*/
+	overflow: hidden;
+	/*-webkit-box-shadow: 0px 0px 4px #c7c7c7;*/
+	cursor: text;
+	outline: none;
+	padding: 10px;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	}
+.editarea:hover{
+	-webkit-box-shadow: 0px 0px 8px #bcbcbc;
+	border: 1px solid #bcbcbc;
+	}
+.editareax{
+	position:absolute;
+	/*width: 500px;*/
+	background: transparent; /*fff095*/
+	/*border: 1px solid transparent;
+	/*-webkit-border-radius: 4px;*/
+	overflow: hidden;
+	cursor: text;
+	outline: none;
+	font-family: Helvetica;
+	/*font-family: serif;*/
+	font-size: 11px;
+	font-weight: normal;
+	padding: 10px;
+	-webkit-transition: all 0.2s ease-in-out;
+    padding-left: 15px;
+	}
+.editareax:hover{
+	/*-webkit-box-shadow: 0px 0px 4px #c7c7c7;*/
+	
+	background: #f9f9f9; /*fff095   transparent*/
+    opacity: 0.9;
+    -webkit-box-shadow: inset 0px 5px 5px -5px #B6B6B6, inset 5px 0px 0px 0px #999, inset 5px -5px 5px -5px #B6B6B6, inset 0px 0px 5px 0px #CECECE;
+    padding-left: 15px;
+    -webkit-border-radius: 5px;
+	}
+.editareax:focus{
+	/*-webkit-box-shadow: 0px 0px 8px #bcbcbc;*/
+	
+	background: #f9f9f9; /*fff095   transparent*/
+    opacity: 0.9;
+    -webkit-box-shadow: inset 0px 5px 5px -5px #9B9B9B, inset 5px 0px 0px 0px #333, inset 5px -5px 5px -5px #9B9B9B, inset 0px 0px 5px 0px #CECECE;
+    padding-left: 15px;
+    -webkit-border-radius: 5px;
+	}
+.editareax2{
+	position:absolute;
+	/*width: 500px;*/
+	background: #f9f9f9; /*fff095   transparent*/
+	/*-webkit-border-radius: 4px;*/
+	overflow: hidden;
+	cursor: text;
+	outline: none;
+	font-family: Helvetica;
+	/*font-family: serif;*/
+	font-size: 11px;
+	font-weight: normal;
+	padding: 10px;
+	/*-webkit-box-shadow: 0px 0px 8px #bcbcbc;*/
+	/*border: 1px solid #bcbcbc;*/
+    opacity: 0.9;
+    -webkit-box-shadow: inset 0px 5px 5px -5px #9B9B9B, inset 5px 0px 0px 0px #333, inset 5px -5px 5px -5px #9B9B9B, inset 0px 0px 5px 0px #CECECE;
+    padding-left: 15px;
+    -webkit-border-radius: 5px;
+	}
+.inarea{
+	position:absolute;
+	top: 0px;
+	left: 0px;
+	width: 500px;
+	height: 8px;
+	background: #f4f4f4;
+	border-bottom: 1px solid #c7c7c7;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	cursor: move;
+	}
+.inarea2{
+	position:absolute;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 6px;
+	background: transparent;
+	border-bottom: 0px solid #c7c7c7;
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	cursor: move;
+	}
+.inarea3{
+	position:absolute;
+	top: 0px;
+	right: 0px;
+	width: 6px;
+	height: 100%;
+	background: transparent;
+	border-bottom: 0px solid #c7c7c7;
+	-webkit-border-bottom-right-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	cursor: e-resize;
+	}
+.editspan{
+	position: relative;
+	outline: none;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	width: 100%;
+	min-height: 10px;
+	-webkit-user-select: text;
+	}
+.noteheadline{
+	position: absolute;
+	top: 30px;
+	left: 30px;
+	min-width: 100px;
+    height: 22px;
+	padding: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+	/*background: #f7f4f4; /* #f7f4f4 */
+	border-bottom: 1px solid #b6b6b6;
+	/*border-top-right-radius: 4px 17px;
+	border-bottom-right-radius: 4px 17px;
+	border-bottom-left-radius: 4px 17px;
+	border-top-left-radius: 4px 17px;*/
+	font-family: Helvetica;
+	font-size: 18px;
+	font-weight: normal;
+	outline: none;
+	-webkit-user-select: text;
+    color: #696969;
+	-webkit-transition: all 0.2s ease-in-out;
+    z-index:14;
+	}
+.noteheadline:hover{
+	border-bottom: 1px solid #000000;
+    color: #000000;
+}
+.noteheadline:focus{
+	border-bottom: 1px solid #000000;
+    color: #000000;
+}
+.notedateline{
+	position: absolute;
+	top: 61px;
+	left: 30px;
+	min-width: 100px;
+	padding: 3px;
+    padding-left: 6px;
+    padding-right: 6px;
+	/*background: #f7f4f4; /* #f7f4f4 */
+	/*border-bottom: 1px solid #b6b6b6;
+	/*border-top-right-radius: 4px 17px;
+	border-bottom-right-radius: 4px 17px;
+	border-bottom-left-radius: 4px 17px;
+	border-top-left-radius: 4px 17px;*/
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	outline: none;
+	-webkit-user-select: text;
+    color: #b6b6b6;
+	-webkit-transition: all 0.2s ease-in-out;
+    z-index:14;
+	}
+.notedateline:hover{
+    color: #000000;
+}
+.notedateline:focus{
+    color: #000000;
+}
+.palm20{
+	position:absolute;
+	height: 20px;
+	width: 20px;
+	top: 5px;
+	left: 5px;
+	z-index: 9;
+	background-image: url('img/palm20.png');
+	-webkit-user-select: none;
+	}
+.palm201{
+	position:absolute;
+	height: 20px;
+	width: 20px;
+	top: 5px;
+	left: 5px;
+	z-index: 9;
+	background-image: url('img/palm20_1.png');
+	-webkit-user-select: none;
+	}
+.title{
+		position:absolute;
+		top: 54px;
+		left: 200px;
+		background: #222222;
+		color: #ffffff;
+		padding: 3px;
+		padding-left:6px;
+		padding-right:6px;
+		z-index: 14;
+		font-family: Helvetica;
+		font-size: 11px;
+		font-weight: normal;
+		-webkit-transition: all 0.3s ease-in-out;
+		}
+.titleeck{
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	left: 50%;
+	margin-left: -5px;
+	top: -10px;
+	border: 5px solid transparent;
+	border-bottom: 5px solid #222222;
+	}
+
+.rect{
+	position: absolute;
+	-webkit-user-select: none;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.drawline{
+	position: absolute;
+	}
+.drawlinefocus{	
+	position: absolute;
+	/*border: 2px solid #3EABFF;*/
+	box-shadow: 0 0 10px 2px #3EABFF;
+	z-index: 16;
+	}
+.drawlinemove{
+	position: absolute;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.inlineevent{
+	position: absolute;
+	left: 10px;
+	right: 10px;
+	top: -2px;
+	bottom: -2px;
+	background: transparent;
+	cursor: move;
+	}
+.drawlinepoint1{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	left: -4px;
+	top: 50%;
+	margin-top: -4px;
+	-webkit-border-radius: 3px;
+	}
+.drawlinepoint1:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawlinepoint2{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	right: -4px;
+	top: 50%;
+	margin-top: -4px;
+	-webkit-border-radius: 3px;
+	}
+.drawlinepoint2:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawarrowleft{
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	background: transparent;
+	border: 6px solid transparent;
+	border-left: 12px solid black;
+	right: -8px;
+	top: 50%;
+	margin-top: -6px;
+	}
+.drawarrowright{
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	background: transparent;
+	border: 6px solid transparent;
+	border-right: 12px solid black;
+	left: -8px;
+	top: 50%;
+	margin-top: -6px;
+	}
+.drawarrowleftwhite{
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	background: transparent;
+	border: 3px solid transparent;
+	border-left: 6px solid white;
+	right: -1px;
+	top: 50%;
+	margin-top: -3px;
+	}
+.drawarrowrightwhite{
+	position: absolute;
+	width: 0px;
+	height: 0px;
+	background: transparent;
+	border: 3px solid transparent;
+	border-right: 6px solid white;
+	left: -1px;
+	top: 50%;
+	margin-top: -3px;
+	}
+.drawcircleleft{
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	background: #333333;
+	border: 0px solid transparent;
+	right: 0px;
+	top: 50%;
+	margin-top: -6px;
+	-webkit-border-radius: 6px;
+	}
+.drawcircleright{
+	position: absolute;
+	width: 12px;
+	height: 12px;
+	background: #333333;
+	border: 0px solid transparent;
+	left: 0px;
+	top: 50%;
+	margin-top: -6px;
+	-webkit-border-radius: 6px;
+	}
+.drawcircleleftwhite{
+	position: absolute;
+	width: 8px;
+	height: 8px;
+	background: #ffffff;
+	border: 0px solid transparent;
+	right: 2px;
+	top: 50%;
+	margin-top: -4px;
+	-webkit-border-radius: 4px;
+}
+.drawcirclerightwhite{
+	position: absolute;
+	width: 8px;
+	height: 8px;
+	background: #ffffff;
+	border: 0px solid transparent;
+	left: 2px;
+	top: 50%;
+	margin-top: -4px;
+	-webkit-border-radius: 4px;
+}
+.drawrect{
+	position: absolute;
+	}
+.drawrectmove{
+	position: absolute;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.drawrectfocus{
+	position: absolute;
+	box-shadow: 0 0 10px 2px #3EABFF;
+	}
+.drawrectpoint1{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	left: -3px;
+	top: -3px;
+	-webkit-border-radius: 3px;
+	cursor:nw-resize;
+	}
+.drawrectpoint1:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint2{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	right: -3px;
+	bottom: -3px;
+	-webkit-border-radius: 3px;
+	cursor:nw-resize;
+	}
+.drawrectpoint2:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint3{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	left: -3px;
+	bottom: -3px;
+	-webkit-border-radius: 3px;
+	cursor:ne-resize;
+	}
+.drawrectpoint3:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint4{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	right: -3px;
+	top: -3px;
+	-webkit-border-radius: 3px;
+	cursor:ne-resize;
+	}
+.drawrectpoint4:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint5{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	left: -3px;
+	top: 50%;
+	margin-top:-3px;
+	cursor:e-resize;
+	}
+.drawrectpoint5:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint6{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	right: -3px;
+	top: 50%;
+	margin-top:-3px;
+	cursor:e-resize;
+	}
+.drawrectpoint6:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint7{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	bottom: -3px;
+	left: 50%;
+	margin-left:-3px;
+	cursor:n-resize;
+	}
+.drawrectpoint7:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectpoint8{
+	position: absolute;
+	width: 6px;
+	height: 6px;
+	background: transparent;
+	border: 1px solid transparent;
+	top: -3px;
+	left: 50%;
+	margin-left:-3px;
+	cursor:n-resize;
+	}
+.drawrectpoint8:hover{
+	background: #f9f8f8;
+	border: 1px solid #333333;
+	}
+.drawrectinline{
+	position: absolute;
+	top:3px;
+	left: 3px;
+	right: 3px;
+	bottom: 3px;
+	cursor:move;
+}
+.loading{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	z-index: 100;
+	background: #ffffff;
+	opacity: 0.85;
+	}
+.loadicon{
+	position:absolute;
+	left: 50%;
+	top: 50%;
+	width: 32px;
+	height: 32px;
+	margin-left: -16px;
+	margin-top: -16px;
+	background: url('img/doc/load.gif');
+	}
+.info{
+	position:absolute;
+	width: 560px;
+	height: 460px;
+	top: 50%;
+	left: 50%;
+	margin-top: -250px;
+	margin-left: -300px;
+	background: #222222;
+	color: #ffffff;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	padding: 20px;
+	-webkit-border-radius: 3px;
+	border: 1px solid black;
+	-webkit-box-shadow: 0px 0px 20px #222222;
+	overflow: auto;
+	}
+.fontchange{
+	position:absolute;
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	top: 50px;
+	left: 232px;
+	height: 178px;
+	width: 110px;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	background: whitesmoke;
+	border: 1px solid #D4D4D4;
+	border-top: 0px;
+	box-shadow: 1 0 2px #d4d4d4;
+	color: #333333;
+	z-index:8;
+	-webkit-user-select: none;
+	/*-webkit-transition: all 0.3s ease-in-out;*/
+	overflow: hidden;
+	}
+.fontchange li{
+	top: 6px;
+	position: relative;
+	float: left;
+	height: 18px;
+	background: whitesmoke;
+	width: 110px;
+	text-align: center;
+	cursor: pointer;
+	padding-top: 4px;
+	border-top: 1px solid whitesmoke;
+	border-bottom: 1px solid whitesmoke;
+	}
+.fontchange li:hover{
+	background: #e3e3e3;
+	/*box-shadow: 0 0 4px #d4d4d4;
+	border-top: 1px solid #D4D4D4;
+	border-bottom: 1px solid #D4D4D4;*/
+	z-index: 9;
+	}
+.fontchange li:active{
+	background: #c3c3c3;
+	/*box-shadow: inset 0 0 6px #d4d4d4;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;*/
+	z-index: 9;
+	}
+.sizechange{
+	position:absolute;
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	top: 50px;
+	left: 275px;
+	height: 178px;
+	width: 110px;
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	background: whitesmoke;
+	border: 1px solid #D4D4D4;
+	border-top: 0px;
+	box-shadow: 1 0 2px #d4d4d4;
+	color: #333333;
+	z-index:8;
+	-webkit-user-select: none;
+	/*-webkit-transition: all 0.3s ease-in-out;*/
+	overflow: hidden;
+	}
+.sizechange li{
+	top: 6px;
+	position: relative;
+	float: left;
+	height: 18px;
+	background: whitesmoke;
+	width: 110px;
+	text-align: center;
+	cursor: pointer;
+	border-top: 1px solid whitesmoke;
+	border-bottom: 1px solid whitesmoke;
+	padding-top: 4px;
+	}
+.sizechange li:hover{
+	background: #e3e3e3;
+	/*box-shadow: 0 0 4px #d4d4d4;
+	border-top: 1px solid #D4D4D4;
+	border-bottom: 1px solid #D4D4D4;*/
+	z-index: 9;
+	}
+.sizechange li:active{
+	background: #c3c3c3;
+	/*box-shadow: inset 0 0 6px #d4d4d4;
+	border-top: 1px solid #C9C9C9;
+	border-bottom: 1px solid #C9C9C9;*/
+	z-index: 9;
+	}
+.borderchange{
+	position: absolute;
+	height: 21px;
+	bottom: 0px;
+	right: 0px;
+	width: 180px;
+}
+
+.slideline{
+	position: absolute;
+	height:1px;
+	width: 110px;
+	top:9px;
+	left: 0px;
+	background: rgb(201, 201, 201);
+	border-top: 1px solid rgb(156, 156, 156);
+}
+
+.slider{
+	position: absolute;
+	height:11px;
+	width: 4px;
+	top:-6px;
+	margin-left: 2px;
+	background: #4f4f4f;
+	border: 1px solid #4f4f4f;
+	cursor: e-resize;
+}
+.slidesolve{
+	position: absolute;
+	height:17px;
+	width: 30px;
+	top: 1px;
+	left: 120px;
+	background: transparent;
+	border: 0px solid #cccccc;
+	color: #333333;
+	text-align: right;
+	font-family: Helvetica;
+	font-size: 14px;
+	font-weight: bold;
+	outline: none;
+}
+.slideeinheit{
+	position: absolute;
+	height:19px;
+	width: 7px;
+	top:2px;
+	left: 155px;
+	text-align: left;
+	font-family: Helvetica;
+	color: #333333;
+	font-size: 14px;
+	font-weight: bold;
+}
+rot{
+	color: #ff0000;
+	}
+gelb{
+	color: #ffca00;
+	}
+grun{
+	color: #009801;
+	}
+blau{
+	color: #006ec3;
+	}
+weis{
+	color: #ffffff;
+	}
+	
+/*:before {
+  content: '\41\50\52\49\4C\20\46\4F\4F\4C\20\F4\BF\F4';
+}*/
+.dirButtons {
+    
+}
+
+.loginCenter {
+    position:absolute;
+    top: 90px;
+    left: 0px;
+    right: 0px;
+    text-align:center;
+}
+

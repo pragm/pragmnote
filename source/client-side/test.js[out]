@@ -1,0 +1,163 @@
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: test.js[out]
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+
+function checkchange(keys, oldkeys, md5s, oldmd5s){
+    var keyarray = oldkeys;
+    var md5array = oldmd5s;
+	var changes = new Array();
+	var loeschen = new Array();
+	var changecounter = 0;
+	var loeschencounter = 0;
+	if(comparearrays(keys ,keyarray)){
+		//var run = 0;
+		var counter = 0;
+		while(md5array[keyarray[counter]]) {
+			if(md5array[keyarray[counter]] != md5s[keys[counter]]){
+				changes[changecounter] = keys[counter];
+				changecounter++;
+				}
+			counter++;
+			}
+		} else{
+		var counter = 0;
+		var idcounter = 0;
+		var vorhanden = 0;
+		while(keys[counter]){
+			var checkid = keys[counter];
+			idcounter = 0;
+			vorhanden = 0;
+			while(keyarray[idcounter]){
+				if(checkid==keyarray[idcounter] && md5array[keyarray[idcounter]] == md5s[keyarray[idcounter]]){
+					vorhanden = 1;
+					}
+				idcounter++;
+				}
+			if(vorhanden == 0){
+				changes[changecounter] = keys[counter];
+				changecounter++;
+				}
+			counter++;
+			}
+		var counter = 0;
+		var idcounter = 0;
+		var vorhanden = 0;
+		while(keyarray[counter]){
+			var checkid = keyarray[counter];
+			idcounter = 0;
+			vorhanden = 0;
+			while(keys[idcounter]){
+				if(checkid==keys[idcounter] && md5array[keys[idcounter]] == md5s[keys[idcounter]]){
+					vorhanden = 1;
+					}
+				idcounter++;
+				}
+			if(vorhanden == 0){
+				loeschen[loeschencounter] = keyarray[counter];
+				loeschencounter++;
+				}
+			counter++;
+			}
+		}
+	return loeschen;
+	//load_ids(changes);
+	//delete_ids(loeschen);
+	}
+	
+function comparearrays(array1, array2){
+	var counter=0;
+	var run = 1;
+	while(array1[counter] || array2[counter] && run == 1){
+		if(array1[counter] != array2[counter]){
+			run = 0;
+			return false;
+			}
+		counter++;
+		}
+	return true;
+	}
+
+function load_ids(loadarray){
+		var counter = 0;
+		countloadids = 0;
+		countloadedids = 0;
+		var retrylist = new Array();
+		var retrycout = 0;
+		var retry = 0;
+		while(loadarray[counter]){
+			var myid = parseInt(loadarray[counter]);
+			if(myid!=nosyncid){
+				if(firstload==1){
+					loading(1);
+					}
+				if(get_contentbyid(myid)){
+					
+					} else {
+					retrylist[retrycout] = id;
+					retrycout++;
+					retry = 1;
+					}
+				countloadids++;
+				}
+			counter++;
+			}
+		firstload=0;
+		if(retry==1){
+			load_ids(retrylist);
+			}
+		}
+
+function delete_ids(loadarray){
+		var counter = 0;
+		while(loadarray[counter]){
+			var myid = parseInt(loadarray[counter]);
+			var idstring = myid.toString();
+			var type = idstring.substring(0, 3);
+			if(type=="100"){
+			removeElement("editarea"+myid);
+			}else{
+				removeElement(myid);
+				}
+			counter++;
+			}
+		}
+
+var Xa= new Array(123, 454, 564, 876, 911);
+
+var Xb= new Array(123, 454, 777, 876, 911);
+
+var Xc= new Array();
+Xc[123] = 'aaat';
+Xc[454] = 'bbb';
+Xc[564] = 'ccc';
+Xc[876] = 'ddd';
+Xc[911] = 'eee';
+
+var Xd= new Array();
+Xd[123] = 'aaa';
+Xd[454] = 'bbb';
+Xd[777] = 'xer';
+Xd[876] = 'ddd';
+Xd[911] = 'eee';
+

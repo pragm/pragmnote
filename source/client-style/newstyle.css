@@ -1,0 +1,433 @@
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: newstyle.css
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+.displayBlocker{
+    position: absolute;
+	top: 50px;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background: white;
+	z-index: 16;
+	overflow:auto;
+    display: block;
+    opacity: 0.7;
+}
+
+.fileTabs{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 10px;
+    right: 0px;
+    background: #333;
+    z-index: 10;
+    -webkit-transition: all 0.3s ease-in-out;
+    /*overflow: hidden;*/
+}
+.fileTabs:hover{
+    height: 50px;
+}
+.fileTabsPragm{
+    position: absolute;
+    left: 12px;
+    bottom: 13px;
+    background-image: url('img/doc/pragm_1_white.png');
+    width: 81px;
+    height: 24px;
+}
+.fileTabButton{
+    position: absolute;
+    bottom: 0px;
+    top: 0px;
+    left: 0px;
+    width: 108px;
+    -webkit-transition: all 0.1s ease-in-out;
+    z-index:13;
+    cursor: pointer;
+}
+.fileTabButton:hover{
+    background: #222222;
+}
+.searcharea0{
+	position:absolute;
+	top: 20px;
+	left: 0px;
+	right: 0px;
+	height: 45px;
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+	background: transparent;
+}
+.searcharea1{
+	position:absolute;
+	top: 20px;
+	left: 0px;
+	right: 0px;
+	height: 45px;
+	border-bottom: 1px solid #666;
+	border-top: 1px solid #111;
+	background: #333;
+}
+.search{
+	position: absolute;
+	top: 10px;
+	left: 16px;
+	right: 16px;
+	height: 25px;
+	border: 1px solid black;
+	background: #f5f5f5;
+	-webkit-border-radius: 5px;
+	outline:none;
+	padding-left: 25px;
+	background-image: url("img/search.png");
+	background-repeat: no-repeat;
+	background-position: 5px 5px;
+}
+.search:hover{
+	background-color: #ffffff;
+	
+}
+.search:focus{
+	background-color: #ffffff;
+}
+.searchimg{
+	position: relative;
+	top: 5px;
+	left: 5px;
+	width: 15px;
+	height: 15px;
+	background: url("img/search.png");
+}
+.overview{
+	position:fixed;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	width: 215px;
+	background: whitesmoke; /*3F4343*/
+}
+.background{
+    position:fixed;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    background: whitesmoke;
+}
+.notenew{
+	position: absolute;
+	top: 20px;
+	left: 50%;
+	margin-left: -25px;
+	width: 50px;
+	height: 75px;
+	background: url("img/notenew.png");
+}
+.oline{
+	position: absolute;
+	top: 105px;
+	left: 20px;
+	right: 20px;
+	height: 1px;
+	/*background: #1a1a1a;*/
+}
+.listul{
+	position: absolute;
+	list-style-image:url('img/filesys/ar_r.png');
+	margin: 0;
+	padding-left: 2px;
+	top: 88px;
+	height: 29px;
+	left: 14px;
+	right: 0px;
+	-webkit-user-select: none;
+	-webkit-transition: all 0.3s ease-in-out;
+	cursor: pointer;
+}
+.listul li{
+	position: relative;
+	padding: 3px;
+	color: #898989;
+	font-family: SourceSans, Helvetica;
+	font-size: 12px;
+	font-weight: normal;
+	left: 10px;
+	border-bottom: 1px solid transparent;
+	border-top: 1px solid transparent;
+	/*text-shadow: 1px 1px 1px #000;*/
+}
+/*.listul li:hover{
+	border-bottom: 1px solid #666;
+	border-top: 1px solid #111;
+	background: #333;
+	color: #EEE;
+}*/
+.ulactive{
+	position:absolute;
+	top: 87px;
+	left: 0px;
+	right: 14px;
+	height: 23px;
+	border-bottom: 1px solid #666;
+	border-top: 1px solid #111;
+	background-color: #333;
+	/*background-image: url("img/shower.png");
+	background-repeat: no-repeat;
+	background-position: 207px 0px;*/
+	-webkit-transition: all 0.2s ease-in-out;
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2));*/
+}
+.shower{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 0px;
+	height: 1px;
+	border-right: 10px solid #f5f5f5;
+	border-bottom: 11px solid transparent;
+	border-top: 11px solid transparent;
+	border-left: 10px solid transparent;
+	/*background: #f5f5f5;*/
+}
+.editul{
+	position: absolute;
+	list-style-type:none;
+	margin: 0;
+	padding-left: 2px;
+	top: 10px;
+	left: 0px;
+	-webkit-user-select: none;
+	z-index: 9;
+	/*border-bottom: 1px solid #D4D4D4;*/
+	/*box-shadow: 0 0 2px #d4d4d4;*/
+	-webkit-transition: all 0.3s ease-in-out;
+	/*background: #f9f8f8;*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2));*/
+    background: #f5f5f5;
+	}
+.editli{
+	position: relative;
+	float: left;
+	left: 0px;
+	margin-left:-2px;
+	padding: 7px;
+	/*min-width: 31px;*/
+	padding-top: 13px;
+    padding-bottom: 13px;
+	/*height: 19px;
+	
+	/*background: #f9f8f8;  F7F4F4 */
+	z-index: 6;
+	cursor: pointer;
+	text-align: center;
+	
+	-webkit-user-select: none;
+	}
+.editli:hover{
+	/*border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	box-shadow: 0 0 6px #bbbbbb;
+	z-index: 8;*/
+    
+    background: #e3e3e3; /*  #ffffff */
+	z-index: 7;
+	}
+.editli:active{
+	/*background: #f9f8f8; /*  #ffffff 
+	box-shadow: inset 0 0 6px #cccccc;
+	border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	z-index: 7;*/
+    
+   
+	/*background: #f9f8f8; /*  #ffffff 
+	box-shadow: inset 0 0 6px #bbbbbb;*/
+	z-index: 7;
+    
+    background: #c3c3c3; 
+	}
+.editlidown{
+	position: relative;
+	float: left;
+	left: 0px;
+	margin-left:-2px;
+	padding: 7px;
+	/*min-width: 31px;*/
+	padding-top: 13px;
+	height: 19px;
+	/*background: #f9f8f8; /*  #ffffff *
+	box-shadow: inset 0 0 6px #cccccc;
+	border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;*/
+	z-index: 7;
+	cursor: pointer;
+	text-align: center;
+	background: #c3c3c3;
+	-webkit-user-select: none;
+	}
+.cut {
+	padding: 0;
+	background: #999999;
+	width: 3px;
+	height: 29px;
+	position: relative;
+	float: left;
+	left: 0px;
+	}
+.unselectinput{
+	position: absolute;
+	top: -3px;
+	left: -3px;
+	border: 0px;
+	background: transparent;
+	right: -3px;
+	bottom: -3px;
+	cursor: pointer;
+	z-index: 11;
+	outline: none;
+	}
+.draweditul{
+	position: absolute;
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	bottom: 9px;
+	right: 8px;
+	-webkit-user-select: none;
+	z-index: 28;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.draweditli{
+	opacity: 0.5;
+	position: relative;
+	float: left;
+	margin-left:-2px;
+	padding: 7px;
+	/*min-width: 31px;*/ /* F7F4F4 */
+	cursor: pointer;
+	text-align: center;
+	-webkit-transition: all 0.1s ease-in-out;
+	-webkit-user-select: none;
+	}
+.draweditli:hover{
+    opacity: 1.0;
+	/*border-left: 1px solid #C9C9C9;
+	border-right: 1px solid #C9C9C9;
+	box-shadow: 0 0 6px #bbbbbb;
+	z-index: 8;*/
+	}
+.draweditli:active{
+	background: rgb(0, 0, 0); /*  #ffffff */
+	}
+.foot{
+	position: absolute;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 21px;
+	/*border-top: 1px solid #D4D4D4;
+	/*box-shadow: 0 0 2px #d4d4d4;*/
+	-webkit-transition: all 0.3s ease-in-out;
+	background: #f5f5f5;
+	/*z-index: 11;*/
+	font-family: Helvetica;
+	font-size: 11px;
+	font-weight: normal;
+	text-align: center;
+	color: #333333;
+	}
+.colorshemer{
+	position:absolute;
+	left: 150px;
+	bottom: 0px;
+	height: 21px;
+	list-style-type:none;
+	margin: 0;
+	padding: 0;
+	z-index: 14;
+	-webkit-transition: all 0.3s ease-in-out;
+	}
+.colorshemer li{
+	position: relative;
+	float: left;
+	width: 12px;
+	height: 12px;
+	margin-top: 4px;
+	/*margin-left: 2px;*/
+	border: 1px solid #f9f8f8;
+	left: 0px;
+	-webkit-transition: all 0.1s ease-in-out;
+	}
+.colorshemer li:hover{
+	position: relative;
+	float: left;
+	width: 30px;
+	height: 30px;
+	bottom: 11px;
+	border: 1px solid #000000;
+	cursor: pointer;
+	margin-top: -3px;
+	}
+.inbutton{
+	position: relative;
+	}
+.colornote{
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 140px;
+	height: 21px;
+	margin: 0;
+	font-family: Helvetica;
+	font-size: 13px;
+	font-weight: bold;
+	text-align: right;
+	padding-right: 10px;
+	padding-top: 2px;
+	color: #333333;
+	cursor: pointer;
+	}
+
+::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+}
+::-webkit-scrollbar-thumb {
+    background: #999999; 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+
+
+.messagebox {
+    position:fixed;
+    top: 10px;
+    right: 10px;
+    height: 30px;
+    width: 200px;
+    background: #fff111;
+    z-index: 999;
+}

@@ -1,0 +1,214 @@
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: databasecontrol.js[out]
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+var fs = require('fs');
+
+var datei_typ = function datei_typ(){
+
+	var dateiNamen = new Array();
+
+	this.readStr = function (file, operation, uKey, clientID, uValue){
+		fs.readFile(file, 'UTF8', function (err, fileData) {
+  			if (err) {error.report(3, 'tryed to read file: '+file);} else {
+  				dbc.fileSwitch(fileData, operation, uKey, clientID, uValue);
+  			}
+		});
+	};
+
+	this.readStrSave = function (id){
+		fs.readFile('./data/'+id+'.p', 'UTF8', function (err, fileData) {
+  			if (err) {error.report(3, 'tryed to read file: ./data/'+id+'.p');} else {
+  				var keys = fileData.split("#k#");
+  				L3.saveFile(id, keys);
+  			}
+		});
+	};
+
+	this.readStrName = function (id){
+		fs.readFile('./data/'+id+'.p', 'UTF8', function (err, fileData) {
+  			if (err) {error.report(3, 'tryed to read file: ./data/'+id+'.p');} else {
+  				var keys = fileData.split("#k#");
+  				var name = dbc.get(keys, 'name');
+  				dateiNamen[id] = name;
+  			}
+		});
+	};
+
+	this.readDir = function (){
+		fs.readdir('./data/', function (err, dirData) {
+  			if (err) {error.report(3, 'tryed to read dir: ./data/');} else {
+  				for(var numbs in dirData){
+
+  				}
+  				dlog(dirData);
+  			}
+		});
+	};
+
+	this.writeStr = function (id, text){
+		fs.writeFile('./data/'+id+'.p', text, function (err) {
+  			if (err) {error.report(3, 'tryed to write file: '+file);} else {
+  				if(L3.exit == true){
+  					cLog("exit websocket server");
+  					server.close();
+  				}
+  			}
+		});
+	};
+}
+
+var dbc_typ = function dbc_typ(){
+
+	this.file = function (file, operation, uKey, clientID, uValue){
+		datei.readStr(file, operation, uKey, uValue);
+	};
+
+	this.fileSwitch = function (fileData, operation, uKey, clientID, uValue){
+		var keys = fileData.split("#k#");
+		/*switch operation{
+			case "get":
+				dbc.get(keys, uKey);
+				break;
+			case "set":
+				dbc.set(keys, uKey);
+				break;
+			case "kill":
+				dbc.kill(keys, uKey);
+				break;
+			case "makeFullList":
+				dbc.makeFullList(keys, clientID);
+				break;
+			default:
+				error.report(1, 'DBC fileSwitch Operation not available: '+operation);
+				break;
+		}*/
+	};
+
+	this.get = function (keys, uKey){
+		for(var i in keys){
+			var tempkey = keys[i].split("#v#");
+			if(tempkey[0]==uKey){
+				return tempkey[1];
+			}
+		}
+		return false;
+	};
+
+	this.set = function (keys, uKey, uValue){
+		var found = true;
+		var last = 0;
+		for(var nummer in keys){
+			last = nummer;
+			var tempkey = keys[nummer].split("#v#");
+			if(tempkey[0]==uKey){
+				keys[nummer] = uKey+"#v#"+uValue;
+				found = false;
+			}
+		}
+		if (found) {
+			keys.push(uKey+"#v#"+uValue);
+		}
+		return keys;
+	};
+
+	this.kill = function (keys, uKey){
+		for(var nummer in keys){
+			var tempkey = keys[i].split("#v#");
+			if(tempkey[0]==uKey){
+				keys.slice(nummer, 1);
+			}
+		}
+		return keys;
+	};
+
+	this.allKeys = function (keys){
+		var keyArray = new Array();
+		for(var nummer in keys){
+			if(nummer!=0){
+				var tempkey = keys[nummer].split("#v#");
+				keyArray[nummer-1] = tempkey[0];
+			}
+		}
+		return keyArray;
+	};
+
+	this.addLink = function (file, id){
+		var content = this.get(file, 'content');
+		var content = content.split(";");
+		var found = true;
+		var last;
+		for(key in content){
+			if(content[key] == id){
+				found = false;
+			}
+			last = key;
+		}
+		if(found){
+			content[last+1] =  id;
+		}
+		content = content.join(";");
+		this.set(file, 'content', content);
+	};
+
+	this.rmLink = function (file, id){
+		var content = this.get(file, 'content');
+		var content = content.split(";");
+		var last;
+		for(key in content){
+			if(content[key] == id){
+				last = key;
+			}
+		}
+		content= content.slice(last, 1);
+		content = content.join(";");
+		this.set(file, 'content', content);
+	};
+
+	this.makeFullListOP = function (id, clientID){
+		fs.readFile('./data/'+id+'.p', 'UTF8', function (err, fileData) {
+  			if (err) {error.report(3, 'tryed to read file: ./data/'+id+'.p'); throw err;}
+  			var keys = fileData.split("#k#");
+  			dbc.makeFullList(keys, id, clientID);
+		});
+	};
+
+	this.makeFullList = function (keys, id, clientID){
+		var list = this.allKeys(keys);
+		var firstLetter = "";
+		var length = "";
+		for(var key in list){
+			firstLetter = list[key][0];
+			length = list[key].length;
+			if(firstLetter == '1' & length == 10){
+				L3.files[id][list[key]] = this.get(keys, list[key]);
+			};
+		};
+		dlog("UPDATE OLD");
+		L3.oldFiles[id] = L3.files[id];
+		L3.updateUser(clientID);
+	};
+};
+
+var datei = new datei_typ();
+var dbc = new dbc_typ();
