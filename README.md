@@ -41,7 +41,8 @@ Furthermore I plan to build a js-library for differential realtime synchronizati
     <td>System</td><td>boss</td>
   </tr>
 </table>
- 
+## Known Bugs:
+Usage of websockets results in problems with usage of pragm behind http proxys like squid.
 ## Website:
 
 http://www.pragm.de/
