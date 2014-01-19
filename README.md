@@ -1,6 +1,6 @@
 pragm note
 ====
-pragm is a Open Source multiuser Scratchpad inspired by Microsoft Onenote®. [Sorry! No online demo right now]
+pragm is a Open Source multiuser Scratchpad. Check out the <a href="http://demo.pragm.de/">Demo</a>
 
 Pull requests are welcome
 
