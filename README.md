@@ -6,10 +6,10 @@ Pull requests are welcome
 
 ## Features/Already Done/Current Siutation:
 
-- I built a RichText.editor which has a (currently) simple file-explorer
-- I built up a node.js WebSocket server which synchronizes documents to the Editor in realtime
+- Pragm is a RichText.editor which has a (currently) simple file-explorer
+- Pragm is built up a node.js WebSocket server which synchronizes documents to the Editor in realtime
 - Because each key event/input gets synchronizes immediately the web application produces a huge amount of traffic.
-- To adress this problem  I created a differential algorithm which resulted in a siginificant decrease of traffic produced by the synchronization. The Synchronization has a currently very high efficency and needs currently less traffic than Google Docs.
+- To adress this problem  Pragm contains a differential algorithm which resulted in a siginificant decrease of traffic produced by the synchronization. The Synchronization has a currently very high efficency and needs currently less traffic than Google Docs.
 
 ## Ideas for future:
 
