@@ -30,19 +30,20 @@ var global_typ = function global_typ(){
     this.websocket_server_address = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300
     this.websocket_server_address_array = new Array();
     this.websocket_server_address_array[0] = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300 
-	this.websocket_server_address_array[1] = 'ws://91.89.70.45:9343'; 
-	this.websocket_server_address_array[2] = 'ws://46.38.236.248:9342'; 
+	this.websocket_server_address_array[3] = 'ws://localhost:9342'; 
+	this.websocket_server_address_array[2] = 'ws://demo.pragm.de:9342'; 
+	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343'; 
     this.actualServer = -1;
-    this.pServer = 'ws://localhost:9343';
+    this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
     
     this.get_websocket_server_address = function(){
         if(this.firstTry){
             this.firstTry = false;
-            return prompt("WebSocket Server:", this.pServer);
+            //return prompt("WebSocket Server:", this.pServer);
         } else {
-            return prompt("Connection failed! Please retry! WebSocket Server:", this.pServer);
+            //return prompt("Connection failed! Please retry! WebSocket Server:", this.pServer);
         }
         this.actualServer++;
         if(!this.websocket_server_address_array[this.actualServer]){
@@ -63,7 +64,7 @@ var global_typ = function global_typ(){
     this.textboxXdif = 8;       //X-Verschiebung einer Textbox beim erstellen
     this.textboxXdif = 18;      //Y-Verschiebung einer Textbox beim erstellen
     this.websocket_slow_down = 10; //Verlangsame reconnect Versuche nach n Versuchen
-    this.websocket_slow_time = 20000; // nach 20 Sekunden Reconnect
+    this.websocket_slow_time = 500; // nach 20 Sekunden Reconnect
     this.draganddroprealtime = false;
     this.difcut = 457;
     this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';

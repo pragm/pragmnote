@@ -441,7 +441,11 @@
 	cursor: pointer;
 	z-index: 11;
 	outline: none;
+    width: 48px;
 	}
+.sizechange li input{
+    width: 116px;
+}
 .draweditul{
 	position: absolute;
 	list-style-type:none;
@@ -1443,6 +1447,10 @@
 	/*-webkit-transition: all 0.3s ease-in-out;*/
 	overflow: hidden;
 	}
+
+.fontchange li input{
+    width: 116px;
+}
 .fontchange li{
 	top: 6px;
 	position: relative;

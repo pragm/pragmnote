@@ -306,7 +306,11 @@
 	cursor: pointer;
 	z-index: 11;
 	outline: none;
+    width: 48px;
 	}
+.sizechange li input{
+    width: 116px;
+}
 .draweditul{
 	position: absolute;
 	list-style-type:none;

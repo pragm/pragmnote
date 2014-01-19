@@ -207,3 +207,16 @@ var L1_typ = function L1_typ(){
     };
 
 var L1 = new L1_typ();
+
+function callbackInterval(){
+    var date = new Date();
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    //log(hour+":"+min+":"+sec);
+    if(hour == 3 && min == 0){
+        log("RESTART NIGHT NOW");
+    }
+}
+
+setInterval(callbackInterval, 60000);

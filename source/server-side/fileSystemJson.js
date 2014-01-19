@@ -26,7 +26,7 @@ var fs = require('fs');
 var pfile_typ = function pfile_typ(){
     
     this.dirObject = { };
-    this.dir = "data/";
+    this.dir = "./data/";
     this.deleteDir = "4DELETED00";
     this.userDir   = "4000000000";
     this.dirFile   = "DirIndexFile";

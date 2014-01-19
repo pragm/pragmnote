@@ -874,6 +874,10 @@
 	/*-webkit-transition: all 0.3s ease-in-out;*/
 	overflow: hidden;
 	}
+
+.fontchange li input{
+    width: 116px;
+}
 .fontchange li{
 	top: 6px;
 	position: relative;
