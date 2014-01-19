@@ -1,6 +1,6 @@
 Pragm Note
 ====
-Pragm is an Open Source multiuser Scratchpad. Check out the <a href="http://demo.pragm.de/">demo</a>.
+Pragm is an Open Source multiuser Scratchpad. Check out the <a href="http://demo.pragm.de/">demo</a>. [UNSTABLE: We take no warranty on bla]
 
 Pull Requests are appreciated and welcomed.
 
