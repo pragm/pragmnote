@@ -79,8 +79,10 @@ var text = "0206224400ffshjnkbgmmm";
 process.title = 'pragm-websocket';
 
 // Port where we'll run the websocket server
-if(!webSocketsServerPort){
+if(!global.config.port){
     var webSocketsServerPort = 9343;
+} else {
+    var webSocketsServerPort = global.config.port;
 }
 
 var timeStatCounter = 0;

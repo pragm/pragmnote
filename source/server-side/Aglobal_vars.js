@@ -22,6 +22,7 @@
 #
 ******************************************************************************************/
 //var agent = require('webkit-devtools-agent');
+var fs = require('fs');
 
 var global_typ = function global_typ(){
 
@@ -41,6 +42,13 @@ var global_typ = function global_typ(){
     this.firewall[this.mDefault] = new Array('1', '2', '3', '4');
     this.firewall[this.mGuest] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, '1');
     this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName);
+    
+    //this.config = { };
+    //log(fs.readFileSync('config.json', 'UTF8'));
+    this.config = JSON.parse(fs.readFileSync('config.json', 'UTF8'));
+    log("CONFIG: "+JSON.stringify(this.config));
+    //this.config.port = 9343;
+    //this.config.dir = "./data/";
 
 };
 

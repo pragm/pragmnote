@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.588
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.588 BETA"); console.log("");
+//Server-Build Version: BETA => 0.606
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.606 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -719,6 +719,7 @@ var sID = new sID_typ();
 #
 ******************************************************************************************/
 //var agent = require('webkit-devtools-agent');
+var fs = require('fs');
 
 var global_typ = function global_typ(){
 
@@ -738,6 +739,13 @@ var global_typ = function global_typ(){
     this.firewall[this.mDefault] = new Array('1', '2', '3', '4');
     this.firewall[this.mGuest] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, '1');
     this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName);
+    
+    //this.config = { };
+    //log(fs.readFileSync('config.json', 'UTF8'));
+    this.config = JSON.parse(fs.readFileSync('config.json', 'UTF8'));
+    log("CONFIG: "+JSON.stringify(this.config));
+    //this.config.port = 9343;
+    //this.config.dir = "./data/";
 
 };
 
@@ -1001,7 +1009,7 @@ var pfile_typ = function pfile_typ(){
         if(operation==='dir'){
             id = this.dirFile;
         }
-        var file = this.dir+id+'.json';
+        var file = global.config.dir+id+'.json';
 		fs.readFile(file, 'UTF8', function (err, fileData) {
   			if (err) {console.log('tryed to read file: '+file);} else {
   				if(operation==='dir'){
@@ -1044,7 +1052,7 @@ var pfile_typ = function pfile_typ(){
             // Todo: L3.killData(id); (clear RAM)
         }
         if(id!=""){
-            fs.writeFile(this.dir+id+'.json', text, function (err) {
+            fs.writeFile(global.config.dir+id+'.json', text, function (err) {
                 if (err) {error.report(3, 'tryed to write file: '+file);} else {
                     log("Saved file "+pfile.dir+id+'.json');
                     if(id != this.dirFile){
@@ -1880,8 +1888,10 @@ var text = "0206224400ffshjnkbgmmm";
 process.title = 'pragm-websocket';
 
 // Port where we'll run the websocket server
-if(!webSocketsServerPort){
+if(!global.config.port){
     var webSocketsServerPort = 9343;
+} else {
+    var webSocketsServerPort = global.config.port;
 }
 
 var timeStatCounter = 0;

@@ -42,7 +42,7 @@ var pfile_typ = function pfile_typ(){
         if(operation==='dir'){
             id = this.dirFile;
         }
-        var file = this.dir+id+'.json';
+        var file = global.config.dir+id+'.json';
 		fs.readFile(file, 'UTF8', function (err, fileData) {
   			if (err) {console.log('tryed to read file: '+file);} else {
   				if(operation==='dir'){
@@ -85,7 +85,7 @@ var pfile_typ = function pfile_typ(){
             // Todo: L3.killData(id); (clear RAM)
         }
         if(id!=""){
-            fs.writeFile(this.dir+id+'.json', text, function (err) {
+            fs.writeFile(global.config.dir+id+'.json', text, function (err) {
                 if (err) {error.report(3, 'tryed to write file: '+file);} else {
                     log("Saved file "+pfile.dir+id+'.json');
                     if(id != this.dirFile){
