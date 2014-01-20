@@ -36,7 +36,6 @@ var data_typ = function data_typ(){
                 textbox.setid(contentID, data.files[fileID][contentID]);
                 break;
             case '103':
-                console.log(contentID);
                 staticItems.setid(contentID, data.files[fileID][contentID]);
                 break;
         }

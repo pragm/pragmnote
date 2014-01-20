@@ -1,4 +1,4 @@
-var clientversion = "0.625"/******************************************************************************************
+var clientversion = "0.627"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1044,7 +1044,6 @@ var data_typ = function data_typ(){
                 textbox.setid(contentID, data.files[fileID][contentID]);
                 break;
             case '103':
-                console.log(contentID);
                 staticItems.setid(contentID, data.files[fileID][contentID]);
                 break;
         }
@@ -2593,7 +2592,6 @@ var L3_typ = function L3_typ(){
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
-                console.log("load: "+id);
             }
         }
         uiControl.loadHandler();

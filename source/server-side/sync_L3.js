@@ -313,7 +313,7 @@ var L3_typ = function L3_typ(){
             }
         }
         if(!temp){
-            log("KILL DATA TRUE");
+            dlog("KILL DATA TRUE");
             delete this.files[fkey];
         }
     }

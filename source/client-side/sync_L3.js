@@ -190,7 +190,6 @@ var L3_typ = function L3_typ(){
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
-                console.log("load: "+id);
             }
         }
         uiControl.loadHandler();

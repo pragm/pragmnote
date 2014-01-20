@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.625
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.625 BETA"); console.log("");
+//Server-Build Version: BETA => 0.627
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.627 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1691,7 +1691,7 @@ var L3_typ = function L3_typ(){
             }
         }
         if(!temp){
-            log("KILL DATA TRUE");
+            dlog("KILL DATA TRUE");
             delete this.files[fkey];
         }
     }
