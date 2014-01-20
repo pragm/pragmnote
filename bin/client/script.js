@@ -1,4 +1,4 @@
-/******************************************************************************************
+var clientversion = "0.588"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1517,6 +1517,8 @@ var globalEvent_typ = function globalEvent_typ(){
         //this.setDefaultNotecon();
         //setTimeout("globalEvent.lateload();", 1000);
         document.getElementById('displayBlocker').style.display = "none";
+        
+        document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
         L1.onload();
