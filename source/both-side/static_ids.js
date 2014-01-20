@@ -52,6 +52,7 @@ var sID_typ = function sID_typ(){
 	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
     
 	/*
 	LEGITIMATION ID: Idee: 

@@ -154,6 +154,24 @@ var L3_typ = function L3_typ(){
                 }
                 break;
                 
+            case sID.fileunloadtrue:
+                if(uiControl.switchfilebool){
+                    uiControl.switchfilebool = false;
+		            uiControl.resetUI();
+                    uiControl.view('editor');
+                    L3.loadFile(uiControl.switchfile);
+                } else {
+                    if(uiControl.unloadfile){
+                        uiControl.unloadfile = false;
+                        L3.file = "0000000000";
+		                this.view('files');
+		                this.resetUI();
+                    } else {
+                        L3.file = "0000000000";
+                    }
+                }
+                break;
+                
             default:
                 error.report(2, id);
                 return false;

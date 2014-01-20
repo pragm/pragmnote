@@ -27,6 +27,9 @@ var uiControl_typ = function global_typ(){
     
     this.loadwait;
     this.loadtimeout = 100;
+    this.switchfilebool = false;
+    this.switchfile = "";
+    this.unloadfile = false;
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -36,16 +39,13 @@ var uiControl_typ = function global_typ(){
 
 	this.unloadFile = function(){
 		L3.unloadFile(L3.file);
-		this.view('files');
-		this.resetUI();
+        this.unloadfile = true;
 	}
 
 	this.loadOtherFile = function(id){
+        this.switchfilebool = true;
         tab.fileOpened(id);
 		L3.unloadFile(L3.file);
-		this.resetUI();
-		this.view('editor');
-		L3.loadFile(id);
 	}
 
 	this.resetUI = function(){

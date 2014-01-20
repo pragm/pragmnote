@@ -180,8 +180,10 @@ var L3_typ = function L3_typ(){
 
     this.unloadFile = function (clientID){
         this.saveFileOP(this.users[clientID]['file']);
+        var tempid = this.users[clientID]['file'];
         //delete this.users[clientID].files[this.users[clientID]['file']];
         this.users[clientID]['file'] = "";
+        L2x1.send(clientID, sID.fileunloadtrue, tempid);
     };
 
     this.updateUser = function (clientID){
