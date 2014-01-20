@@ -186,10 +186,11 @@ var L3_typ = function L3_typ(){
     this.loadFile = function(id){
         L3.file = id;
         if(!data.files[id]) {
-            data.files[id] = new Array();
+            data.files[id] =  { };
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
+                console.log("load: "+id);
             }
         }
         uiControl.loadHandler();

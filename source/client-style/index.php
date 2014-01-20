@@ -21,7 +21,14 @@
 #       Version/Release...............: 0.5xx
 #
 ******************************************************************************************/-->
-
+<?php 
+$temp = trim(file_get_contents('config.json')); 
+$temp = str_replace ("\t","",$temp);
+$temp = str_replace ("\n","",$temp);
+$temp = str_replace ("\r","",$temp);
+$temp = str_replace ("\0","",$temp);
+$temp = str_replace ("\x0B","",$temp);
+?>
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -30,7 +37,7 @@
 <title id="title">pragm</title>
 <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600' rel='stylesheet' type='text/css'>
-<script type="text/javascript">var globalconfig = '<?php echo file_get_contents('config.json'); ?>';</script>
+<script type="text/javascript">var globalconfig = '<?php echo $temp; ?>';</script>
 
 <!-- #buildSoftwareCut# -->
 

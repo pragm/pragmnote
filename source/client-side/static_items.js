@@ -26,7 +26,9 @@
 var staticItems_typ = function staticItems_typ(){
     
     this.setid = function(id, content){
-        document.getElementById(id).innerHTML = content;
+        if(document.getElementById(id)){
+            document.getElementById(id).innerHTML = content; //TODO: Tryes to call ID 1031111110
+        }
     };
 
     this.saveid = function(id){

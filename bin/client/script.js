@@ -1,4 +1,4 @@
-var clientversion = "0.609"/******************************************************************************************
+var clientversion = "0.625"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1034,7 +1034,7 @@ var color = new color_typ();
 var data_typ = function data_typ(){
     
 	this.fileList;
-	this.files = new Array(); //Struktur: files[fileID][contentID] = content;
+	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
     
     this.edited_sync = function(fileID, contentID){
@@ -1044,6 +1044,7 @@ var data_typ = function data_typ(){
                 textbox.setid(contentID, data.files[fileID][contentID]);
                 break;
             case '103':
+                console.log(contentID);
                 staticItems.setid(contentID, data.files[fileID][contentID]);
                 break;
         }
@@ -1055,17 +1056,17 @@ var data_typ = function data_typ(){
     
     this.reset = function(){
         this.fileList = "";
-	    this.files = new Array();
+	    this.files = { };
 	    this.users = "";
     }
         
     this.delete_UI = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         L3.delete(id);
     }
         
     this.delete_sync = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
     
@@ -2350,7 +2351,9 @@ var SimplebSocket = function(url)
 var staticItems_typ = function staticItems_typ(){
     
     this.setid = function(id, content){
-        document.getElementById(id).innerHTML = content;
+        if(document.getElementById(id)){
+            document.getElementById(id).innerHTML = content; //TODO: Tryes to call ID 1031111110
+        }
     };
 
     this.saveid = function(id){
@@ -2586,10 +2589,11 @@ var L3_typ = function L3_typ(){
     this.loadFile = function(id){
         L3.file = id;
         if(!data.files[id]) {
-            data.files[id] = new Array();
+            data.files[id] =  { };
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
+                console.log("load: "+id);
             }
         }
         uiControl.loadHandler();
