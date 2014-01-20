@@ -79,8 +79,9 @@ var pfile_typ = function pfile_typ(){
         }
         if(operation==='newfile'){
             var tempNew = { };
+            var d=new Date();
             tempNew['1031111111'] = clientID;
-            tempNew['1031111112'] = "Sunday 1.December 2013<br>22:42";
+            tempNew['1031111112'] = d;
             var text = JSON.stringify(tempNew); // L3.files[id]
             // Todo: L3.killData(id); (clear RAM)
         }
