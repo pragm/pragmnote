@@ -665,6 +665,7 @@ var sID_typ = function sID_typ(){
 	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
     
 	/*
 	LEGITIMATION ID: Idee: 
@@ -1606,19 +1607,20 @@ var global_typ = function global_typ(){
     this.websocket_server_address = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300
     this.websocket_server_address_array = new Array();
     this.websocket_server_address_array[0] = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300 
-	this.websocket_server_address_array[1] = 'ws://91.89.70.45:9343'; 
-	this.websocket_server_address_array[2] = 'ws://46.38.236.248:9342'; 
+	this.websocket_server_address_array[3] = 'ws://localhost:9342'; 
+	this.websocket_server_address_array[2] = 'ws://demo.pragm.de:9342'; 
+	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343'; 
     this.actualServer = -1;
-    this.pServer = 'ws://localhost:9343';
+    this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
     
     this.get_websocket_server_address = function(){
         if(this.firstTry){
             this.firstTry = false;
-            return prompt("WebSocket Server:", this.pServer);
+            //return prompt("WebSocket Server:", this.pServer);
         } else {
-            return prompt("Connection failed! Please retry! WebSocket Server:", this.pServer);
+            //return prompt("Connection failed! Please retry! WebSocket Server:", this.pServer);
         }
         this.actualServer++;
         if(!this.websocket_server_address_array[this.actualServer]){
@@ -1639,7 +1641,7 @@ var global_typ = function global_typ(){
     this.textboxXdif = 8;       //X-Verschiebung einer Textbox beim erstellen
     this.textboxXdif = 18;      //Y-Verschiebung einer Textbox beim erstellen
     this.websocket_slow_down = 10; //Verlangsame reconnect Versuche nach n Versuchen
-    this.websocket_slow_time = 20000; // nach 20 Sekunden Reconnect
+    this.websocket_slow_time = 500; // nach 20 Sekunden Reconnect
     this.draganddroprealtime = false;
     this.difcut = 457;
     this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
@@ -2544,6 +2546,24 @@ var L3_typ = function L3_typ(){
                 }
                 break;
                 
+            case sID.fileunloadtrue:
+                if(uiControl.switchfilebool){
+                    uiControl.switchfilebool = false;
+		            uiControl.resetUI();
+                    uiControl.view('editor');
+                    L3.loadFile(uiControl.switchfile);
+                } else {
+                    if(uiControl.unloadfile){
+                        uiControl.unloadfile = false;
+                        L3.file = "0000000000";
+		                uiControl.view('files');
+		                uiControl.resetUI();
+                    } else {
+                        L3.file = "0000000000";
+                    }
+                }
+                break;
+                
             default:
                 error.report(2, id);
                 return false;
@@ -2807,6 +2827,9 @@ var uiControl_typ = function global_typ(){
     
     this.loadwait;
     this.loadtimeout = 100;
+    this.switchfilebool = false;
+    this.switchfile = "";
+    this.unloadfile = false;
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -2816,16 +2839,14 @@ var uiControl_typ = function global_typ(){
 
 	this.unloadFile = function(){
 		L3.unloadFile(L3.file);
-		this.view('files');
-		this.resetUI();
+        this.unloadfile = true;
 	}
 
 	this.loadOtherFile = function(id){
+        this.switchfilebool = true;
         tab.fileOpened(id);
+        this.switchfile = id;
 		L3.unloadFile(L3.file);
-		this.resetUI();
-		this.view('editor');
-		L3.loadFile(id);
 	}
 
 	this.resetUI = function(){
@@ -2877,24 +2898,28 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "files":
 				document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "editor":
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "";
+                document.title = getFileName(testDir.split(":"), L3.file);
 	            break;
 	        case "load":
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note - please wait";
 	            break;
 	        default:
 	            console.log("command '"+code+"' does not exist");

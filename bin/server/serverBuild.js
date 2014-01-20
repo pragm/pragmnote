@@ -1,6 +1,5 @@
-﻿var webSocketsServerPort = 9343;
-//Server-Build Version: BETA => 0.534
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.534 BETA"); console.log("");
+//Server-Build Version: BETA => 0.583
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.583 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -668,6 +667,7 @@ var sID_typ = function sID_typ(){
 	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
     
 	/*
 	LEGITIMATION ID: Idee: 
@@ -985,7 +985,7 @@ var fs = require('fs');
 var pfile_typ = function pfile_typ(){
     
     this.dirObject = { };
-    this.dir = "data/";
+    this.dir = "./data/";
     this.deleteDir = "4DELETED00";
     this.userDir   = "4000000000";
     this.dirFile   = "DirIndexFile";
@@ -1039,7 +1039,7 @@ var pfile_typ = function pfile_typ(){
         if(operation==='newfile'){
             var tempNew = { };
             tempNew['1031111111'] = clientID;
-            tempNew['1031111112'] = "Sunday 1.December 2013<br>22:42";
+            tempNew['1031111112'] = "Sunday 2.December 2013<br>22:42";
             var text = JSON.stringify(tempNew); // L3.files[id]
             // Todo: L3.killData(id); (clear RAM)
         }
@@ -1550,8 +1550,10 @@ var L3_typ = function L3_typ(){
 
     this.unloadFile = function (clientID){
         this.saveFileOP(this.users[clientID]['file']);
+        var tempid = this.users[clientID]['file'];
         //delete this.users[clientID].files[this.users[clientID]['file']];
         this.users[clientID]['file'] = "";
+        L2x1.send(clientID, sID.fileunloadtrue, tempid);
     };
 
     this.updateUser = function (clientID){
@@ -2006,3 +2008,16 @@ var L1_typ = function L1_typ(){
     };
 
 var L1 = new L1_typ();
+
+function callbackInterval(){
+    var date = new Date();
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    //log(hour+":"+min+":"+sec);
+    if(hour == 3 && min == 0){
+        log("RESTART NIGHT NOW");
+    }
+}
+
+setInterval(callbackInterval, 60000);

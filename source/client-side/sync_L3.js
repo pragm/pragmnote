@@ -164,8 +164,8 @@ var L3_typ = function L3_typ(){
                     if(uiControl.unloadfile){
                         uiControl.unloadfile = false;
                         L3.file = "0000000000";
-		                this.view('files');
-		                this.resetUI();
+		                uiControl.view('files');
+		                uiControl.resetUI();
                     } else {
                         L3.file = "0000000000";
                     }

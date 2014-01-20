@@ -45,6 +45,7 @@ var uiControl_typ = function global_typ(){
 	this.loadOtherFile = function(id){
         this.switchfilebool = true;
         tab.fileOpened(id);
+        this.switchfile = id;
 		L3.unloadFile(L3.file);
 	}
 
@@ -97,24 +98,28 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "files":
 				document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "editor":
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "";
+                document.title = getFileName(testDir.split(":"), L3.file);
 	            break;
 	        case "load":
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note - please wait";
 	            break;
 	        default:
 	            console.log("command '"+code+"' does not exist");
