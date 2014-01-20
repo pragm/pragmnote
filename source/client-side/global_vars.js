@@ -24,6 +24,7 @@
 
 
 var global_typ = function global_typ(){
+    this.config = JSON.parse(globalconfig);
     this.websocket_server_address_online = 'ws://pragm.dyndns-work.com:9343';
     this.websocket_server_address_local  = 'ws://localhost:9343';
 	this.websocket_server_address = 'ws://91.89.70.45:9343'; 
@@ -32,13 +33,18 @@ var global_typ = function global_typ(){
     this.websocket_server_address_array[0] = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300 
 	this.websocket_server_address_array[3] = 'ws://localhost:9342'; 
 	this.websocket_server_address_array[2] = 'ws://demo.pragm.de:9342'; 
-	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343'; 
+	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343';
     this.actualServer = -1;
     this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
     
     this.get_websocket_server_address = function(){
+        if(this.config.addressalert){
+            return prompt("WebSocket Server:", this.pServer);
+        } else {
+            return this.config.serveraddress;
+        }
         if(this.firstTry){
             this.firstTry = false;
             //return prompt("WebSocket Server:", this.pServer);

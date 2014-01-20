@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.606
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.606 BETA"); console.log("");
+//Server-Build Version: BETA => 0.609
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.609 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner

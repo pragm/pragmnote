@@ -30,11 +30,9 @@
 <title id="title">pragm</title>
 <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript">var globalconfig = '<?php echo file_get_contents('config.json'); ?>';</script>
 
-
-    <script type="text/javascript" src="script.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    
+<!-- #buildSoftwareCut# -->
 
 </head>
 <body class="body" name="body" id="body" onload="globalEvent.onload();" onmouseup="globalEvent.drop();" onclick="globalEvent.onclick();" onmousemove="globalEvent.mousemove();">
@@ -200,4 +198,3 @@
     
 </body>
 </html>
-
