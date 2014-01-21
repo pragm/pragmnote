@@ -28,13 +28,19 @@ var staticItems_typ = function staticItems_typ(){
     this.setid = function(id, content){
         if(document.getElementById(id)){
             document.getElementById(id).innerHTML = content; //TODO: Tryes to call ID 1031111110
+        } else {
+            error.report(3, "ID: "+id+" Content: "+content);
         }
     };
 
     this.saveid = function(id){
-        var content = document.getElementById(id).innerHTML;
-        data.files[L3.file][id] = content;
-        data.edited_UI(id);
+        if(document.getElementById(id)){
+            var content = document.getElementById(id).innerHTML;
+            data.files[L3.file][id] = content;
+            data.edited_UI(id);
+        } else {
+            error.report(3, "ID: "+id+" Content: "+content);
+        }
     };
 
 };

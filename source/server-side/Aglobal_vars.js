@@ -47,7 +47,7 @@ var global_typ = function global_typ(){
     //log(fs.readFileSync('config.json', 'UTF8'));
     this.config = JSON.parse(fs.readFileSync('config.json', 'UTF8'));
     log("CONFIG: "+JSON.stringify(this.config));
-    //this.config.port = 9343;
+    //this = 9343;
     //this.config.dir = "./data/";
 
 };
