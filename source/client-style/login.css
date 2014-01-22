@@ -130,6 +130,6 @@
 		bottom: 0px;
 		left: 0px;
 		right: 0px;
-		background: #e5e5e5;
+		background: url('img/wal.png');
 		z-index: 99;
 	}
