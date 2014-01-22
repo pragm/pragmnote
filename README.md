@@ -8,7 +8,7 @@ Pull Requests are appreciated and welcomed.
 Pragm was once a small idea of creating a multiuser note taking application. 
 
 Now it's became quite big. So... we need your help. If you are comfortable using HTML, CSS and Javascript feel free to contact us.
-info@pragm.de
+bug@pragm.de
 
 ## Features/Already Done/Current Siutation:
 
