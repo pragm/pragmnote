@@ -5,6 +5,11 @@ Pragm is an Open Source multiuser Scratchpad. Check out the <a href="http://demo
 
 Pull Requests are appreciated and welcomed.
 
+Pragm was once a small idea of creating a multiuser note taking application. 
+
+Now it's became quite big. So... we need your help. If you are comfortable using HTML, CSS and Javascript feel free to contact us.
+info@pragm.de
+
 ## Features/Already Done/Current Siutation:
 
 - Pragm is a RichText.editor which has a (currently) simple file-explorer
