@@ -243,7 +243,24 @@ var pfile_typ = function pfile_typ(){
             }
         }
         L2x1.send(clientID, sID.fileList, output.join(":"));
+        this.generateUserFilelistJSON(clientID, userID);
         //console.log(output.join(":"));
+    }
+    
+    this.generateUserFilelistJSON = function(clientID, userID){
+        output = {};
+        counter = 0;
+        //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
+        //output[userID] = JSON.parse( JSON.stringify( a ) );
+        counter++;
+        for(key in this.dirObject){
+            share = this.dirObject[key].share.split(";");
+            if(userID === "5000000000" || this.dirObject[key].owner == userID || searchArray(share, userID)){
+                output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
+            }
+        }
+        //L2x1.send(clientID, sID.fileList, output.join(":"));
+        console.log(JSON.stringify(output));
     }
     
     this.makeid = function (type){
