@@ -59,14 +59,14 @@ $temp = str_replace ("\x0B","",$temp);
     </nobr>
     <div class="TabsIn1" onclick="uiControl.unloadFile();"></div>
     <div class="TabsIn2"></div>
-    <ul class="draweditul" id="draweditul" style="">
+    <!--<ul class="draweditul" id="draweditul" style="">
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add rect (out of work)"><input class="unselectinput" type="button" onclick="addrect();"><img src="img/doc/rect.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add circle (out of work)"><input class="unselectinput" type="button" onclick="addline(3,3);"><img src="img/doc/circle.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add triangle (out of work)"><input class="unselectinput" type="button" onclick="rich.fontEdit('insertunorderedlist');"><img src="img/doc/triangle.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add line (out of work)"><input class="unselectinput" type="button" onclick="addline(0,0);"><img src="img/doc/line.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add arrow (out of work)"><input class="unselectinput" type="button" onclick="addline(0,1);"><img src="img/doc/arrow.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="delete element (out of work)"><input class="unselectinput" type="button" onclick="killfocusline();"><img src="img/doc/delete.png"></li>
-     </ul>
+     </ul>-->
     </div>
 <ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
@@ -84,8 +84,8 @@ $temp = str_replace ("\x0B","",$temp);
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Decrease indent');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('outdent');"><img src="img/doc/untab.png"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Bullets');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('insertunorderedlist');"><img src="img/doc/list.png"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Numbering');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('insertorderedlist');"><img src="img/doc/numblist.png"></li>
- <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add link (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addlink.png"></li>
- <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add image (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addimg.png"></li>
+ <!--<li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add link (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addlink.png"></li>
+ <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add image (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addimg.png"></li>-->
 </ul>
 
 
