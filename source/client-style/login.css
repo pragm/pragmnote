@@ -130,6 +130,8 @@
 		bottom: 0px;
 		left: 0px;
 		right: 0px;
-		background: url('img/wal.png');
+		background: url('img/wal.jpg');
+		 background-repeat:no-repeat;
+  background-position:100px 50%;
 		z-index: 99;
 	}
