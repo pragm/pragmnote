@@ -1,4 +1,4 @@
-var clientversion = "0.1.643"/******************************************************************************************
+var clientversion = "0.1.646"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1698,7 +1698,7 @@ var global_typ = function global_typ(){
     this.websocket_slow_time = 500; // nach 20 Sekunden Reconnect
     this.draganddroprealtime = false;
     this.difcut = 457;
-    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
+    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);"  onfocus="staticItems.focus();" onblur="staticItems.blur();"id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
     
     this.setTime = function(time){
         this.time = time;
@@ -1736,6 +1736,8 @@ var global = new global_typ();
 
 
 var textbox_typ = function textbox_typ(){
+    
+    this.focusactive = false;
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
@@ -1821,6 +1823,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.aktivatefocus = function (id){
+        this.focusactive = true;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
 	   textbox.aktiveid = textbox.id;
@@ -1835,6 +1838,7 @@ var textbox_typ = function textbox_typ(){
 	   if(document.getElementById("editarea"+textbox.id)){
            document.getElementById("editarea"+textbox.id).className = "editareax";
        }
+        this.focusactive = false;
 	}
         
     this.setid =function (id, value){
@@ -1882,20 +1886,22 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-	   this.id = textbox.makeid('100');
-	   this.Ereignis = window.event;
-	   this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
-	   this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
-	   textbox.newdiv = document.createElement("div");
-	   textbox.newdiv.className		 = "editareax";
-	   textbox.newdiv.id				 = 'editarea'+this.id;
-	   textbox.newdiv.style.left		 = this.x+'px';
-	   textbox.newdiv.style.top		 = this.y+'px';
-	   textbox.newdiv.style.width		 = '400px';
-	   textbox.newdiv.contenteditable	 = 'false';
-       textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
-	   document.getElementById('notecon').appendChild(textbox.newdiv);
-	   document.getElementById("editing"+this.id).focus();
+        if(!this.focusactive && !staticItems.focusactive){
+           this.id = textbox.makeid('100');
+           this.Ereignis = window.event;
+           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
+           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
+           textbox.newdiv = document.createElement("div");
+           textbox.newdiv.className		 = "editareax";
+           textbox.newdiv.id				 = 'editarea'+this.id;
+           textbox.newdiv.style.left		 = this.x+'px';
+           textbox.newdiv.style.top		 = this.y+'px';
+           textbox.newdiv.style.width		 = '400px';
+           textbox.newdiv.contenteditable	 = 'false';
+           textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
+           document.getElementById('notecon').appendChild(textbox.newdiv);
+           document.getElementById("editing"+this.id).focus();
+        }
 	};
     
     this.getTextboxHTML = function (id, content){
@@ -2394,6 +2400,16 @@ var SimplebSocket = function(url)
 
 
 var staticItems_typ = function staticItems_typ(){
+    
+    this.focusactive = false;
+    
+    this.focus = function(){
+        this.focusactive = true;
+    }
+    
+    this.blur = function(){
+        this.focusactive = false;
+    }
     
     this.setid = function(id, content){
         if(document.getElementById(id)){

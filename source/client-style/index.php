@@ -119,8 +119,8 @@ $temp = str_replace ("\x0B","",$temp);
 </div>
 
 <div class="notecon" id="notecon" ondblclick="textbox.addfield();" onmousedown="console.log();">
-	<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div>
-    <div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>
+	<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div>
+    <div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>
 </div>
 
 

@@ -25,6 +25,16 @@
 
 var staticItems_typ = function staticItems_typ(){
     
+    this.focusactive = false;
+    
+    this.focus = function(){
+        this.focusactive = true;
+    }
+    
+    this.blur = function(){
+        this.focusactive = false;
+    }
+    
     this.setid = function(id, content){
         if(document.getElementById(id)){
             document.getElementById(id).innerHTML = content; //TODO: Tryes to call ID 1031111110
