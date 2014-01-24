@@ -1,7 +1,49 @@
-﻿var webSocketsServerPort = 9343;
-//Server-Build Version: BETA => 0.534
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.534 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.675
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.675 BETA"); console.log("");
     /******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 21.01.2014
+#       Filename......................: date.js
+#       Version/Release...............: 0.6xx
+#
+******************************************************************************************/
+
+var date_typ = function date_typ(){
+
+	this.day = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+	this.month = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+    
+    this.fileDate = function(){
+	    var now = new Date(); // Muster: Sunday 4.December 2013<br>22:42
+        var Std = now.getHours();
+        var Min = now.getMinutes();
+        var StdAusgabe = ((Std < 10) ? "0" + Std : Std);
+        var MinAusgabe = ((Min < 10) ? "0" + Min : Min);
+        return this.day[now.getDay()]+" "+now.getDate()+"."+this.month[now.getMonth()]+" "+now.getFullYear()+"<br>"+StdAusgabe+":"+MinAusgabe; 
+	};
+
+};
+
+var date = new date_typ();
+
+
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -668,6 +710,7 @@ var sID_typ = function sID_typ(){
 	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
     
 	/*
 	LEGITIMATION ID: Idee: 
@@ -719,6 +762,7 @@ var sID = new sID_typ();
 #
 ******************************************************************************************/
 //var agent = require('webkit-devtools-agent');
+var fs = require('fs');
 
 var global_typ = function global_typ(){
 
@@ -738,6 +782,13 @@ var global_typ = function global_typ(){
     this.firewall[this.mDefault] = new Array('1', '2', '3', '4');
     this.firewall[this.mGuest] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, '1');
     this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName);
+    
+    //this.config = { };
+    //log(fs.readFileSync('config.json', 'UTF8'));
+    this.config = JSON.parse(fs.readFileSync('config.json', 'UTF8'));
+    log("CONFIG: "+JSON.stringify(this.config));
+    //this = 9343;
+    //this.config.dir = "./data/";
 
 };
 
@@ -985,7 +1036,7 @@ var fs = require('fs');
 var pfile_typ = function pfile_typ(){
     
     this.dirObject = { };
-    this.dir = "data/";
+    this.dir = "./data/";
     this.deleteDir = "4DELETED00";
     this.userDir   = "4000000000";
     this.dirFile   = "DirIndexFile";
@@ -1001,7 +1052,7 @@ var pfile_typ = function pfile_typ(){
         if(operation==='dir'){
             id = this.dirFile;
         }
-        var file = this.dir+id+'.json';
+        var file = global.config.dir+id+'.json';
 		fs.readFile(file, 'UTF8', function (err, fileData) {
   			if (err) {console.log('tryed to read file: '+file);} else {
   				if(operation==='dir'){
@@ -1039,12 +1090,12 @@ var pfile_typ = function pfile_typ(){
         if(operation==='newfile'){
             var tempNew = { };
             tempNew['1031111111'] = clientID;
-            tempNew['1031111112'] = "Sunday 1.December 2013<br>22:42";
+            tempNew['1031111112'] = date.fileDate();
             var text = JSON.stringify(tempNew); // L3.files[id]
             // Todo: L3.killData(id); (clear RAM)
         }
         if(id!=""){
-            fs.writeFile(this.dir+id+'.json', text, function (err) {
+            fs.writeFile(global.config.dir+id+'.json', text, function (err) {
                 if (err) {error.report(3, 'tryed to write file: '+file);} else {
                     log("Saved file "+pfile.dir+id+'.json');
                     if(id != this.dirFile){
@@ -1183,7 +1234,8 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.generateUserFilelist = function(clientID, userID){
-        output = [];
+        this.generateUserFilelistJSON(clientID, userID);
+        /*output = [];
         counter = 0;
         output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
         counter++;
@@ -1202,7 +1254,24 @@ var pfile_typ = function pfile_typ(){
             }
         }
         L2x1.send(clientID, sID.fileList, output.join(":"));
+        //this.generateUserFilelistJSON(clientID, userID);*/
         //console.log(output.join(":"));
+    }
+    
+    this.generateUserFilelistJSON = function(clientID, userID){
+        output = {};
+        counter = 0;
+        //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
+        //output[userID] = JSON.parse( JSON.stringify( a ) );
+        counter++;
+        for(key in this.dirObject){
+            share = this.dirObject[key].share.split(";");
+            if(userID === "5000000000" || this.dirObject[key].owner == userID || searchArray(share, userID)){
+                output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
+            }
+        }
+        L2x1.send(clientID, sID.fileList, JSON.stringify(output));
+        //console.log(JSON.stringify(output));
     }
     
     this.makeid = function (type){
@@ -1550,8 +1619,10 @@ var L3_typ = function L3_typ(){
 
     this.unloadFile = function (clientID){
         this.saveFileOP(this.users[clientID]['file']);
+        var tempid = this.users[clientID]['file'];
         //delete this.users[clientID].files[this.users[clientID]['file']];
         this.users[clientID]['file'] = "";
+        L2x1.send(clientID, sID.fileunloadtrue, tempid);
     };
 
     this.updateUser = function (clientID){
@@ -1681,7 +1752,7 @@ var L3_typ = function L3_typ(){
             }
         }
         if(!temp){
-            log("KILL DATA TRUE");
+            dlog("KILL DATA TRUE");
             delete this.files[fkey];
         }
     }
@@ -1878,16 +1949,20 @@ var text = "0206224400ffshjnkbgmmm";
 process.title = 'pragm-websocket';
 
 // Port where we'll run the websocket server
-if(!webSocketsServerPort){
-    var webSocketsServerPort = 9343;
+if(!global.config.port){
+    var webSocketsServerPort = 8080;
+} else {
+    var webSocketsServerPort = global.config.port;
 }
 
 var timeStatCounter = 0;
 var timeStat = new Array();
 
 // websocket and http servers
-var webSocketServer = require('websocket').server;
-var http = require('http');
+//var webSocketServer = require('websocket').server;
+//var http = require('http');
+var io = require('socket.io').listen(webSocketsServerPort);
+io.set('log level', 1);
 
 // list of currently connected clients (users)
 var clients = [ ];
@@ -1914,7 +1989,7 @@ pfile.readStr('123', 'dir', 2);
 /**
  * HTTP server
  */
-var server = http.createServer(function(request, response) {
+/*var server = http.createServer(function(request, response) {
     // Not important for us. We're writing WebSocket server, not HTTP server
     request.on('error', function(message){
         log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [REQUEST] MSG: "+message);
@@ -1926,7 +2001,7 @@ var server = http.createServer(function(request, response) {
 server.listen(webSocketsServerPort, function() {
     log(" Server is listening on port " + webSocketsServerPort);
     
-});
+});*/
 
 process.on('uncaughtException', function(err) {
   log(' C A U G H T    E X C E P T I O N : ' + err);
@@ -1934,7 +2009,7 @@ process.on('uncaughtException', function(err) {
     process.abort();
 });//*/
 
-server.on('error', function(message){
+/*server.on('error', function(message){
         log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [LISTEN]");
         process.abort();
     });
@@ -1945,49 +2020,51 @@ server.on('close', function(message){
     });
 /**
  * WebSocket server
- */
+ *
 var wsServer = new webSocketServer({
     httpServer: server
-});
+});*/
 
 
-wsServer.on('error', function(message){
+/*wsServer.on('error', function(message){
         log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [wsServer]");
         wsServer.close();
-    });
+    });*/
 
 var connectionCounter = 0;
 
 // This callback function is called every time someone
 // tries to connect to the WebSocket server
-wsServer.on('request', function(request) {
-    var connection = request.accept(null, request.origin); 
+io.sockets.on('connection', function (socket) {
+    //var connection = request.accept(null, request.origin); 
+    //socket.origin;
     // we need to know client clientID to remove them on 'close' event
     //var clientID = clients.push(connection) - 1;   // -1
     var clientID = connectionCounter;
-    clients[clientID] = connection;
+    clients[clientID] = socket;
     connectionCounter++;
     secure.init(clientID);
     L2.cache[clientID] = new Array();
     L3.users[clientID] = new Array();
     L3.users[clientID]['file'] = "";
-    iLog('Connection accepted! CLIENTID=>'+clientID+' IP=>'+connection.remoteAddress+' ORIGIN=>'+request.origin);
+    iLog('Connection accepted! CLIENTID=>'+clientID+' IP=>'+socket.remoteAddress+' ORIGIN=>'+socket.origin);
 
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') { // accept only text
+    socket.on('message', function (msg) {
+        //if (message.type === 'utf8') { // accept only text
                 //log(' Received Message from '+ clientID + ': ' + message.utf8Data+"<= AND =>"+connection.remoteAddress);
 
                 //timeStatCounter = timeStat.push(new Date()) - 1;
-                L2.recieve(clientID, message.utf8Data);
+                //L2.recieve(clientID, message.utf8Data);
+                L2.recieve(clientID, msg);
                 //for (var i=0; i < clients.length; i++) {
                 //    clients[i].sendUTF(message.utf8Data+"<= AND =>");
                 //}
             //}
-        }
+        //}
     });
 
     // user disconnected
-    connection.on('close', function(connection) {
+    socket.on('disconnect', function () {
         //clients.splice(clientID, 1);
         if(clients[clientID]){delete clients[clientID]};
         iLog("CLIENTID=>"+clientID+" disconnected!");
@@ -2000,9 +2077,22 @@ wsServer.on('request', function(request) {
 
 var L1_typ = function L1_typ(){
     this.send = function (client, text){
-        clients[client].sendUTF(text);
+        clients[client].send(text);
         //log(" SCRIPTTIME => "+(new Date()-timeStat[timeStatCounter])+"ms");
     }
     };
 
 var L1 = new L1_typ();
+
+function callbackInterval(){
+    var date = new Date();
+    var hour = date.getHours();
+    var min = date.getMinutes();
+    var sec = date.getSeconds();
+    //log(hour+":"+min+":"+sec);
+    if(hour == 3 && min == 0){
+        log("RESTART NIGHT NOW");
+    }
+}
+
+setInterval(callbackInterval, 60000);

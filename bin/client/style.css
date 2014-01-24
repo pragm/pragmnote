@@ -130,7 +130,10 @@
 		bottom: 0px;
 		left: 0px;
 		right: 0px;
-		background: #e5e5e5;
+		background: url('img/wal.jpg');
+		/* background-repeat:no-repeat;
+  background-position:100px 50%;*/
+        background-size:100% auto;
 		z-index: 99;
 	}
 /******************************************************************************************
@@ -596,7 +599,7 @@
 ******************************************************************************************/
 
 .body{
-    background: #ff0000;
+    background: #ffffff;
 	-webkit-user-select: none;
 	min-width: 580px;
 	overflow: hidden;

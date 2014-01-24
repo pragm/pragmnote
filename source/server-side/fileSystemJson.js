@@ -42,7 +42,7 @@ var pfile_typ = function pfile_typ(){
         if(operation==='dir'){
             id = this.dirFile;
         }
-        var file = this.dir+id+'.json';
+        var file = global.config.dir+id+'.json';
 		fs.readFile(file, 'UTF8', function (err, fileData) {
   			if (err) {console.log('tryed to read file: '+file);} else {
   				if(operation==='dir'){
@@ -79,14 +79,13 @@ var pfile_typ = function pfile_typ(){
         }
         if(operation==='newfile'){
             var tempNew = { };
-            var d=new Date();
             tempNew['1031111111'] = clientID;
-            tempNew['1031111112'] = d;
+            tempNew['1031111112'] = date.fileDate();
             var text = JSON.stringify(tempNew); // L3.files[id]
             // Todo: L3.killData(id); (clear RAM)
         }
         if(id!=""){
-            fs.writeFile(this.dir+id+'.json', text, function (err) {
+            fs.writeFile(global.config.dir+id+'.json', text, function (err) {
                 if (err) {error.report(3, 'tryed to write file: '+file);} else {
                     log("Saved file "+pfile.dir+id+'.json');
                     if(id != this.dirFile){
@@ -225,7 +224,8 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.generateUserFilelist = function(clientID, userID){
-        output = [];
+        this.generateUserFilelistJSON(clientID, userID);
+        /*output = [];
         counter = 0;
         output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
         counter++;
@@ -244,7 +244,24 @@ var pfile_typ = function pfile_typ(){
             }
         }
         L2x1.send(clientID, sID.fileList, output.join(":"));
+        //this.generateUserFilelistJSON(clientID, userID);*/
         //console.log(output.join(":"));
+    }
+    
+    this.generateUserFilelistJSON = function(clientID, userID){
+        output = {};
+        counter = 0;
+        //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
+        //output[userID] = JSON.parse( JSON.stringify( a ) );
+        counter++;
+        for(key in this.dirObject){
+            share = this.dirObject[key].share.split(";");
+            if(userID === "5000000000" || this.dirObject[key].owner == userID || searchArray(share, userID)){
+                output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
+            }
+        }
+        L2x1.send(clientID, sID.fileList, JSON.stringify(output));
+        //console.log(JSON.stringify(output));
     }
     
     this.makeid = function (type){

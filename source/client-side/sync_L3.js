@@ -93,30 +93,30 @@ var L3_typ = function L3_typ(){
         switch(id){
             case sID.fileList:
                 data.fileList = daten;
-                testDir = daten;
+                dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            lastDir = data.login.userID;
-                            mainDir = data.login.userID;
-                            showDir(mainDir);
-                            refreshShow();
+                            dirCreator.lastDir = data.login.userID;
+                            dirCreator.mainDir = data.login.userID;
+                            dirCreator.showDir(dirCreator.mainDir);
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
-                            refreshShow();
+                            dirCreator.refreshShow();
                         break;
                 }
                 break;
@@ -154,6 +154,24 @@ var L3_typ = function L3_typ(){
                 }
                 break;
                 
+            case sID.fileunloadtrue:
+                if(uiControl.switchfilebool){
+                    uiControl.switchfilebool = false;
+		            uiControl.resetUI();
+                    uiControl.view('editor');
+                    L3.loadFile(uiControl.switchfile);
+                } else {
+                    if(uiControl.unloadfile){
+                        uiControl.unloadfile = false;
+                        L3.file = "0000000000";
+		                uiControl.view('files');
+		                uiControl.resetUI();
+                    } else {
+                        L3.file = "0000000000";
+                    }
+                }
+                break;
+                
             default:
                 error.report(2, id);
                 return false;
@@ -168,7 +186,7 @@ var L3_typ = function L3_typ(){
     this.loadFile = function(id){
         L3.file = id;
         if(!data.files[id]) {
-            data.files[id] = new Array();
+            data.files[id] =  { };
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);

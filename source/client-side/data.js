@@ -26,7 +26,7 @@
 var data_typ = function data_typ(){
     
 	this.fileList;
-	this.files = new Array(); //Struktur: files[fileID][contentID] = content;
+	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
     
     this.edited_sync = function(fileID, contentID){
@@ -47,17 +47,17 @@ var data_typ = function data_typ(){
     
     this.reset = function(){
         this.fileList = "";
-	    this.files = new Array();
+	    this.files = { };
 	    this.users = "";
     }
         
     this.delete_UI = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         L3.delete(id);
     }
         
     this.delete_sync = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
     

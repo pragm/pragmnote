@@ -27,6 +27,9 @@ var uiControl_typ = function global_typ(){
     
     this.loadwait;
     this.loadtimeout = 100;
+    this.switchfilebool = false;
+    this.switchfile = "";
+    this.unloadfile = false;
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -36,16 +39,14 @@ var uiControl_typ = function global_typ(){
 
 	this.unloadFile = function(){
 		L3.unloadFile(L3.file);
-		this.view('files');
-		this.resetUI();
+        this.unloadfile = true;
 	}
 
 	this.loadOtherFile = function(id){
+        this.switchfilebool = true;
         tab.fileOpened(id);
+        this.switchfile = id;
 		L3.unloadFile(L3.file);
-		this.resetUI();
-		this.view('editor');
-		L3.loadFile(id);
 	}
 
 	this.resetUI = function(){
@@ -79,7 +80,7 @@ var uiControl_typ = function global_typ(){
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, lastDir, type);
+        L3.addFile(name, dirCreator.lastDir, type);
     };
     
     this.loadHandler = function(){
@@ -97,24 +98,28 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "files":
 				document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "editor":
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "";
+                document.title = dirCreator.getName(L3.file);
 	            break;
 	        case "load":
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note - please wait";
 	            break;
 	        default:
 	            console.log("command '"+code+"' does not exist");

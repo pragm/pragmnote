@@ -1,3 +1,46 @@
+var clientversion = "0.2.675"/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 21.01.2014
+#       Filename......................: date.js
+#       Version/Release...............: 0.6xx
+#
+******************************************************************************************/
+
+var date_typ = function date_typ(){
+
+	this.day = new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
+	this.month = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+    
+    this.fileDate = function(){
+	    var now = new Date(); // Muster: Sunday 4.December 2013<br>22:42
+        var Std = now.getHours();
+        var Min = now.getMinutes();
+        var StdAusgabe = ((Std < 10) ? "0" + Std : Std);
+        var MinAusgabe = ((Min < 10) ? "0" + Min : Min);
+        return this.day[now.getDay()]+" "+now.getDate()+"."+this.month[now.getMonth()]+" "+now.getFullYear()+"<br>"+StdAusgabe+":"+MinAusgabe; 
+	};
+
+};
+
+var date = new date_typ();
+
+
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -665,6 +708,7 @@ var sID_typ = function sID_typ(){
 	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
     
 	/*
 	LEGITIMATION ID: Idee: 
@@ -1033,7 +1077,7 @@ var color = new color_typ();
 var data_typ = function data_typ(){
     
 	this.fileList;
-	this.files = new Array(); //Struktur: files[fileID][contentID] = content;
+	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
     
     this.edited_sync = function(fileID, contentID){
@@ -1054,17 +1098,17 @@ var data_typ = function data_typ(){
     
     this.reset = function(){
         this.fileList = "";
-	    this.files = new Array();
+	    this.files = { };
 	    this.users = "";
     }
         
     this.delete_UI = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         L3.delete(id);
     }
         
     this.delete_sync = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
     
@@ -1238,7 +1282,7 @@ var L2 = new L2_typ();
 #
 ******************************************************************************************/
 
-
+/*
 var testDir = "33e1d210cfDatei1:39f6168622Datei2:3aaaaaaaaaDatei3:4000000000root;4000000001;3aaaaaaaaa:4000000001Ordner1;45909c4fcf;39f6168622:45909c4fcfOrdner2;33e1d210cf";
 var lastDir = '5000000001';
 var mainDir = '5000000001';
@@ -1408,7 +1452,106 @@ function refreshShow(){
 
 function createFile(folder, name, type){
     
+}*/
+
+//var testtext = '{"5vdfud2o7a":{"owner":"5vdfud2o7a","parent":"4000000000","name":"Bob","username":"Bob","password":"123","userRight":3,"content":"3ngcnefa8u;3z203p3kmo;40twtrl7qw;3aqcmdb59o;3v096j7i0d;3wr7bw9diw;38f7mn71rp","share":""},"40twtrl7qw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs Folder","content":"3emqfb6uw2","share":""},"3emqfb6uw2":{"owner":"5vdfud2o7a","parent":"40twtrl7qw","name":"Lorem ipsum dolor","share":""},"3z203p3kmo":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs file","share":""},"3ngcnefa8u":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Click Me","share":""},"3phyg3emyk":{"owner":"5vdfud2o7a","parent":"4DELETED00","name":"My sad deleted file","share":""},"3aqcmdb59o":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"debug","share":""},"3v096j7i0d":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"test","share":""},"3wr7bw9diw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"NewTest","share":""},"38f7mn71rp":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"LALA","share":""}}';
+
+var dirCreator_typ = function dirCreator_typ(){
+    
+    this.dirObject = {};
+    this.lastDir = "5000000001";
+    this.mainDir = "5000000001";
+    
+    this.setDir = function(jsontext){
+        this.dirObject = JSON.parse(jsontext);
+    };
+    
+    this.getName = function(id){
+        if(this.dirObject[id]){
+            return this.dirObject[id].name;
+        } else {
+            return "unnamed file";
+        }
+    };
+    
+    this.showDir = function(id){
+        var content = this.dirObject[id].content;
+        var contentArray = content.split(';');
+        var html = "";
+        for(i in contentArray){
+            if(this.dirObject[contentArray[i]]){
+                name = this.getName(contentArray[i]);
+                html = html+this.createElement(contentArray[i], name);
+            }
+        }
+        document.getElementById('fileListUl').innerHTML = html;
+    };
+    
+    this.generateFileSuperPath = function(id){
+        var name = this.dirObject[id].name;
+        var html = this.createFolderElement(id, name);
+        while(id != this.mainDir){
+            id = this.dirObject[id].parent;
+            name = this.dirObject[id].name;
+            html = this.createFolderElement(id, name)+html;
+        }
+        document.getElementById('dirShow').innerHTML = html;
+    };
+    
+    this.refreshShow = function(){
+        this.showDir(this.lastDir);
+        this.generateFileSuperPath(this.lastDir);
+    };
+    
+    this.openFile = function(id){
+        switch(id.substr(0,1)){
+            case "3":
+                //Datei Oeffnen
+                uiControl.loadFile(id);
+                break;
+            case "4":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+            case "5":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+        }
+    };
+    
+    this.createElement = function(id, name){
+        var t = new Array("fileIcon", "file");
+        switch(id.substr(0,1)){
+                case "3":
+                t[0] = "fileIcon";
+                t[1] = "file";
+                break;
+                case "4":
+                t[0] = "folderIcon";
+                t[1] = "folder";
+                break;
+                case "5":
+                t[0] = "fileIcon";
+                t[1] = "user";
+                break;
+        }
+        id = "'"+id+"'";
+        var e = '<li onclick="dirCreator.openFile('+id+');"><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font style="position: relative; left: 30px;">'+name+'</font></li>';
+        return e;
+    };
+    
+    this.createFolderElement = function(id, name){
+        id = "'"+id+"'";
+        var e = '<li onclick="dirCreator.openFile('+id+');">'+name+'</li>';
+        return e;
+    };
 }
+
+var dirCreator = new dirCreator_typ();
+//dirCreator.setDir(testtext);
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1441,10 +1584,13 @@ var error_typ = function error_typ(){
 			this.text = "Fatalerror";
 			break;
 		case 1:
-			this.text = "Sonstige";
+			this.text = "ELSE";
 			break;
 		case 2:
-			this.text = "Unbekannte Package ID";
+			this.text = "unknown package ID";
+			break;
+		case 3:
+			this.text = "Tried to set/get not existing element.";
 			break;
 		default:
 			this.text = "Fatalerror";
@@ -1516,6 +1662,8 @@ var globalEvent_typ = function globalEvent_typ(){
         //this.setDefaultNotecon();
         //setTimeout("globalEvent.lateload();", 1000);
         document.getElementById('displayBlocker').style.display = "none";
+        
+        document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
         L1.onload();
@@ -1600,25 +1748,32 @@ var globalEvent = new globalEvent_typ();
 
 
 var global_typ = function global_typ(){
+    this.config = JSON.parse(globalconfig);
     this.websocket_server_address_online = 'ws://pragm.dyndns-work.com:9343';
     this.websocket_server_address_local  = 'ws://localhost:9343';
 	this.websocket_server_address = 'ws://91.89.70.45:9343'; 
     this.websocket_server_address = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300
     this.websocket_server_address_array = new Array();
     this.websocket_server_address_array[0] = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300 
-	this.websocket_server_address_array[1] = 'ws://91.89.70.45:9343'; 
-	this.websocket_server_address_array[2] = 'ws://46.38.236.248:9342'; 
+	this.websocket_server_address_array[3] = 'ws://localhost:9342'; 
+	this.websocket_server_address_array[2] = 'ws://demo.pragm.de:9342'; 
+	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343';
     this.actualServer = -1;
-    this.pServer = 'ws://localhost:9343';
+    this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
     
     this.get_websocket_server_address = function(){
-        if(this.firstTry){
-            this.firstTry = false;
+        if(this.config.addressalert){
             return prompt("WebSocket Server:", this.pServer);
         } else {
-            return prompt("Connection failed! Please retry! WebSocket Server:", this.pServer);
+            return this.config.serveraddress;
+        }
+        if(this.firstTry){
+            this.firstTry = false;
+            //return prompt("WebSocket Server:", this.pServer);
+        } else {
+            //return prompt("Connection failed! Please retry! WebSocket Server:", this.pServer);
         }
         this.actualServer++;
         if(!this.websocket_server_address_array[this.actualServer]){
@@ -1639,10 +1794,10 @@ var global_typ = function global_typ(){
     this.textboxXdif = 8;       //X-Verschiebung einer Textbox beim erstellen
     this.textboxXdif = 18;      //Y-Verschiebung einer Textbox beim erstellen
     this.websocket_slow_down = 10; //Verlangsame reconnect Versuche nach n Versuchen
-    this.websocket_slow_time = 20000; // nach 20 Sekunden Reconnect
+    this.websocket_slow_time = 500; // nach 20 Sekunden Reconnect
     this.draganddroprealtime = false;
     this.difcut = 457;
-    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
+    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);"  onfocus="staticItems.focus();" onblur="staticItems.blur();"id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
     
     this.setTime = function(time){
         this.time = time;
@@ -1680,6 +1835,8 @@ var global = new global_typ();
 
 
 var textbox_typ = function textbox_typ(){
+    
+    this.focusactive = false;
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
@@ -1765,6 +1922,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.aktivatefocus = function (id){
+        this.focusactive = true;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
 	   textbox.aktiveid = textbox.id;
@@ -1779,6 +1937,7 @@ var textbox_typ = function textbox_typ(){
 	   if(document.getElementById("editarea"+textbox.id)){
            document.getElementById("editarea"+textbox.id).className = "editareax";
        }
+        this.focusactive = false;
 	}
         
     this.setid =function (id, value){
@@ -1826,20 +1985,22 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-	   this.id = textbox.makeid('100');
-	   this.Ereignis = window.event;
-	   this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
-	   this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
-	   textbox.newdiv = document.createElement("div");
-	   textbox.newdiv.className		 = "editareax";
-	   textbox.newdiv.id				 = 'editarea'+this.id;
-	   textbox.newdiv.style.left		 = this.x+'px';
-	   textbox.newdiv.style.top		 = this.y+'px';
-	   textbox.newdiv.style.width		 = '400px';
-	   textbox.newdiv.contenteditable	 = 'false';
-       textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
-	   document.getElementById('notecon').appendChild(textbox.newdiv);
-	   document.getElementById("editing"+this.id).focus();
+        if(!this.focusactive && !staticItems.focusactive){
+           this.id = textbox.makeid('100');
+           this.Ereignis = window.event;
+           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
+           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
+           textbox.newdiv = document.createElement("div");
+           textbox.newdiv.className		 = "editareax";
+           textbox.newdiv.id				 = 'editarea'+this.id;
+           textbox.newdiv.style.left		 = this.x+'px';
+           textbox.newdiv.style.top		 = this.y+'px';
+           textbox.newdiv.style.width		 = '400px';
+           textbox.newdiv.contenteditable	 = 'false';
+           textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
+           document.getElementById('notecon').appendChild(textbox.newdiv);
+           document.getElementById("editing"+this.id).focus();
+        }
 	};
     
     this.getTextboxHTML = function (id, content){
@@ -2331,6 +2492,98 @@ var SimplebSocket = function(url)
 #       Projectname...................: pragm
 #
 #       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: websocketcontrol_L1.js
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+
+var oTime = 1;
+
+var L1_typ = function L1_typ(){
+	
+	this.Server;
+	this.state;// test
+    this.socket;
+	
+	this.send = function(text) {
+		this.socket.send(text);
+        
+        aTime = new Date().getTime();
+        nTime = parseInt(aTime) - parseInt(global.time);
+        //console.log("TIME: "+nTime);
+		};
+ 
+	this.onload = function() {
+		L1.state = 1;
+        this.countErrors = 0;
+		//update_websocketstate();  //Test UI
+		globalEvent.state(2);
+        var address = global.get_websocket_server_address();
+		this.Server = new SimplebSocket(address);
+        this.socket = io.connect(address);
+		this.socket.on('connect', function () {
+            console.log("open");
+			L1.state = 2;
+            var L2 = new L2_typ();
+            L2.init();
+            globalEvent.state(1);
+            if(global.firstConnect){
+                uiControl.view('start');
+                global.firstConnect = false;
+            }
+			//update_websocketstate();  //Test UI
+			});
+	 
+		this.socket.on('disconnect', function (msg) {
+			L1.state = 0;
+			//update_websocketstate();  //Test UI
+			globalEvent.state(2);
+			this.socket = false;
+			L2.reset();
+            this.countErrors++;
+			if(global.retry_when_disconnected){
+                if(this.countErrors<global.websocket_slow_down){
+				    L1.onload();
+                } else {
+                    setTimeout("L1.onload();", global.websocket_slow_time);
+                }
+				}
+			});
+	 
+		this.socket.on('message', function (msg) {
+            //console.log(msg);
+			L2.recieve(msg);
+			//newmsg(msg); //Test UI
+			});
+	     
+		//this.Server.connect();
+		};
+	
+};
+
+var L1 = new L1_typ();
+
+		
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
 #       Filename......................: static_items.js
 #       Version/Release...............: 0.5xx
 #
@@ -2339,14 +2592,32 @@ var SimplebSocket = function(url)
 
 var staticItems_typ = function staticItems_typ(){
     
+    this.focusactive = false;
+    
+    this.focus = function(){
+        this.focusactive = true;
+    }
+    
+    this.blur = function(){
+        this.focusactive = false;
+    }
+    
     this.setid = function(id, content){
-        document.getElementById(id).innerHTML = content;
+        if(document.getElementById(id)){
+            document.getElementById(id).innerHTML = content; //TODO: Tryes to call ID 1031111110
+        } else {
+            error.report(3, "ID: "+id+" Content: "+content);
+        }
     };
 
     this.saveid = function(id){
-        var content = document.getElementById(id).innerHTML;
-        data.files[L3.file][id] = content;
-        data.edited_UI(id);
+        if(document.getElementById(id)){
+            var content = document.getElementById(id).innerHTML;
+            data.files[L3.file][id] = content;
+            data.edited_UI(id);
+        } else {
+            error.report(3, "ID: "+id+" Content: "+content);
+        }
     };
 
 };
@@ -2483,30 +2754,30 @@ var L3_typ = function L3_typ(){
         switch(id){
             case sID.fileList:
                 data.fileList = daten;
-                testDir = daten;
+                dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            lastDir = data.login.userID;
-                            mainDir = data.login.userID;
-                            showDir(mainDir);
-                            refreshShow();
+                            dirCreator.lastDir = data.login.userID;
+                            dirCreator.mainDir = data.login.userID;
+                            dirCreator.showDir(dirCreator.mainDir);
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
-                            refreshShow();
+                            dirCreator.refreshShow();
                         break;
                 }
                 break;
@@ -2544,6 +2815,24 @@ var L3_typ = function L3_typ(){
                 }
                 break;
                 
+            case sID.fileunloadtrue:
+                if(uiControl.switchfilebool){
+                    uiControl.switchfilebool = false;
+		            uiControl.resetUI();
+                    uiControl.view('editor');
+                    L3.loadFile(uiControl.switchfile);
+                } else {
+                    if(uiControl.unloadfile){
+                        uiControl.unloadfile = false;
+                        L3.file = "0000000000";
+		                uiControl.view('files');
+		                uiControl.resetUI();
+                    } else {
+                        L3.file = "0000000000";
+                    }
+                }
+                break;
+                
             default:
                 error.report(2, id);
                 return false;
@@ -2558,7 +2847,7 @@ var L3_typ = function L3_typ(){
     this.loadFile = function(id){
         L3.file = id;
         if(!data.files[id]) {
-            data.files[id] = new Array();
+            data.files[id] =  { };
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
@@ -2680,8 +2969,9 @@ var tab_typ = function tab_typ(){
                 if(this.active == this.tabArray[numb]){add = 'id="TabActive" ';}
                 var temp = "'TabActive'";
                 var tempId = "'"+this.tabArray[numb]+"'";
-                var fullDirArray = testDir.split(":");
-                var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                //var fullDirArray = testDir.split(":");
+                //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                var tempName = dirCreator.getName(this.tabArray[numb]);
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -2807,6 +3097,9 @@ var uiControl_typ = function global_typ(){
     
     this.loadwait;
     this.loadtimeout = 100;
+    this.switchfilebool = false;
+    this.switchfile = "";
+    this.unloadfile = false;
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -2816,16 +3109,14 @@ var uiControl_typ = function global_typ(){
 
 	this.unloadFile = function(){
 		L3.unloadFile(L3.file);
-		this.view('files');
-		this.resetUI();
+        this.unloadfile = true;
 	}
 
 	this.loadOtherFile = function(id){
+        this.switchfilebool = true;
         tab.fileOpened(id);
+        this.switchfile = id;
 		L3.unloadFile(L3.file);
-		this.resetUI();
-		this.view('editor');
-		L3.loadFile(id);
 	}
 
 	this.resetUI = function(){
@@ -2859,7 +3150,7 @@ var uiControl_typ = function global_typ(){
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, lastDir, type);
+        L3.addFile(name, dirCreator.lastDir, type);
     };
     
     this.loadHandler = function(){
@@ -2877,24 +3168,28 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "files":
 				document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note";
 				break;
 	        case "editor":
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "";
+                document.title = dirCreator.getName(L3.file);
 	            break;
 	        case "load":
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
+                document.title = "pragm note - please wait";
 	            break;
 	        default:
 	            console.log("command '"+code+"' does not exist");
@@ -2905,96 +3200,6 @@ var uiControl_typ = function global_typ(){
 
 var uiControl = new uiControl_typ();
 
-/******************************************************************************************
-#
-#       Copyright 2014 Dustin Robert Hoffner
-#
-#       Licensed under the Apache License, Version 2.0 (the "License");
-#       you may not use this file except in compliance with the License.
-#       You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#       Unless required by applicable law or agreed to in writing, software
-#       distributed under the License is distributed on an "AS IS" BASIS,
-#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#       See the License for the specific language governing permissions and
-#       limitations under the License.
-#       
-#       Projectname...................: pragm
-#
-#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
-#       Filename......................: websocketcontrol_L1.js
-#       Version/Release...............: 0.5xx
-#
-******************************************************************************************/
-
-
-var oTime = 1;
-
-var L1_typ = function L1_typ(){
-	
-	this.Server;
-	this.state;// test
-	
-	this.send = function(text) {
-		this.Server.send('message',text);
-        
-        aTime = new Date().getTime();
-        nTime = parseInt(aTime) - parseInt(global.time);
-        //console.log("TIME: "+nTime);
-		};
- 
-	this.onload = function() {
-		L1.state = 1;
-        this.countErrors = 0;
-		//update_websocketstate();  //Test UI
-		globalEvent.state(2);
-        var address = global.get_websocket_server_address();
-		this.Server = new SimplebSocket(address);
-		this.Server.bind('open', function() {
-            console.log("open");
-			L1.state = 2;
-            var L2 = new L2_typ();
-            L2.init();
-            globalEvent.state(1);
-            if(global.firstConnect){
-                uiControl.view('start');
-                global.firstConnect = false;
-            }
-			//update_websocketstate();  //Test UI
-			});
-	 
-		this.Server.bind('close', function( data ) {
-			L1.state = 0;
-			//update_websocketstate();  //Test UI
-			globalEvent.state(2);
-			this.Server = false;
-			L2.reset();
-            this.countErrors++;
-			if(global.retry_when_disconnected){
-                if(this.countErrors<global.websocket_slow_down){
-				    L1.onload();
-                } else {
-                    setTimeout("L1.onload();", global.websocket_slow_time);
-                }
-				}
-			});
-	 
-		this.Server.bind('message', function( msg ) {
-            //console.log(msg);
-			L2.recieve(msg);
-			//newmsg(msg); //Test UI
-			});
-	     
-		this.Server.connect();
-		};
-	
-};
-
-var L1 = new L1_typ();
-
-		
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
