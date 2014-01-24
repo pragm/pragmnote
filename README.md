@@ -13,7 +13,7 @@ bug@pragm.de
 ## Features/Already Done/Current Situation:
 
 - Pragm is a RichText.editor which has a (currently) simple file-explorer
-- Pragm is built upon a node.js WebSocket server which synchronizes documents to the editor in realtime
+- Pragm is built upon a node.js Socket.io server which synchronizes documents to the editor in realtime
 - Because each key event/input synchronizes with the server immediately the web application produces a huge amount of traffic.
 - To address this problem, Pragm contains a differential algorithm which has resulted in a siginificant decrease in traffic produced by the synchronization. The synchronization has very high efficency currently and needs less traffic than Google Docs at this time.
 
@@ -49,8 +49,7 @@ Furthermore, I plan to build a js-library for differential realtime synchronizat
 </table>
 
 ## Known Bugs:
-Usage of websockets results in problems with usage of Pragm behind http proxys like squid.
-
+See Issues!
 ## Website:
 
 http://www.pragm.de/
