@@ -1,6 +1,6 @@
 
 {
-    "serveraddress": "ws://localhost:9343",
+    "serveraddress": "http://localhost:8080/",
     "addressalert": false
 }
 

@@ -37,6 +37,7 @@ $temp = str_replace ("\x0B","",$temp);
 <title id="title">pragm</title>
 <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 <link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="socket.io.min.js"></script> <!--node_modules/socket.io-client/dist/socket.io.min.js-->
 <script type="text/javascript">var globalconfig = '<?php echo $temp; ?>';</script>
 
 <!-- #buildSoftwareCut# -->
