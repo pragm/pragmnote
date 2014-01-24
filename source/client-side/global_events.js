@@ -61,7 +61,8 @@ var globalEvent_typ = function globalEvent_typ(){
         document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
-        L1.onload();
+        //L1.onload();
+        uiControl.view("start");
     };
     
     this.onConnect = function (){

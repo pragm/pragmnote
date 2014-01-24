@@ -1,4 +1,4 @@
-var clientversion = "0.2.675"/******************************************************************************************
+var clientversion = "0.2.700"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1666,7 +1666,8 @@ var globalEvent_typ = function globalEvent_typ(){
         document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
-        L1.onload();
+        //L1.onload();
+        uiControl.view("start");
     };
     
     this.onConnect = function (){
@@ -2505,6 +2506,8 @@ var L1_typ = function L1_typ(){
 	this.Server;
 	this.state;// test
     this.socket;
+    this.beforedisconnect = 0;
+    this.beforeFile;
 	
 	this.send = function(text) {
 		this.socket.send(text);
@@ -2539,14 +2542,24 @@ var L1_typ = function L1_typ(){
 			L1.state = 0;
 			//update_websocketstate();  //Test UI
 			globalEvent.state(2);
-			this.socket = false;
+			//this.socket = false;
+            if(L3.file != "0000000000" && L3.file){
+                this.beforedisconnect = 1;
+            } else {
+                if(data.login<5){
+                    this.beforedisconnect = 2;
+                } else {
+                    this.beforedisconnect = 0;
+                }
+            }
+            
 			L2.reset();
             this.countErrors++;
 			if(global.retry_when_disconnected){
                 if(this.countErrors<global.websocket_slow_down){
-				    L1.onload();
+				    //L1.onload();
                 } else {
-                    setTimeout("L1.onload();", global.websocket_slow_time);
+                    //setTimeout("L1.onload();", global.websocket_slow_time);
                 }
 				}
 			});
@@ -2690,6 +2703,8 @@ var L3_typ = function L3_typ(){
     this.file = false;
     this.beforeEvent = "loadFirst";
     this.loadedFile = false;
+    this.loginDat = { };
+    this.firstload = true;
 	
     this.init = function(){
         //Random generierter Username 
@@ -2701,6 +2716,7 @@ var L3_typ = function L3_typ(){
         //return this.clientName;
         
         L2.send(sID.clientName, this.clientName);
+        //L3.login();
         
         //L2.send(sID.getServer, String(sID.fileList));
         
@@ -2805,6 +2821,12 @@ var L3_typ = function L3_typ(){
 
             case sID.legitimationID:
                 data.legitimationID = daten;
+                if(this.firstload){
+                    L3.login();
+                    L3.firstload = false;
+                } else {
+                    
+                }
                 break;
                 
             case sID.updated:
@@ -2866,8 +2888,9 @@ var L3_typ = function L3_typ(){
         L2.send(id, data.files[this.file][id]);
     };
 
-    this.login = function(obj){
-        L2.send(sID.Login, JSON.stringify(obj));
+    this.login = function(){
+        L3.loginDat.legitimationID = data.legitimationID;
+        L2.send(sID.Login, JSON.stringify(L3.loginDat));
     }
     
     this.delete = function (id){
@@ -2893,11 +2916,14 @@ var L3_typ = function L3_typ(){
      this.reset = function(){
          data.reset();
          this.file = false;
+         this.beforeEvent = "loadFirst";
+         this.loadedFile = false;
          if(data.login){
              if(data.login.userRight){
                 if(data.login.userRight < 5){
                     uiControl.view('load');
-                    setTimeout("location.reload();", 5000);
+                    //setTimeout("location.reload();", 5000);
+                    console.log('reset L3');
                 }
              }
          }
@@ -3126,16 +3152,24 @@ var uiControl_typ = function global_typ(){
 	}
 
 	this.login = function (){
-		var loginObject = new Object();
-
-		loginObject.userName     = document.getElementById('loginUsername').value;
-		loginObject.userPassword = document.getElementById('loginPassword').value;
-		loginObject.legitimationID = data.legitimationID;
-
-		data.loginObject = loginObject;
+        var loginObject = new Object();
+        
+        
+    
+        L3.loginDat.userName     = document.getElementById('loginUsername').value;
+        L3.loginDat.userPassword = document.getElementById('loginPassword').value;
         uiControl.loadHandler();
-		L3.login(loginObject);
-		return false;
+        //L3.loginDat = loginObject;
+		if(L3.firstload){
+            //loginObject.legitimationID = data.legitimationID;
+    
+            //L3.login(loginObject);
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
 	};
 
 	this.loginGood = function (){
@@ -3145,6 +3179,7 @@ var uiControl_typ = function global_typ(){
 
 	this.loginBad = function (){
 		alert("Bad Login");
+        this.loadHandlerFin();
 		this.view('start');
 	};
     

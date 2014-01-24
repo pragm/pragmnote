@@ -56,16 +56,24 @@ var uiControl_typ = function global_typ(){
 	}
 
 	this.login = function (){
-		var loginObject = new Object();
-
-		loginObject.userName     = document.getElementById('loginUsername').value;
-		loginObject.userPassword = document.getElementById('loginPassword').value;
-		loginObject.legitimationID = data.legitimationID;
-
-		data.loginObject = loginObject;
+        var loginObject = new Object();
+        
+        
+    
+        L3.loginDat.userName     = document.getElementById('loginUsername').value;
+        L3.loginDat.userPassword = document.getElementById('loginPassword').value;
         uiControl.loadHandler();
-		L3.login(loginObject);
-		return false;
+        //L3.loginDat = loginObject;
+		if(L3.firstload){
+            //loginObject.legitimationID = data.legitimationID;
+    
+            //L3.login(loginObject);
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
 	};
 
 	this.loginGood = function (){
@@ -75,6 +83,7 @@ var uiControl_typ = function global_typ(){
 
 	this.loginBad = function (){
 		alert("Bad Login");
+        this.loadHandlerFin();
 		this.view('start');
 	};
     

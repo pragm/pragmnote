@@ -30,6 +30,8 @@ var L1_typ = function L1_typ(){
 	this.Server;
 	this.state;// test
     this.socket;
+    this.beforedisconnect = 0;
+    this.beforeFile;
 	
 	this.send = function(text) {
 		this.socket.send(text);
@@ -64,14 +66,24 @@ var L1_typ = function L1_typ(){
 			L1.state = 0;
 			//update_websocketstate();  //Test UI
 			globalEvent.state(2);
-			this.socket = false;
+			//this.socket = false;
+            if(L3.file != "0000000000" && L3.file){
+                this.beforedisconnect = 1;
+            } else {
+                if(data.login<5){
+                    this.beforedisconnect = 2;
+                } else {
+                    this.beforedisconnect = 0;
+                }
+            }
+            
 			L2.reset();
             this.countErrors++;
 			if(global.retry_when_disconnected){
                 if(this.countErrors<global.websocket_slow_down){
-				    L1.onload();
+				    //L1.onload();
                 } else {
-                    setTimeout("L1.onload();", global.websocket_slow_time);
+                    //setTimeout("L1.onload();", global.websocket_slow_time);
                 }
 				}
 			});
