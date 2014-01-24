@@ -133,5 +133,6 @@
 		background: url('img/wal.jpg');
 		/* background-repeat:no-repeat;
   background-position:100px 50%;*/
+        background-size:100% auto;
 		z-index: 99;
 	}
