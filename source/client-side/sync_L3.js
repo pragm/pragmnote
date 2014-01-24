@@ -93,30 +93,30 @@ var L3_typ = function L3_typ(){
         switch(id){
             case sID.fileList:
                 data.fileList = daten;
-                testDir = daten;
+                dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            lastDir = data.login.userID;
-                            mainDir = data.login.userID;
-                            showDir(mainDir);
-                            refreshShow();
+                            dirCreator.lastDir = data.login.userID;
+                            dirCreator.mainDir = data.login.userID;
+                            dirCreator.showDir(dirCreator.mainDir);
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
-                            refreshShow();
+                            dirCreator.refreshShow();
                         break;
                 }
                 break;

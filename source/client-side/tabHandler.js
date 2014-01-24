@@ -58,8 +58,9 @@ var tab_typ = function tab_typ(){
                 if(this.active == this.tabArray[numb]){add = 'id="TabActive" ';}
                 var temp = "'TabActive'";
                 var tempId = "'"+this.tabArray[numb]+"'";
-                var fullDirArray = testDir.split(":");
-                var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                //var fullDirArray = testDir.split(":");
+                //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                var tempName = dirCreator.getName(this.tabArray[numb]);
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;

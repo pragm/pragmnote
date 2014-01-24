@@ -1,4 +1,4 @@
-var clientversion = "0.1.651"/******************************************************************************************
+var clientversion = "0.2.669"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1282,7 +1282,7 @@ var L2 = new L2_typ();
 #
 ******************************************************************************************/
 
-
+/*
 var testDir = "33e1d210cfDatei1:39f6168622Datei2:3aaaaaaaaaDatei3:4000000000root;4000000001;3aaaaaaaaa:4000000001Ordner1;45909c4fcf;39f6168622:45909c4fcfOrdner2;33e1d210cf";
 var lastDir = '5000000001';
 var mainDir = '5000000001';
@@ -1452,7 +1452,106 @@ function refreshShow(){
 
 function createFile(folder, name, type){
     
+}*/
+
+//var testtext = '{"5vdfud2o7a":{"owner":"5vdfud2o7a","parent":"4000000000","name":"Bob","username":"Bob","password":"123","userRight":3,"content":"3ngcnefa8u;3z203p3kmo;40twtrl7qw;3aqcmdb59o;3v096j7i0d;3wr7bw9diw;38f7mn71rp","share":""},"40twtrl7qw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs Folder","content":"3emqfb6uw2","share":""},"3emqfb6uw2":{"owner":"5vdfud2o7a","parent":"40twtrl7qw","name":"Lorem ipsum dolor","share":""},"3z203p3kmo":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs file","share":""},"3ngcnefa8u":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Click Me","share":""},"3phyg3emyk":{"owner":"5vdfud2o7a","parent":"4DELETED00","name":"My sad deleted file","share":""},"3aqcmdb59o":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"debug","share":""},"3v096j7i0d":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"test","share":""},"3wr7bw9diw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"NewTest","share":""},"38f7mn71rp":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"LALA","share":""}}';
+
+var dirCreator_typ = function dirCreator_typ(){
+    
+    this.dirObject = {};
+    this.lastDir = "5000000001";
+    this.mainDir = "5000000001";
+    
+    this.setDir = function(jsontext){
+        this.dirObject = JSON.parse(jsontext);
+    };
+    
+    this.getName = function(id){
+        if(this.dirObject[id]){
+            return this.dirObject[id].name;
+        } else {
+            return "unnamed file";
+        }
+    };
+    
+    this.showDir = function(id){
+        var content = this.dirObject[id].content;
+        var contentArray = content.split(';');
+        var html = "";
+        for(i in contentArray){
+            if(this.dirObject[contentArray[i]]){
+                name = this.getName(contentArray[i]);
+                html = html+this.createElement(contentArray[i], name);
+            }
+        }
+        document.getElementById('fileListUl').innerHTML = html;
+    };
+    
+    this.generateFileSuperPath = function(id){
+        var name = this.dirObject[id].name;
+        var html = this.createFolderElement(id, name);
+        while(id != this.mainDir){
+            id = this.dirObject[id].parent;
+            name = this.dirObject[id].name;
+            html = this.createFolderElement(id, name)+html;
+        }
+        document.getElementById('dirShow').innerHTML = html;
+    };
+    
+    this.refreshShow = function(){
+        this.showDir(this.lastDir);
+        this.generateFileSuperPath(this.lastDir);
+    };
+    
+    this.openFile = function(id){
+        switch(id.substr(0,1)){
+            case "3":
+                //Datei Oeffnen
+                uiControl.loadFile(id);
+                break;
+            case "4":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+            case "5":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+        }
+    };
+    
+    this.createElement = function(id, name){
+        var t = new Array("fileIcon", "file");
+        switch(id.substr(0,1)){
+                case "3":
+                t[0] = "fileIcon";
+                t[1] = "file";
+                break;
+                case "4":
+                t[0] = "folderIcon";
+                t[1] = "folder";
+                break;
+                case "5":
+                t[0] = "fileIcon";
+                t[1] = "user";
+                break;
+        }
+        id = "'"+id+"'";
+        var e = '<li onclick="dirCreator.openFile('+id+');"><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font style="position: relative; left: 30px;">'+name+'</font></li>';
+        return e;
+    };
+    
+    this.createFolderElement = function(id, name){
+        id = "'"+id+"'";
+        var e = '<li onclick="dirCreator.openFile('+id+');">'+name+'</li>';
+        return e;
+    };
 }
+
+var dirCreator = new dirCreator_typ();
+//dirCreator.setDir(testtext);
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2563,30 +2662,30 @@ var L3_typ = function L3_typ(){
         switch(id){
             case sID.fileList:
                 data.fileList = daten;
-                testDir = daten;
+                dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            lastDir = data.login.userID;
-                            mainDir = data.login.userID;
-                            showDir(mainDir);
-                            refreshShow();
+                            dirCreator.lastDir = data.login.userID;
+                            dirCreator.mainDir = data.login.userID;
+                            dirCreator.showDir(dirCreator.mainDir);
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
-                            refreshShow();
+                            dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
-                            refreshShow();
+                            dirCreator.refreshShow();
                         break;
                 }
                 break;
@@ -2778,8 +2877,9 @@ var tab_typ = function tab_typ(){
                 if(this.active == this.tabArray[numb]){add = 'id="TabActive" ';}
                 var temp = "'TabActive'";
                 var tempId = "'"+this.tabArray[numb]+"'";
-                var fullDirArray = testDir.split(":");
-                var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                //var fullDirArray = testDir.split(":");
+                //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                var tempName = dirCreator.getName(this.tabArray[numb]);
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -2958,7 +3058,7 @@ var uiControl_typ = function global_typ(){
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, lastDir, type);
+        L3.addFile(name, dirCreator.lastDir, type);
     };
     
     this.loadHandler = function(){
@@ -2990,7 +3090,7 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "";
-                document.title = getFileName(testDir.split(":"), L3.file);
+                document.title = dirCreator.getName(L3.file);
 	            break;
 	        case "load":
 				//document.getElementById('loginHTML').style.display = "none";

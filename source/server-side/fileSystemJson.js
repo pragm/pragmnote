@@ -224,7 +224,8 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.generateUserFilelist = function(clientID, userID){
-        output = [];
+        this.generateUserFilelistJSON(clientID, userID);
+        /*output = [];
         counter = 0;
         output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
         counter++;
@@ -243,7 +244,7 @@ var pfile_typ = function pfile_typ(){
             }
         }
         L2x1.send(clientID, sID.fileList, output.join(":"));
-        this.generateUserFilelistJSON(clientID, userID);
+        //this.generateUserFilelistJSON(clientID, userID);*/
         //console.log(output.join(":"));
     }
     
@@ -259,8 +260,8 @@ var pfile_typ = function pfile_typ(){
                 output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
             }
         }
-        //L2x1.send(clientID, sID.fileList, output.join(":"));
-        console.log(JSON.stringify(output));
+        L2x1.send(clientID, sID.fileList, JSON.stringify(output));
+        //console.log(JSON.stringify(output));
     }
     
     this.makeid = function (type){

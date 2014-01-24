@@ -80,7 +80,7 @@ var uiControl_typ = function global_typ(){
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, lastDir, type);
+        L3.addFile(name, dirCreator.lastDir, type);
     };
     
     this.loadHandler = function(){
@@ -112,7 +112,7 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";
 				document.getElementById('fileTabs').style.height = "";
-                document.title = getFileName(testDir.split(":"), L3.file);
+                document.title = dirCreator.getName(L3.file);
 	            break;
 	        case "load":
 				//document.getElementById('loginHTML').style.display = "none";
