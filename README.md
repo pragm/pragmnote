@@ -10,7 +10,7 @@ Pragm was once a small idea of creating a multiuser note taking application.
 Now it's became quite big. So... we need your help. If you are comfortable using HTML, CSS and Javascript feel free to contact us.
 bug@pragm.de
 
-## Features/Already Done/Current Siutation:
+## Features/Already Done/Current Situation:
 
 - Pragm is a RichText.editor which has a (currently) simple file-explorer
 - Pragm is built upon a node.js WebSocket server which synchronizes documents to the editor in realtime
