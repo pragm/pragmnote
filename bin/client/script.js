@@ -1,4 +1,4 @@
-var clientversion = "0.2.700"/******************************************************************************************
+var clientversion = "0.2.722"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1079,6 +1079,7 @@ var data_typ = function data_typ(){
 	this.fileList;
 	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
+    this.legitimationID = "";
     
     this.edited_sync = function(fileID, contentID){
         var type = contentID.substr(0,3);
@@ -1100,6 +1101,7 @@ var data_typ = function data_typ(){
         this.fileList = "";
 	    this.files = { };
 	    this.users = "";
+        this.legitimationID = "";
     }
         
     this.delete_UI = function(id){
@@ -2532,18 +2534,23 @@ var L1_typ = function L1_typ(){
             L2.init();
             globalEvent.state(1);
             if(global.firstConnect){
-                uiControl.view('start');
+                //uiControl.view('start');
                 global.firstConnect = false;
+                uiControl.connect();
+            } else {
+                uiControl.reconnect();
             }
 			//update_websocketstate();  //Test UI
 			});
 	 
 		this.socket.on('disconnect', function (msg) {
 			L1.state = 0;
-			//update_websocketstate();  //Test UI
 			globalEvent.state(2);
+            uiControl.disconnect();
+			L2.reset();
+			//update_websocketstate();  //Test UI
 			//this.socket = false;
-            if(L3.file != "0000000000" && L3.file){
+            /*if(L3.file != "0000000000" && L3.file){
                 this.beforedisconnect = 1;
             } else {
                 if(data.login<5){
@@ -2551,17 +2558,15 @@ var L1_typ = function L1_typ(){
                 } else {
                     this.beforedisconnect = 0;
                 }
-            }
-            
-			L2.reset();
-            this.countErrors++;
+            }*/
+            /*this.countErrors++;
 			if(global.retry_when_disconnected){
                 if(this.countErrors<global.websocket_slow_down){
 				    //L1.onload();
                 } else {
                     //setTimeout("L1.onload();", global.websocket_slow_time);
                 }
-				}
+				}*/
 			});
 	 
 		this.socket.on('message', function (msg) {
@@ -2773,9 +2778,15 @@ var L3_typ = function L3_typ(){
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            dirCreator.lastDir = data.login.userID;
-                            dirCreator.mainDir = data.login.userID;
-                            dirCreator.showDir(dirCreator.mainDir);
+                            if(uiControl.disconnectdata.lastDir != ""){
+                                dirCreator.lastDir = uiControl.disconnectdata.lastDir;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(uiControl.disconnectdata.lastDir);
+                            } else {
+                                dirCreator.lastDir = data.login.userID;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(dirCreator.mainDir);
+                            }
                             dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
@@ -2918,10 +2929,11 @@ var L3_typ = function L3_typ(){
          this.file = false;
          this.beforeEvent = "loadFirst";
          this.loadedFile = false;
+         this.firstload = true;
          if(data.login){
              if(data.login.userRight){
                 if(data.login.userRight < 5){
-                    uiControl.view('load');
+                    //uiControl.view('load');
                     //setTimeout("location.reload();", 5000);
                     console.log('reset L3');
                 }
@@ -3126,6 +3138,10 @@ var uiControl_typ = function global_typ(){
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
+    this.lastview;
+    this.disconnectdata = { };
+    this.disconnectdata.bool = false;
+    this.disconnectdata.lastDir = "";
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -3175,6 +3191,11 @@ var uiControl_typ = function global_typ(){
 	this.loginGood = function (){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
+        if(this.disconnectdata.bool){
+            dirCreator.openFile(this.disconnectdata.file);
+            this.view(this.lastview);
+            this.disconnectdata.bool = false;
+        }
 	};
 
 	this.loginBad = function (){
@@ -3197,6 +3218,7 @@ var uiControl_typ = function global_typ(){
     };
 
 	this.view = function (code){
+        this.lastview = code;
 		switch (code) {
 	        case "start":
 				document.getElementById('noteconBackground').style.display = "none";
@@ -3226,11 +3248,27 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
-	        default:
+            default:
 	            console.log("command '"+code+"' does not exist");
 	            break;
 	    }
 	};
+    
+    this.connect = function(){
+        //L3.login();
+    };
+    
+    this.reconnect = function(){
+        this.disconnectdata.bool = true;
+    };
+    
+    this.disconnect = function(){
+        this.disconnectdata.view = this.lastview;
+        this.disconnectdata.file = L3.file;
+        this.disconnectdata.lastDir = dirCreator.lastDir;
+        this.resetUI();
+        this.view('load');
+    };
 };
 
 var uiControl = new uiControl_typ();
