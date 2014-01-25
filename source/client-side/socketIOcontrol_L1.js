@@ -56,18 +56,23 @@ var L1_typ = function L1_typ(){
             L2.init();
             globalEvent.state(1);
             if(global.firstConnect){
-                uiControl.view('start');
+                //uiControl.view('start');
                 global.firstConnect = false;
+                uiControl.connect();
+            } else {
+                uiControl.reconnect();
             }
 			//update_websocketstate();  //Test UI
 			});
 	 
 		this.socket.on('disconnect', function (msg) {
 			L1.state = 0;
-			//update_websocketstate();  //Test UI
 			globalEvent.state(2);
+            uiControl.disconnect();
+			L2.reset();
+			//update_websocketstate();  //Test UI
 			//this.socket = false;
-            if(L3.file != "0000000000" && L3.file){
+            /*if(L3.file != "0000000000" && L3.file){
                 this.beforedisconnect = 1;
             } else {
                 if(data.login<5){
@@ -75,17 +80,15 @@ var L1_typ = function L1_typ(){
                 } else {
                     this.beforedisconnect = 0;
                 }
-            }
-            
-			L2.reset();
-            this.countErrors++;
+            }*/
+            /*this.countErrors++;
 			if(global.retry_when_disconnected){
                 if(this.countErrors<global.websocket_slow_down){
 				    //L1.onload();
                 } else {
                     //setTimeout("L1.onload();", global.websocket_slow_time);
                 }
-				}
+				}*/
 			});
 	 
 		this.socket.on('message', function (msg) {

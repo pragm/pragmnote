@@ -30,6 +30,10 @@ var uiControl_typ = function global_typ(){
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
+    this.lastview;
+    this.disconnectdata = { };
+    this.disconnectdata.bool = false;
+    this.disconnectdata.lastDir = "";
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -79,6 +83,11 @@ var uiControl_typ = function global_typ(){
 	this.loginGood = function (){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
+        if(this.disconnectdata.bool){
+            dirCreator.openFile(this.disconnectdata.file);
+            this.view(this.lastview);
+            this.disconnectdata.bool = false;
+        }
 	};
 
 	this.loginBad = function (){
@@ -101,6 +110,7 @@ var uiControl_typ = function global_typ(){
     };
 
 	this.view = function (code){
+        this.lastview = code;
 		switch (code) {
 	        case "start":
 				document.getElementById('noteconBackground').style.display = "none";
@@ -130,11 +140,27 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
-	        default:
+            default:
 	            console.log("command '"+code+"' does not exist");
 	            break;
 	    }
 	};
+    
+    this.connect = function(){
+        //L3.login();
+    };
+    
+    this.reconnect = function(){
+        this.disconnectdata.bool = true;
+    };
+    
+    this.disconnect = function(){
+        this.disconnectdata.view = this.lastview;
+        this.disconnectdata.file = L3.file;
+        this.disconnectdata.lastDir = dirCreator.lastDir;
+        this.resetUI();
+        this.view('load');
+    };
 };
 
 var uiControl = new uiControl_typ();

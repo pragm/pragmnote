@@ -28,6 +28,7 @@ var data_typ = function data_typ(){
 	this.fileList;
 	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
+    this.legitimationID = "";
     
     this.edited_sync = function(fileID, contentID){
         var type = contentID.substr(0,3);
@@ -49,6 +50,7 @@ var data_typ = function data_typ(){
         this.fileList = "";
 	    this.files = { };
 	    this.users = "";
+        this.legitimationID = "";
     }
         
     this.delete_UI = function(id){

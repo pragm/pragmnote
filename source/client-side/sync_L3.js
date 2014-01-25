@@ -99,9 +99,15 @@ var L3_typ = function L3_typ(){
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            dirCreator.lastDir = data.login.userID;
-                            dirCreator.mainDir = data.login.userID;
-                            dirCreator.showDir(dirCreator.mainDir);
+                            if(uiControl.disconnectdata.lastDir != ""){
+                                dirCreator.lastDir = uiControl.disconnectdata.lastDir;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(uiControl.disconnectdata.lastDir);
+                            } else {
+                                dirCreator.lastDir = data.login.userID;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(dirCreator.mainDir);
+                            }
                             dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
@@ -244,10 +250,11 @@ var L3_typ = function L3_typ(){
          this.file = false;
          this.beforeEvent = "loadFirst";
          this.loadedFile = false;
+         this.firstload = true;
          if(data.login){
              if(data.login.userRight){
                 if(data.login.userRight < 5){
-                    uiControl.view('load');
+                    //uiControl.view('load');
                     //setTimeout("location.reload();", 5000);
                     console.log('reset L3');
                 }
