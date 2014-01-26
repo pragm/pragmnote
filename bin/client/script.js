@@ -1,4 +1,4 @@
-var clientversion = "0.2.726"/******************************************************************************************
+var clientversion = "0.2.764"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1461,8 +1461,8 @@ function createFile(folder, name, type){
 var dirCreator_typ = function dirCreator_typ(){
     
     this.dirObject = {};
-    this.lastDir = "5000000001";
-    this.mainDir = "5000000001";
+    this.lastDir = "";
+    this.mainDir = "";
     
     this.setDir = function(jsontext){
         this.dirObject = JSON.parse(jsontext);
@@ -1477,27 +1477,35 @@ var dirCreator_typ = function dirCreator_typ(){
     };
     
     this.showDir = function(id){
-        var content = this.dirObject[id].content;
-        var contentArray = content.split(';');
-        var html = "";
-        for(i in contentArray){
-            if(this.dirObject[contentArray[i]]){
-                name = this.getName(contentArray[i]);
-                html = html+this.createElement(contentArray[i], name);
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArray = content.split(';');
+            var html = "";
+            for(i in contentArray){
+                if(this.dirObject[contentArray[i]]){
+                    name = this.getName(contentArray[i]);
+                    html = html+this.createElement(contentArray[i], name);
+                }
             }
+            document.getElementById('fileListUl').innerHTML = html;
+        } else {
+            console.log("Error: Unknown Concept Bug [1] Issue #56");
         }
-        document.getElementById('fileListUl').innerHTML = html;
     };
     
     this.generateFileSuperPath = function(id){
-        var name = this.dirObject[id].name;
-        var html = this.createFolderElement(id, name);
-        while(id != this.mainDir){
-            id = this.dirObject[id].parent;
-            name = this.dirObject[id].name;
-            html = this.createFolderElement(id, name)+html;
+        if(this.dirObject[id]){
+            var name = this.dirObject[id].name;
+            var html = this.createFolderElement(id, name);
+            while(id != this.mainDir){
+                id = this.dirObject[id].parent;
+                name = this.dirObject[id].name;
+                html = this.createFolderElement(id, name)+html;
+            }
+            document.getElementById('dirShow').innerHTML = html;
+        } else {
+            console.log("Error: Unknown Concept Bug [2] Issue #56");
         }
-        document.getElementById('dirShow').innerHTML = html;
     };
     
     this.refreshShow = function(){
@@ -2778,11 +2786,13 @@ var L3_typ = function L3_typ(){
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            if(uiControl.disconnectdata.lastDir != ""){
+                            if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
+                                console.log("CON1 "+uiControl.disconnectdata.lastDir);
                                 dirCreator.lastDir = uiControl.disconnectdata.lastDir;
                                 dirCreator.mainDir = data.login.userID;
                                 dirCreator.showDir(uiControl.disconnectdata.lastDir);
                             } else {
+                                console.log("CON2 "+data.login.userID);
                                 dirCreator.lastDir = data.login.userID;
                                 dirCreator.mainDir = data.login.userID;
                                 dirCreator.showDir(dirCreator.mainDir);
@@ -3192,9 +3202,17 @@ var uiControl_typ = function global_typ(){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
         if(this.disconnectdata.bool){
-            dirCreator.openFile(this.disconnectdata.file);
-            this.view(this.lastview);
-            this.disconnectdata.bool = false;
+            if(data.login.userRight){
+                if(data.login.userRight < 5){
+                    if(this.disconnectdata.file && this.disconnectdata.file != ""){
+                        dirCreator.openFile(this.disconnectdata.file);
+                    }
+                    if(this.lastview && this.lastview != ""){
+                        this.view(this.lastview);
+                    }
+                    this.disconnectdata.bool = false;
+                }
+            }
         }
 	};
 

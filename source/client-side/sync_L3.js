@@ -99,11 +99,13 @@ var L3_typ = function L3_typ(){
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            if(uiControl.disconnectdata.lastDir != ""){
+                            if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
+                                console.log("CON1 "+uiControl.disconnectdata.lastDir);
                                 dirCreator.lastDir = uiControl.disconnectdata.lastDir;
                                 dirCreator.mainDir = data.login.userID;
                                 dirCreator.showDir(uiControl.disconnectdata.lastDir);
                             } else {
+                                console.log("CON2 "+data.login.userID);
                                 dirCreator.lastDir = data.login.userID;
                                 dirCreator.mainDir = data.login.userID;
                                 dirCreator.showDir(dirCreator.mainDir);

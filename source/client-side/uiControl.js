@@ -84,9 +84,17 @@ var uiControl_typ = function global_typ(){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
         if(this.disconnectdata.bool){
-            dirCreator.openFile(this.disconnectdata.file);
-            this.view(this.lastview);
-            this.disconnectdata.bool = false;
+            if(data.login.userRight){
+                if(data.login.userRight < 5){
+                    if(this.disconnectdata.file && this.disconnectdata.file != ""){
+                        dirCreator.openFile(this.disconnectdata.file);
+                    }
+                    if(this.lastview && this.lastview != ""){
+                        this.view(this.lastview);
+                    }
+                    this.disconnectdata.bool = false;
+                }
+            }
         }
 	};
 

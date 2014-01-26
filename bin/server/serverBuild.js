@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.726
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.726 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.764
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.764 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2060,7 +2060,7 @@ io.sockets.on('connection', function (socket) {
                 //L2.recieve(clientID, message.utf8Data);
                 L2.recieve(clientID, msg);
                 //for (var i=0; i < clients.length; i++) {
-                //    clients[i].sendUTF(message.utf8Data+"<= AND =>");
+                //    clients[i].sendUTF(message.utf8Data+"<= AND =>"); 
                 //}
             //}
         //}
