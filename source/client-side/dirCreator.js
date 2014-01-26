@@ -199,8 +199,8 @@ function createFile(folder, name, type){
 var dirCreator_typ = function dirCreator_typ(){
     
     this.dirObject = {};
-    this.lastDir = "5000000001";
-    this.mainDir = "5000000001";
+    this.lastDir = "";
+    this.mainDir = "";
     
     this.setDir = function(jsontext){
         this.dirObject = JSON.parse(jsontext);
@@ -215,27 +215,35 @@ var dirCreator_typ = function dirCreator_typ(){
     };
     
     this.showDir = function(id){
-        var content = this.dirObject[id].content;
-        var contentArray = content.split(';');
-        var html = "";
-        for(i in contentArray){
-            if(this.dirObject[contentArray[i]]){
-                name = this.getName(contentArray[i]);
-                html = html+this.createElement(contentArray[i], name);
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArray = content.split(';');
+            var html = "";
+            for(i in contentArray){
+                if(this.dirObject[contentArray[i]]){
+                    name = this.getName(contentArray[i]);
+                    html = html+this.createElement(contentArray[i], name);
+                }
             }
+            document.getElementById('fileListUl').innerHTML = html;
+        } else {
+            console.log("Error: Unknown Concept Bug [1] Issue #56");
         }
-        document.getElementById('fileListUl').innerHTML = html;
     };
     
     this.generateFileSuperPath = function(id){
-        var name = this.dirObject[id].name;
-        var html = this.createFolderElement(id, name);
-        while(id != this.mainDir){
-            id = this.dirObject[id].parent;
-            name = this.dirObject[id].name;
-            html = this.createFolderElement(id, name)+html;
+        if(this.dirObject[id]){
+            var name = this.dirObject[id].name;
+            var html = this.createFolderElement(id, name);
+            while(id != this.mainDir){
+                id = this.dirObject[id].parent;
+                name = this.dirObject[id].name;
+                html = this.createFolderElement(id, name)+html;
+            }
+            document.getElementById('dirShow').innerHTML = html;
+        } else {
+            console.log("Error: Unknown Concept Bug [2] Issue #56");
         }
-        document.getElementById('dirShow').innerHTML = html;
     };
     
     this.refreshShow = function(){

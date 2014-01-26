@@ -30,6 +30,10 @@ var uiControl_typ = function global_typ(){
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
+    this.lastview;
+    this.disconnectdata = { };
+    this.disconnectdata.bool = false;
+    this.disconnectdata.lastDir = "";
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -56,25 +60,47 @@ var uiControl_typ = function global_typ(){
 	}
 
 	this.login = function (){
-		var loginObject = new Object();
-
-		loginObject.userName     = document.getElementById('loginUsername').value;
-		loginObject.userPassword = document.getElementById('loginPassword').value;
-		loginObject.legitimationID = data.legitimationID;
-
-		data.loginObject = loginObject;
+        var loginObject = new Object();
+        
+        
+    
+        L3.loginDat.userName     = document.getElementById('loginUsername').value;
+        L3.loginDat.userPassword = document.getElementById('loginPassword').value;
         uiControl.loadHandler();
-		L3.login(loginObject);
-		return false;
+        //L3.loginDat = loginObject;
+		if(L3.firstload){
+            //loginObject.legitimationID = data.legitimationID;
+    
+            //L3.login(loginObject);
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
 	};
 
 	this.loginGood = function (){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
+        if(this.disconnectdata.bool){
+            if(data.login.userRight){
+                if(data.login.userRight < 5){
+                    if(this.disconnectdata.file && this.disconnectdata.file != ""){
+                        dirCreator.openFile(this.disconnectdata.file);
+                    }
+                    if(this.lastview && this.lastview != ""){
+                        this.view(this.lastview);
+                    }
+                    this.disconnectdata.bool = false;
+                }
+            }
+        }
 	};
 
 	this.loginBad = function (){
 		alert("Bad Login");
+        this.loadHandlerFin();
 		this.view('start');
 	};
     
@@ -92,6 +118,7 @@ var uiControl_typ = function global_typ(){
     };
 
 	this.view = function (code){
+        this.lastview = code;
 		switch (code) {
 	        case "start":
 				document.getElementById('noteconBackground').style.display = "none";
@@ -121,11 +148,27 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
-	        default:
+            default:
 	            console.log("command '"+code+"' does not exist");
 	            break;
 	    }
 	};
+    
+    this.connect = function(){
+        //L3.login();
+    };
+    
+    this.reconnect = function(){
+        this.disconnectdata.bool = true;
+    };
+    
+    this.disconnect = function(){
+        this.disconnectdata.view = this.lastview;
+        this.disconnectdata.file = L3.file;
+        this.disconnectdata.lastDir = dirCreator.lastDir;
+        this.resetUI();
+        this.view('load');
+    };
 };
 
 var uiControl = new uiControl_typ();

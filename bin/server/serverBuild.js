@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.675
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.675 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.764
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.764 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1112,6 +1112,8 @@ var pfile_typ = function pfile_typ(){
 	};
     
     this.checkLogin = function (clientID, username, password){
+        log("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
+        console.log('check');
         var userID = null;
         var temp = { }
         temp.userRight = global.mNoLogin;
@@ -1399,6 +1401,7 @@ var secure_typ = function secure_typ(){
 		this.userRights[clientID] = loginObject.userRight;
 		if(this.userRights[clientID] == global.mNoLogin){
 			this.legitimationSet(clientID);
+			log("LOGIN FAILED => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
 		} else {
 			this.legitimationSetX(clientID);
 			log("LOGIN => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
@@ -2057,7 +2060,7 @@ io.sockets.on('connection', function (socket) {
                 //L2.recieve(clientID, message.utf8Data);
                 L2.recieve(clientID, msg);
                 //for (var i=0; i < clients.length; i++) {
-                //    clients[i].sendUTF(message.utf8Data+"<= AND =>");
+                //    clients[i].sendUTF(message.utf8Data+"<= AND =>"); 
                 //}
             //}
         //}

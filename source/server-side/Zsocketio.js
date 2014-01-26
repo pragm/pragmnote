@@ -187,7 +187,7 @@ io.sockets.on('connection', function (socket) {
                 //L2.recieve(clientID, message.utf8Data);
                 L2.recieve(clientID, msg);
                 //for (var i=0; i < clients.length; i++) {
-                //    clients[i].sendUTF(message.utf8Data+"<= AND =>");
+                //    clients[i].sendUTF(message.utf8Data+"<= AND =>"); 
                 //}
             //}
         //}

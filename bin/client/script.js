@@ -1,4 +1,4 @@
-var clientversion = "0.2.675"/******************************************************************************************
+var clientversion = "0.2.764"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1079,6 +1079,7 @@ var data_typ = function data_typ(){
 	this.fileList;
 	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
+    this.legitimationID = "";
     
     this.edited_sync = function(fileID, contentID){
         var type = contentID.substr(0,3);
@@ -1100,6 +1101,7 @@ var data_typ = function data_typ(){
         this.fileList = "";
 	    this.files = { };
 	    this.users = "";
+        this.legitimationID = "";
     }
         
     this.delete_UI = function(id){
@@ -1459,8 +1461,8 @@ function createFile(folder, name, type){
 var dirCreator_typ = function dirCreator_typ(){
     
     this.dirObject = {};
-    this.lastDir = "5000000001";
-    this.mainDir = "5000000001";
+    this.lastDir = "";
+    this.mainDir = "";
     
     this.setDir = function(jsontext){
         this.dirObject = JSON.parse(jsontext);
@@ -1475,27 +1477,35 @@ var dirCreator_typ = function dirCreator_typ(){
     };
     
     this.showDir = function(id){
-        var content = this.dirObject[id].content;
-        var contentArray = content.split(';');
-        var html = "";
-        for(i in contentArray){
-            if(this.dirObject[contentArray[i]]){
-                name = this.getName(contentArray[i]);
-                html = html+this.createElement(contentArray[i], name);
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArray = content.split(';');
+            var html = "";
+            for(i in contentArray){
+                if(this.dirObject[contentArray[i]]){
+                    name = this.getName(contentArray[i]);
+                    html = html+this.createElement(contentArray[i], name);
+                }
             }
+            document.getElementById('fileListUl').innerHTML = html;
+        } else {
+            console.log("Error: Unknown Concept Bug [1] Issue #56");
         }
-        document.getElementById('fileListUl').innerHTML = html;
     };
     
     this.generateFileSuperPath = function(id){
-        var name = this.dirObject[id].name;
-        var html = this.createFolderElement(id, name);
-        while(id != this.mainDir){
-            id = this.dirObject[id].parent;
-            name = this.dirObject[id].name;
-            html = this.createFolderElement(id, name)+html;
+        if(this.dirObject[id]){
+            var name = this.dirObject[id].name;
+            var html = this.createFolderElement(id, name);
+            while(id != this.mainDir){
+                id = this.dirObject[id].parent;
+                name = this.dirObject[id].name;
+                html = this.createFolderElement(id, name)+html;
+            }
+            document.getElementById('dirShow').innerHTML = html;
+        } else {
+            console.log("Error: Unknown Concept Bug [2] Issue #56");
         }
-        document.getElementById('dirShow').innerHTML = html;
     };
     
     this.refreshShow = function(){
@@ -1666,7 +1676,8 @@ var globalEvent_typ = function globalEvent_typ(){
         document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
-        L1.onload();
+        //L1.onload();
+        uiControl.view("start");
     };
     
     this.onConnect = function (){
@@ -2505,6 +2516,8 @@ var L1_typ = function L1_typ(){
 	this.Server;
 	this.state;// test
     this.socket;
+    this.beforedisconnect = 0;
+    this.beforeFile;
 	
 	this.send = function(text) {
 		this.socket.send(text);
@@ -2529,26 +2542,39 @@ var L1_typ = function L1_typ(){
             L2.init();
             globalEvent.state(1);
             if(global.firstConnect){
-                uiControl.view('start');
+                //uiControl.view('start');
                 global.firstConnect = false;
+                uiControl.connect();
+            } else {
+                uiControl.reconnect();
             }
 			//update_websocketstate();  //Test UI
 			});
 	 
 		this.socket.on('disconnect', function (msg) {
 			L1.state = 0;
-			//update_websocketstate();  //Test UI
 			globalEvent.state(2);
-			this.socket = false;
+            uiControl.disconnect();
 			L2.reset();
-            this.countErrors++;
+			//update_websocketstate();  //Test UI
+			//this.socket = false;
+            /*if(L3.file != "0000000000" && L3.file){
+                this.beforedisconnect = 1;
+            } else {
+                if(data.login<5){
+                    this.beforedisconnect = 2;
+                } else {
+                    this.beforedisconnect = 0;
+                }
+            }*/
+            /*this.countErrors++;
 			if(global.retry_when_disconnected){
                 if(this.countErrors<global.websocket_slow_down){
-				    L1.onload();
+				    //L1.onload();
                 } else {
-                    setTimeout("L1.onload();", global.websocket_slow_time);
+                    //setTimeout("L1.onload();", global.websocket_slow_time);
                 }
-				}
+				}*/
 			});
 	 
 		this.socket.on('message', function (msg) {
@@ -2690,6 +2716,8 @@ var L3_typ = function L3_typ(){
     this.file = false;
     this.beforeEvent = "loadFirst";
     this.loadedFile = false;
+    this.loginDat = { };
+    this.firstload = true;
 	
     this.init = function(){
         //Random generierter Username 
@@ -2701,6 +2729,7 @@ var L3_typ = function L3_typ(){
         //return this.clientName;
         
         L2.send(sID.clientName, this.clientName);
+        //L3.login();
         
         //L2.send(sID.getServer, String(sID.fileList));
         
@@ -2757,9 +2786,17 @@ var L3_typ = function L3_typ(){
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            dirCreator.lastDir = data.login.userID;
-                            dirCreator.mainDir = data.login.userID;
-                            dirCreator.showDir(dirCreator.mainDir);
+                            if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
+                                console.log("CON1 "+uiControl.disconnectdata.lastDir);
+                                dirCreator.lastDir = uiControl.disconnectdata.lastDir;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(uiControl.disconnectdata.lastDir);
+                            } else {
+                                console.log("CON2 "+data.login.userID);
+                                dirCreator.lastDir = data.login.userID;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(dirCreator.mainDir);
+                            }
                             dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
@@ -2805,6 +2842,12 @@ var L3_typ = function L3_typ(){
 
             case sID.legitimationID:
                 data.legitimationID = daten;
+                if(this.firstload){
+                    L3.login();
+                    L3.firstload = false;
+                } else {
+                    
+                }
                 break;
                 
             case sID.updated:
@@ -2866,8 +2909,9 @@ var L3_typ = function L3_typ(){
         L2.send(id, data.files[this.file][id]);
     };
 
-    this.login = function(obj){
-        L2.send(sID.Login, JSON.stringify(obj));
+    this.login = function(){
+        L3.loginDat.legitimationID = data.legitimationID;
+        L2.send(sID.Login, JSON.stringify(L3.loginDat));
     }
     
     this.delete = function (id){
@@ -2893,11 +2937,15 @@ var L3_typ = function L3_typ(){
      this.reset = function(){
          data.reset();
          this.file = false;
+         this.beforeEvent = "loadFirst";
+         this.loadedFile = false;
+         this.firstload = true;
          if(data.login){
              if(data.login.userRight){
                 if(data.login.userRight < 5){
-                    uiControl.view('load');
-                    setTimeout("location.reload();", 5000);
+                    //uiControl.view('load');
+                    //setTimeout("location.reload();", 5000);
+                    console.log('reset L3');
                 }
              }
          }
@@ -3100,6 +3148,10 @@ var uiControl_typ = function global_typ(){
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
+    this.lastview;
+    this.disconnectdata = { };
+    this.disconnectdata.bool = false;
+    this.disconnectdata.lastDir = "";
     
 	this.loadFile = function(id){
         tab.fileOpened(id);
@@ -3126,25 +3178,47 @@ var uiControl_typ = function global_typ(){
 	}
 
 	this.login = function (){
-		var loginObject = new Object();
-
-		loginObject.userName     = document.getElementById('loginUsername').value;
-		loginObject.userPassword = document.getElementById('loginPassword').value;
-		loginObject.legitimationID = data.legitimationID;
-
-		data.loginObject = loginObject;
+        var loginObject = new Object();
+        
+        
+    
+        L3.loginDat.userName     = document.getElementById('loginUsername').value;
+        L3.loginDat.userPassword = document.getElementById('loginPassword').value;
         uiControl.loadHandler();
-		L3.login(loginObject);
-		return false;
+        //L3.loginDat = loginObject;
+		if(L3.firstload){
+            //loginObject.legitimationID = data.legitimationID;
+    
+            //L3.login(loginObject);
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
 	};
 
 	this.loginGood = function (){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
+        if(this.disconnectdata.bool){
+            if(data.login.userRight){
+                if(data.login.userRight < 5){
+                    if(this.disconnectdata.file && this.disconnectdata.file != ""){
+                        dirCreator.openFile(this.disconnectdata.file);
+                    }
+                    if(this.lastview && this.lastview != ""){
+                        this.view(this.lastview);
+                    }
+                    this.disconnectdata.bool = false;
+                }
+            }
+        }
 	};
 
 	this.loginBad = function (){
 		alert("Bad Login");
+        this.loadHandlerFin();
 		this.view('start');
 	};
     
@@ -3162,6 +3236,7 @@ var uiControl_typ = function global_typ(){
     };
 
 	this.view = function (code){
+        this.lastview = code;
 		switch (code) {
 	        case "start":
 				document.getElementById('noteconBackground').style.display = "none";
@@ -3191,11 +3266,27 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
-	        default:
+            default:
 	            console.log("command '"+code+"' does not exist");
 	            break;
 	    }
 	};
+    
+    this.connect = function(){
+        //L3.login();
+    };
+    
+    this.reconnect = function(){
+        this.disconnectdata.bool = true;
+    };
+    
+    this.disconnect = function(){
+        this.disconnectdata.view = this.lastview;
+        this.disconnectdata.file = L3.file;
+        this.disconnectdata.lastDir = dirCreator.lastDir;
+        this.resetUI();
+        this.view('load');
+    };
 };
 
 var uiControl = new uiControl_typ();

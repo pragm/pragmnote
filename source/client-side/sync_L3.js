@@ -29,6 +29,8 @@ var L3_typ = function L3_typ(){
     this.file = false;
     this.beforeEvent = "loadFirst";
     this.loadedFile = false;
+    this.loginDat = { };
+    this.firstload = true;
 	
     this.init = function(){
         //Random generierter Username 
@@ -40,6 +42,7 @@ var L3_typ = function L3_typ(){
         //return this.clientName;
         
         L2.send(sID.clientName, this.clientName);
+        //L3.login();
         
         //L2.send(sID.getServer, String(sID.fileList));
         
@@ -96,9 +99,17 @@ var L3_typ = function L3_typ(){
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            dirCreator.lastDir = data.login.userID;
-                            dirCreator.mainDir = data.login.userID;
-                            dirCreator.showDir(dirCreator.mainDir);
+                            if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
+                                console.log("CON1 "+uiControl.disconnectdata.lastDir);
+                                dirCreator.lastDir = uiControl.disconnectdata.lastDir;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(uiControl.disconnectdata.lastDir);
+                            } else {
+                                console.log("CON2 "+data.login.userID);
+                                dirCreator.lastDir = data.login.userID;
+                                dirCreator.mainDir = data.login.userID;
+                                dirCreator.showDir(dirCreator.mainDir);
+                            }
                             dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
@@ -144,6 +155,12 @@ var L3_typ = function L3_typ(){
 
             case sID.legitimationID:
                 data.legitimationID = daten;
+                if(this.firstload){
+                    L3.login();
+                    L3.firstload = false;
+                } else {
+                    
+                }
                 break;
                 
             case sID.updated:
@@ -205,8 +222,9 @@ var L3_typ = function L3_typ(){
         L2.send(id, data.files[this.file][id]);
     };
 
-    this.login = function(obj){
-        L2.send(sID.Login, JSON.stringify(obj));
+    this.login = function(){
+        L3.loginDat.legitimationID = data.legitimationID;
+        L2.send(sID.Login, JSON.stringify(L3.loginDat));
     }
     
     this.delete = function (id){
@@ -232,11 +250,15 @@ var L3_typ = function L3_typ(){
      this.reset = function(){
          data.reset();
          this.file = false;
+         this.beforeEvent = "loadFirst";
+         this.loadedFile = false;
+         this.firstload = true;
          if(data.login){
              if(data.login.userRight){
                 if(data.login.userRight < 5){
-                    uiControl.view('load');
-                    setTimeout("location.reload();", 5000);
+                    //uiControl.view('load');
+                    //setTimeout("location.reload();", 5000);
+                    console.log('reset L3');
                 }
              }
          }
