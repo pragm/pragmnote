@@ -1,4 +1,4 @@
-var clientversion = "0.2.764"/******************************************************************************************
+var clientversion = "0.2.765"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -954,6 +954,7 @@ var color_typ = function color_typ(){
 			    default:
 				    break;
 		}
+        return false;
 	};
 
 	this.setcolor = function(mycolor){
