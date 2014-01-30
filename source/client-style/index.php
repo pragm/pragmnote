@@ -94,6 +94,33 @@ $temp = str_replace ("\x0B","",$temp);
 <div class="displayBlocker" id="displayBlocker"></div>
 <div class="noteconBackground" id="noteconBackground">
     <div class="fileListOverlay">
+        <div class="infoBox" id="Infobox">
+            <div class="nameBox" id="nameBox">Bob King</div>
+            
+            <div class="infoline" id="infoline">data storage (80% free)</div>
+            <div class="userstate" id="userstate"><div class="userstorage" id="userstorage"></div></div><br>
+            <div class="infoline" id="infoline">Language choice:</div>
+            <select class="infoline" >
+                <option>English</option>
+                <option disabled>(not available)</option>
+            
+            </select>
+            <br><br>
+            <div class="infoline" id="infoline">Please help <br>to keep pragm free!</div>
+            <input class="infoline" type="button" value="Get Involved">
+            <div class="infoline" id="infoline">or</div>
+            <input class="infoline" type="button" value="Donate">
+            <!--<ul class="datachoice">
+                <li>files</li>
+                <li>settings</li>
+            </ul>-->
+        
+        </div>
+        <div class="newsBox" id="newsbox">
+            <div class="news" id="news">News</div>
+            <div class="newsline" id="newsline">pragm is cool</div>
+        
+        </div>
     <div class="fileOperationsBar">
         <ul class="dirShow" id="dirShow">
         </ul>

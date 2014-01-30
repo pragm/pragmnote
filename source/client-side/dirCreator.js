@@ -287,7 +287,7 @@ var dirCreator_typ = function dirCreator_typ(){
                 break;
         }
         id = "'"+id+"'";
-        var e = '<li onclick="dirCreator.openFile('+id+');"><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font style="position: relative; left: 30px;">'+name+'</font></li>';
+        var e = '<li><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font class="filenameDir" style="position: relative; left: 30px;" onclick="dirCreator.openFile('+id+');">'+name+'</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>';
         return e;
     };
     
