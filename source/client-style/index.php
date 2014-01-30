@@ -107,9 +107,9 @@ $temp = str_replace ("\x0B","",$temp);
             </select>
             <br><br>
             <div class="infoline" id="infoline">Please help <br>to keep pragm free!</div>
-            <input class="infoline" type="button" value="Get Involved">
+            <input class="infoline" type="button" value="Get Involved" onclick="OpenInNewTab();">
             <div class="infoline" id="infoline">or</div>
-            <input class="infoline" type="button" value="Donate">
+            <input class="infoline" type="button" value="Donate" onclick="alert('out of order');">
             <!--<ul class="datachoice">
                 <li>files</li>
                 <li>settings</li>
@@ -119,7 +119,6 @@ $temp = str_replace ("\x0B","",$temp);
         <div class="newsBox" id="newsbox">
             <div class="news" id="news">News</div>
             <div class="newsline" id="newsline">pragm is cool</div>
-        
         </div>
     <div class="fileOperationsBar">
         <ul class="dirShow" id="dirShow">

@@ -1,4 +1,4 @@
-var clientversion = "0.2.817"/******************************************************************************************
+var clientversion = "0.2.818"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1563,6 +1563,11 @@ var dirCreator_typ = function dirCreator_typ(){
 
 var dirCreator = new dirCreator_typ();
 //dirCreator.setDir(testtext);
+
+function OpenInNewTab(){
+  var win=window.open("https://github.com/pragm/pragmnote", '_blank');
+  win.focus();
+}
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner

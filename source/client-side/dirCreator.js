@@ -300,3 +300,8 @@ var dirCreator_typ = function dirCreator_typ(){
 
 var dirCreator = new dirCreator_typ();
 //dirCreator.setDir(testtext);
+
+function OpenInNewTab(){
+  var win=window.open("https://github.com/pragm/pragmnote", '_blank');
+  win.focus();
+}
