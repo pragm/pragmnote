@@ -30,13 +30,15 @@ $temp = str_replace ("\0","",$temp);
 $temp = str_replace ("\x0B","",$temp);
 ?>
 <!DOCTYPE HTML>
-<html>
+<html ng-app="pragmApp">
 <head>
 
 
 <title id="title">pragm</title>
 <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-<link href='http://fonts.googleapis.com/css?family=Open+Sans:300,600' rel='stylesheet' type='text/css'>
+<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,600" rel="stylesheet" type="text/css">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
 <script type="text/javascript" src="socket.io.min.js"></script> <!--node_modules/socket.io-client/dist/socket.io.min.js-->
 <script type="text/javascript">var globalconfig = '<?php echo $temp; ?>';</script>
 
@@ -45,14 +47,14 @@ $temp = str_replace ("\x0B","",$temp);
     <link rel="stylesheet" type="text/css" href="style.css">
     
 
-</head>
-<body class="body" name="body" id="body" onload="globalEvent.onload();" onmouseup="globalEvent.drop();" onclick="globalEvent.onclick();" onmousemove="globalEvent.mousemove();">
+</head><!--ng-view-->
+<body class="body" name="body" id="body" onload="globalEvent.onload();" onmouseup="globalEvent.drop();" onclick="globalEvent.onclick();" onmousemove="globalEvent.mousemove();" ng-controller="loginController">
 
-<div class="loading" id="pleasewait">
+<!--<div class="loading" id="pleasewait">
     <div class="loadicon"></div>
 </div>
 
-<div class="background"></div>
+<div class="background"></div>-->
 <div class="fileTabs" id="fileTabs" style="height: 50px;">
     <div class="fileTabButton" onclick="uiControl.unloadFile(); tab.deactivateTab();">
         <div unselectable="on" class="fileTabsPragm" id="pragmico2"></div>
@@ -72,7 +74,8 @@ $temp = str_replace ("\x0B","",$temp);
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="delete element (out of work)"><input class="unselectinput" type="button" onclick="killfocusline();"><img src="img/doc/delete.png"></li>
      </ul>-->
     </div>
-<ul class="editul" id="editarea" unselectable="on">
+    <div class="angularView" ng-view></div>
+<!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('Print')"><img src="img/doc/print.png" unselectable="on"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Bold');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('bold')"><img src="img/doc/fett.png" unselectable="on"></li>
@@ -90,7 +93,7 @@ $temp = str_replace ("\x0B","",$temp);
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Numbering');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('insertorderedlist');"><img src="img/doc/numblist.png"></li>
  <!--<li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add link (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addlink.png"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add image (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addimg.png"></li>-->
-</ul>
+<!--</ul>
 
 
 <div class="title" id="showtitle" style="left: -200px;"><div class="titleeck"></div>Mein Cooler Titel</div>
@@ -118,7 +121,7 @@ $temp = str_replace ("\x0B","",$temp);
                 <li>settings</li>
             </ul>-->
         
-        </div>
+       <!-- </div>
         <div class="newsBox" id="newsbox">
             <div class="news" id="news">News</div>
             <div class="newsline" id="newsline">pragm is cool</div>

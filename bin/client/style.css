@@ -1,4 +1,16 @@
-@charset "ISO-8859-1";/******************************************************************************************
+@charset "ISO-8859-1";/*@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(fonts/opensanslight.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(fonts/opensanslsemibold.woff) format('woff');
+}*/
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1748,5 +1760,15 @@ weis{
     font-family: Open Sans, Arial;
     font-size: 13px;
     left: 15px;
+}
+
+.angularView {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: #4eff00;
+    z-index: 9;
 }
 

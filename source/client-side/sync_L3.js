@@ -96,6 +96,7 @@ var L3_typ = function L3_typ(){
         switch(id){
             case sID.fileList:
                 data.fileList = daten;
+                data.set('dirObject', JSON.parse(daten));
                 dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
@@ -124,7 +125,7 @@ var L3_typ = function L3_typ(){
                         case "refresh":
                             dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
-                            uiControl.view('files');
+                            //uiControl.view('files');
                         break;
                         case "":
                             dirCreator.refreshShow();
@@ -166,7 +167,7 @@ var L3_typ = function L3_typ(){
             case sID.updated:
                 if(this.loadedFile){
                     uiControl.loadHandlerFin();
-                    uiControl.view('editor');
+                    //uiControl.view('editor');
                     this.loadedFile = false;
                 }
                 break;

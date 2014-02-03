@@ -1173,3 +1173,13 @@ weis{
     font-size: 13px;
     left: 15px;
 }
+
+.angularView {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: #4eff00;
+    z-index: 9;
+}

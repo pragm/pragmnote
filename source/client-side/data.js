@@ -29,6 +29,28 @@ var data_typ = function data_typ(){
 	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
     this.legitimationID = "";
+    this.dirObject;
+    this.userDir = "";
+    this.acutalDir = "";
+    this.callbacks = { };
+    
+    this.databind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.set = function(object, value){
+        this[object] = value;
+        if(this.callbacks[object]){
+            this.callbacks[object](value);
+        }
+    };
+    
+    this.update = function(object){
+        if(this.callbacks[object]){
+            this.callbacks[object](data[object]);
+        }
+    };
     
     this.edited_sync = function(fileID, contentID){
         var type = contentID.substr(0,3);

@@ -36,9 +36,10 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata.lastDir = "";
     
 	this.loadFile = function(id){
+		this.view('editor');
+        console.log(1);
         tab.fileOpened(id);
 		L3.loadFile(id);
-		this.view('editor');
 	}
 
 	this.unloadFile = function(){
@@ -55,8 +56,8 @@ var uiControl_typ = function global_typ(){
 
 	this.resetUI = function(){
 		//document.getElementById("notecon").innerHMTL = global.notecon;
-		document.getElementById("notecon").innerHTML = "";
-		document.getElementById("notecon").innerHTML = global.notecon;
+		//document.getElementById("notecon").innerHTML = "";
+		//document.getElementById("notecon").innerHTML = global.notecon;
 	}
 
 	this.login = function (){
@@ -119,32 +120,37 @@ var uiControl_typ = function global_typ(){
 
 	this.view = function (code){
         this.lastview = code;
+            console.log("Viewchange => "+code);
 		switch (code) {
 	        case "start":
-				document.getElementById('noteconBackground').style.display = "none";
+                window.location.href = "#";
+				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note";
 				break;
 	        case "files":
-				document.getElementById('noteconBackground').style.display = "";
+                window.location.href = "#files";
+				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note";
 				break;
 	        case "editor":
-				document.getElementById('loginHTML').style.display = "none";
+                window.location.href = "#editor";
+				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "";
                 document.title = dirCreator.getName(L3.file);
 	            break;
 	        case "load":
+                //window.location.href = "#loading";
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
-				document.getElementById('pleasewait').style.display = "";
+				//document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
