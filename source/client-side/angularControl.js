@@ -59,14 +59,17 @@ var pragmApp = angular.module('pragmApp', []);
             var id = $scope.actualDir;
             var counter = 0;
             $scope.dirShow = $scope.dirObject[id].content.split(";");
-            $scope.superFolder = null;
-            $scope.superFolder = [ ];
-            $scope.superFolder[counter] = id;
+            var temparray = [ ];
+            temparray[counter] = id;
             while(id != $scope.mainDir){
                 id = $scope.dirObject[id].parent;
                 counter++;
-                $scope.superFolder[counter] = id;
+                temparray[counter] = id;
             }
+            temparray.reverse();
+            $scope.superFolder = null;
+            $scope.superFolder = temparray;
+            temparray = null;
         };
         
         $scope.openFileAngu = function (id) {

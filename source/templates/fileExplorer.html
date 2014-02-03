@@ -28,7 +28,7 @@
         </div>
     <div class="fileOperationsBar">
         <ul class="dirShow" id="dirShow">
-            <li ng-repeat="(key, id) in superFolder | orderBy:key:reverse=true" ng-click="openFileAngu(id);" class="{{key}}">{{dirObject[id].name}}</li>
+            <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}">{{dirObject[id].name}}</li>
         </ul>
         <ul class="dirButtons">
             <li class="dirButtonsLi" style="z-index: 2;" onclick="alert('out of work - Out of order');" title="delete file (out of work)"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>
@@ -44,7 +44,7 @@
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li ng-repeat="key in dirShow"><img src="img/doc/file.png" class="fileIcon"><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
+        <li ng-repeat="key in dirShow"><img src="img/doc/{{key.substr(0,1);}}.png" class="ico{{key.substr(0,1);}}"><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
     </ul>
         <div class="fileListCut">
             
