@@ -876,14 +876,23 @@
 .ico5{
     position: absolute;
     top: 12px;
+    width: 20px;
+    height: 20px;
+    background: url('img/doc/user.png');
 }
 .ico4{
     position: absolute;
     top: 16px;
+    width: 20px;
+    height: 14px;
+    background: url('img/doc/folder.png');
 }
 .ico3{
     position: absolute;
     top: 12px;
+    width: 20px;
+    height: 20px;
+    background: url('img/doc/file.png');
 }
 .notecon{
 	position: absolute;

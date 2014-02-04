@@ -5,7 +5,7 @@
             
             <div class="infoline" id="infoline">data storage (80% free)</div>
             <div class="userstate" id="userstate"><div class="userstorage" id="userstorage"></div></div><br>
-            <div class="infoline" id="infoline">Language choice:</div>
+            <div class="infoline" id="infoline">Language choice:{{lan}}</div>
             <select class="infoline" >
                 <option>English</option>
                 <option disabled>(not available)</option>
@@ -44,7 +44,7 @@
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li ng-repeat="key in dirShow"><img src="img/doc/{{key.substr(0,1);}}.png" class="ico{{key.substr(0,1);}}"><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
+        <li ng-repeat="key in dirShow"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
     </ul>
         <div class="fileListCut">
             

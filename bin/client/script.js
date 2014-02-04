@@ -1,4 +1,4 @@
-var clientversion = "0.2.946"/******************************************************************************************
+var clientversion = "0.2.952"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -854,7 +854,8 @@ var pragmApp = angular.module('pragmApp', []);
 	// create the controller and inject Angular's $scope
 	pragmApp.controller('loginController', function($scope) {
 		// create a message to display in our view
-		$scope.message = 'mjkm';
+		$scope.clientversion = clientversion;
+		$scope.lan = 'cool';
         /*$scope.lol = 'bla';
         data.databind('messages', function(x){
           console.log("Data: "+JSON.stringify(x));
@@ -867,6 +868,7 @@ var pragmApp = angular.module('pragmApp', []);
 	});
 
 	pragmApp.controller('filesController', function($scope) {
+		$scope.lan = 'cool';
 		$scope.dirObject = { };
         if(data.acutalDir != ""){
             $scope.actualDir = data.acutalDir;
@@ -943,13 +945,16 @@ var pragmApp = angular.module('pragmApp', []);
 	});
 
 	pragmApp.controller('editorController', function($scope) {
+		$scope.lan = 'cool';
 		$scope.message = 'Contact us! JK. This is just a demo.';
         uiControl.file = uiControl.takeFile;
+        console.log("ANGU => L3: "+L3.file);
+        console.log("ANGU => UI: "+uiControl.file);
         data.showCache();
-        //console.log(L3.file);
 	});
 
 	pragmApp.controller('loadingController', function($scope) {
+		$scope.lan = 'cool';
 		$scope.message = 'Please wait us! JK. This is just a demo.';
 	});
 
