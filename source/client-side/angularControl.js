@@ -121,6 +121,9 @@ var pragmApp = angular.module('pragmApp', []);
 
 	pragmApp.controller('editorController', function($scope) {
 		$scope.message = 'Contact us! JK. This is just a demo.';
+        uiControl.file = uiControl.takeFile;
+        data.showCache();
+        //console.log(L3.file);
 	});
 
 	pragmApp.controller('loadingController', function($scope) {

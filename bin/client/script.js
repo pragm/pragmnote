@@ -1,4 +1,4 @@
-var clientversion = "0.2.909"/******************************************************************************************
+var clientversion = "0.2.946"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -944,6 +944,9 @@ var pragmApp = angular.module('pragmApp', []);
 
 	pragmApp.controller('editorController', function($scope) {
 		$scope.message = 'Contact us! JK. This is just a demo.';
+        uiControl.file = uiControl.takeFile;
+        data.showCache();
+        //console.log(L3.file);
 	});
 
 	pragmApp.controller('loadingController', function($scope) {
@@ -1279,19 +1282,24 @@ var data_typ = function data_typ(){
     };
     
     this.edited_sync = function(fileID, contentID){
-        var type = contentID.substr(0,3);
-        switch(type){
-            case '100':
-                textbox.setid(contentID, data.files[fileID][contentID]);
-                break;
-            case '103':
-                staticItems.setid(contentID, data.files[fileID][contentID]);
-                break;
+        if(fileID == uiControl.file){
+            var type = contentID.substr(0,3);
+            switch(type){
+                case '100':
+                    textbox.setid(contentID, data.files[fileID][contentID]);
+                    break;
+                case '103':
+                    staticItems.setid(contentID, data.files[fileID][contentID]);
+                    break;
+            }
+        } else {
+            console.log("Error: UI is not in sync with L3");
         }
     };
     
     this.edited_UI = function(contentID){
-        L3.send(contentID);
+        //L3.send(contentID);
+        L3.uiEdit(uiControl.file, contentID);
     };
     
     this.reset = function(){
@@ -1310,6 +1318,21 @@ var data_typ = function data_typ(){
         delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
+    
+    
+    this.showCache = function(){
+        if(uiControl.file){
+            if(!data.files[uiControl.file]) {
+                data.files[uiControl.file] =  { };
+            } else {
+                for(key in data.files[uiControl.file]){
+                    data.edited_sync(uiControl.file, key);
+                }
+            }
+        } else {
+            console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
     
 };
 var data = new data_typ();
@@ -2927,6 +2950,7 @@ var L3_typ = function L3_typ(){
     this.loadedFile = false;
     this.loginDat = { };
     this.firstload = true;
+    this.callbacks = { };
 	
     this.init = function(){
         //Random generierter Username 
@@ -2975,7 +2999,10 @@ var L3_typ = function L3_typ(){
         //}
         //console.log(id);
         //console.log(daten);
-        //console.log(L3.file);
+        console.log(L3.file);
+        if(!data.files[L3.file]){
+            data.files[L3.file] = { }
+        }
         data.files[L3.file][id] = daten;
         
         data.edited_sync(this.file, id);
@@ -2993,38 +3020,38 @@ var L3_typ = function L3_typ(){
             case sID.fileList:
                 data.fileList = daten;
                 data.set('dirObject', JSON.parse(daten));
-                dirCreator.setDir(daten);
+                //dirCreator.setDir(daten);
                 switch(this.beforeEvent){
                         case "loadFirst":
                             if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
-                                console.log("CON1 "+uiControl.disconnectdata.lastDir);
-                                dirCreator.lastDir = uiControl.disconnectdata.lastDir;
-                                dirCreator.mainDir = data.login.userID;
-                                dirCreator.showDir(uiControl.disconnectdata.lastDir);
+                                //console.log("CON1 "+uiControl.disconnectdata.lastDir);
+                                //dirCreator.lastDir = uiControl.disconnectdata.lastDir;
+                                //dirCreator.mainDir = data.login.userID;
+                                //dirCreator.showDir(uiControl.disconnectdata.lastDir);
                             } else {
-                                console.log("CON2 "+data.login.userID);
-                                dirCreator.lastDir = data.login.userID;
-                                dirCreator.mainDir = data.login.userID;
-                                dirCreator.showDir(dirCreator.mainDir);
+                                //console.log("CON2 "+data.login.userID);
+                                //dirCreator.lastDir = data.login.userID;
+                                //dirCreator.mainDir = data.login.userID;
+                                //dirCreator.showDir(dirCreator.mainDir);
                             }
-                            dirCreator.refreshShow();
-                            uiControl.loadHandlerFin();
+                            //dirCreator.refreshShow();
+                            //uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
-                            dirCreator.refreshShow();
-                            uiControl.loadHandlerFin();
+                            //dirCreator.refreshShow();
+                            //uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
-                            dirCreator.refreshShow();
-                            uiControl.loadHandlerFin();
-                            //uiControl.view('files');
+                            //dirCreator.refreshShow();
+                            //uiControl.loadHandlerFin();
+                            uiControl.view('files');
                         break;
                         case "":
-                            dirCreator.refreshShow();
+                            //dirCreator.refreshShow();
                         break;
                 }
                 break;
@@ -3061,6 +3088,11 @@ var L3_typ = function L3_typ(){
                 break;
                 
             case sID.updated:
+                console.log("UPDATE");
+                if(this.callbacks.load){
+                    this.callbacks.load();
+                    this.callbacks.load = null;
+                }
                 if(this.loadedFile){
                     uiControl.loadHandlerFin();
                     //uiControl.view('editor');
@@ -3069,9 +3101,16 @@ var L3_typ = function L3_typ(){
                 break;
                 
             case sID.fileunloadtrue:
-                if(uiControl.switchfilebool){
+                console.log("UNLOAD Done");
+                L3.file = false;
+                if(this.callbacks.unload){
+                    this.callbacks.unload();
+                    this.callbacks.unload = null;
+                }
+                /*if(uiControl.switchfilebool){
                     uiControl.switchfilebool = false;
 		            uiControl.resetUI();
+                    L3.file = uiControl.switchfile;
                     uiControl.view('editor');
                     L3.loadFile(uiControl.switchfile);
                 } else {
@@ -3083,7 +3122,7 @@ var L3_typ = function L3_typ(){
                     } else {
                         L3.file = "0000000000";
                     }
-                }
+                }*/
                 break;
                 
             default:
@@ -3097,18 +3136,57 @@ var L3_typ = function L3_typ(){
         
         };
     
+    this.showCache = function(){ // does not belong over here
+        if(uiControl.file && uiControl.file!="0000000000"){
+            if(!data.files[uiControl.file]) {
+                data.files[uiControl.file] =  { };
+            } else {
+                for(key in data.files[uiControl.file]){
+                    data.edited_sync(uiControl.file, key);
+                }
+            }
+        } else {
+            console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
+    
     this.loadFile = function(id){
         L3.file = id;
-        if(!data.files[id]) {
+        /*if(!data.files[id]) {
             data.files[id] =  { };
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
             }
-        }
+        }*/
         uiControl.loadHandler();
         this.loadedFile = true;
         L2.send(sID.file, id);  
+    };
+    
+    this.loadFileCallback = function(id, callback){
+        if(!L3.file){
+            L3.callbacks.load = callback;
+            L3.file = id;
+            L2.send(sID.file, id);  
+        } else {
+            this.unloadFileCallback(id, function(){
+                L3.callbacks.load = callback;
+                L3.file = id;
+                L2.send(sID.file, id);
+            });
+        }
+    };
+
+    this.unloadFileCallback = function(id, callback){
+        this.callbacks.unload = callback;
+        L2.send(sID.unloadFile, '');  
+    };
+    
+    this.uiEdit = function (file, id){
+        if(L3.file == file){ // Todo: catch wrong ID's
+            L2.send(id, data.files[file][id]);
+        }
     };
 
     this.unloadFile = function(id){
@@ -3229,7 +3307,7 @@ var tab_typ = function tab_typ(){
                 var tempId = "'"+this.tabArray[numb]+"'";
                 //var fullDirArray = testDir.split(":");
                 //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
-                var tempName = dirCreator.getName(this.tabArray[numb]);
+                var tempName = data.dirObject[this.tabArray[numb]].name;
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -3353,6 +3431,8 @@ function onmousemove(){
 
 var uiControl_typ = function global_typ(){
     
+    this.file = false;
+    this.takeFile = false;
     this.loadwait;
     this.loadtimeout = 100;
     this.switchfilebool = false;
@@ -3363,23 +3443,37 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
     
-	this.loadFile = function(id){
+	this.loadFileOld = function(id){
+        this.file = id;
 		this.view('editor');
         console.log(1);
         tab.fileOpened(id);
 		L3.loadFile(id);
 	}
+    
+    this.loadFile = function(id){
+        this.takeFile = id;
+		this.view('editor');
+        tab.fileOpened(id);
+        L3.loadFileCallback(id, function(){
+            console.log("Callback => LOADED");
+        });
+    };
 
 	this.unloadFile = function(){
-		L3.unloadFile(L3.file);
-        this.unloadfile = true;
+		L3.unloadFileCallback(L3.file, function(){
+            console.log('Callback => UNLOADED')
+        });
+        uiControl.view('files');
 	}
 
 	this.loadOtherFile = function(id){
-        this.switchfilebool = true;
+        this.loadFile(id);
+        /*this.switchfilebool = true;
         tab.fileOpened(id);
         this.switchfile = id;
-		L3.unloadFile(L3.file);
+        console.log("UNLOADING");
+		L3.unloadFile(L3.file);*/
 	}
 
 	this.resetUI = function(){
@@ -3416,7 +3510,7 @@ var uiControl_typ = function global_typ(){
             if(data.login.userRight){
                 if(data.login.userRight < 5){
                     if(this.disconnectdata.file && this.disconnectdata.file != ""){
-                        dirCreator.openFile(this.disconnectdata.file);
+                        //dirCreator.openFile(this.disconnectdata.file);
                     }
                     if(this.lastview && this.lastview != ""){
                         this.view(this.lastview);
@@ -3451,14 +3545,16 @@ var uiControl_typ = function global_typ(){
             console.log("Viewchange => "+code);
 		switch (code) {
 	        case "start":
+                this.file = false;
                 window.location.href = "#";
 				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "50px";
+				document.getElementById('fileTabs').style.height = "0px";
                 document.title = "pragm note";
 				break;
 	        case "files":
+                this.file = false;
                 window.location.href = "#files";
 				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
@@ -3472,7 +3568,7 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "";
-                document.title = dirCreator.getName(L3.file);
+                document.title = data.dirObject[uiControl.takeFile].name;
 	            break;
 	        case "load":
                 //window.location.href = "#loading";

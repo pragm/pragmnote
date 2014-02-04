@@ -25,6 +25,8 @@
 
 var uiControl_typ = function global_typ(){
     
+    this.file = false;
+    this.takeFile = false;
     this.loadwait;
     this.loadtimeout = 100;
     this.switchfilebool = false;
@@ -35,23 +37,37 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
     
-	this.loadFile = function(id){
+	this.loadFileOld = function(id){
+        this.file = id;
 		this.view('editor');
         console.log(1);
         tab.fileOpened(id);
 		L3.loadFile(id);
 	}
+    
+    this.loadFile = function(id){
+        this.takeFile = id;
+		this.view('editor');
+        tab.fileOpened(id);
+        L3.loadFileCallback(id, function(){
+            console.log("Callback => LOADED");
+        });
+    };
 
 	this.unloadFile = function(){
-		L3.unloadFile(L3.file);
-        this.unloadfile = true;
+		L3.unloadFileCallback(L3.file, function(){
+            console.log('Callback => UNLOADED')
+        });
+        uiControl.view('files');
 	}
 
 	this.loadOtherFile = function(id){
-        this.switchfilebool = true;
+        this.loadFile(id);
+        /*this.switchfilebool = true;
         tab.fileOpened(id);
         this.switchfile = id;
-		L3.unloadFile(L3.file);
+        console.log("UNLOADING");
+		L3.unloadFile(L3.file);*/
 	}
 
 	this.resetUI = function(){
@@ -88,7 +104,7 @@ var uiControl_typ = function global_typ(){
             if(data.login.userRight){
                 if(data.login.userRight < 5){
                     if(this.disconnectdata.file && this.disconnectdata.file != ""){
-                        dirCreator.openFile(this.disconnectdata.file);
+                        //dirCreator.openFile(this.disconnectdata.file);
                     }
                     if(this.lastview && this.lastview != ""){
                         this.view(this.lastview);
@@ -123,14 +139,16 @@ var uiControl_typ = function global_typ(){
             console.log("Viewchange => "+code);
 		switch (code) {
 	        case "start":
+                this.file = false;
                 window.location.href = "#";
 				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "50px";
+				document.getElementById('fileTabs').style.height = "0px";
                 document.title = "pragm note";
 				break;
 	        case "files":
+                this.file = false;
                 window.location.href = "#files";
 				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
@@ -144,7 +162,7 @@ var uiControl_typ = function global_typ(){
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "";
-                document.title = dirCreator.getName(L3.file);
+                document.title = data.dirObject[uiControl.takeFile].name;
 	            break;
 	        case "load":
                 //window.location.href = "#loading";
