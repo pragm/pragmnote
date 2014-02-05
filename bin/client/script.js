@@ -1,4 +1,4 @@
-var clientversion = "0.2.1012"/******************************************************************************************
+var clientversion = "0.2.1013"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -898,6 +898,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";                    
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -966,6 +967,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -1101,6 +1103,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {

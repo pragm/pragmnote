@@ -75,6 +75,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";                    
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -143,6 +144,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -278,6 +280,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
