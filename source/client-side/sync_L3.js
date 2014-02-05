@@ -102,6 +102,7 @@ var L3_typ = function L3_typ(){
                 data.fileList = daten;
                 data.set('dirObject', JSON.parse(daten));
                 //dirCreator.setDir(daten);
+                console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){
                         case "loadFirst":
                             if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
@@ -115,20 +116,20 @@ var L3_typ = function L3_typ(){
                                 //dirCreator.mainDir = data.login.userID;
                                 //dirCreator.showDir(dirCreator.mainDir);
                             }
+                            uiControl.view('files');
                             //dirCreator.refreshShow();
                             //uiControl.loadHandlerFin();
-                            uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
                             //dirCreator.refreshShow();
-                            //uiControl.loadHandlerFin();
+                            uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
                             //dirCreator.refreshShow();
-                            //uiControl.loadHandlerFin();
+                            uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
@@ -293,20 +294,23 @@ var L3_typ = function L3_typ(){
         temp.dir = dir;
         temp.type = type;
         this.beforeEvent = "addFile";
-        uiControl.loadHandler();
+        uiControl.loadHandler('creating file');
         L2.send(sID.addFile, JSON.stringify(temp));
     }
     
     this.refreshDir = function(){
         this.beforeEvent = "refresh";
-        uiControl.loadHandler();
+        uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
     };
     
      this.reset = function(){
          data.reset();
-         this.file = false;
          this.beforeEvent = "loadFirst";
+         if(this.file && this.file != ""){
+             this.beforeEvent = "";
+         }
+         this.file = false;
          this.loadedFile = false;
          this.firstload = true;
          if(data.login){

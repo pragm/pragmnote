@@ -33,6 +33,24 @@ var pragmApp = angular.module('pragmApp', []);
 		// create a message to display in our view
 		$scope.clientversion = clientversion;
 		$scope.lan = 'cool';
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            console.log("Update Angular "+$scope.loadinginfo);
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+            } else {
+		      $scope.loadshow = 'block';
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         /*$scope.lol = 'bla';
         data.databind('messages', function(x){
           console.log("Data: "+JSON.stringify(x));
@@ -46,6 +64,27 @@ var pragmApp = angular.module('pragmApp', []);
 
 	pragmApp.controller('filesController', function($scope) {
 		$scope.lan = 'cool';
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+              document.getElementById('fileTabs').style.height = "50px";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.loadshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
 		$scope.dirObject = { };
         if(data.acutalDir != ""){
             $scope.actualDir = data.acutalDir;
@@ -124,6 +163,27 @@ var pragmApp = angular.module('pragmApp', []);
 	pragmApp.controller('editorController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.message = 'Contact us! JK. This is just a demo.';
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+              document.getElementById('fileTabs').style.height = "";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.loadshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         uiControl.file = uiControl.takeFile;
         console.log("ANGU => L3: "+L3.file);
         console.log("ANGU => UI: "+uiControl.file);

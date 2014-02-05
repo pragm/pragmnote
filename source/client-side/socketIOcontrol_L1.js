@@ -42,6 +42,7 @@ var L1_typ = function L1_typ(){
 		};
  
 	this.onload = function() {
+        data.set('loadinginfo', "connecting to server");
 		L1.state = 1;
         this.countErrors = 0;
 		//update_websocketstate();  //Test UI
@@ -50,6 +51,7 @@ var L1_typ = function L1_typ(){
 		this.Server = new SimplebSocket(address);
         this.socket = io.connect(address);
 		this.socket.on('connect', function () {
+            data.set('loadinginfo', "");
             console.log("open");
 			L1.state = 2;
             var L2 = new L2_typ();
@@ -66,6 +68,7 @@ var L1_typ = function L1_typ(){
 			});
 	 
 		this.socket.on('disconnect', function (msg) {
+            data.set('loadinginfo', "disconnected [trying to reconnect]");
 			L1.state = 0;
 			globalEvent.state(2);
             uiControl.disconnect();

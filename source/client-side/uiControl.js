@@ -28,7 +28,7 @@ var uiControl_typ = function global_typ(){
     this.file = false;
     this.takeFile = false;
     this.loadwait;
-    this.loadtimeout = 100;
+    this.loadtimeout = 200;
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
@@ -46,11 +46,15 @@ var uiControl_typ = function global_typ(){
 	}
     
     this.loadFile = function(id){
+        //data.set('loadinginfo', "loading file");
+        this.loadHandler("loading file");
         this.takeFile = id;
 		this.view('editor');
         tab.fileOpened(id);
         L3.loadFileCallback(id, function(){
             console.log("Callback => LOADED");
+            //data.set('loadinginfo', "");
+            uiControl.loadHandlerFin();
         });
     };
 
@@ -83,7 +87,7 @@ var uiControl_typ = function global_typ(){
     
         L3.loginDat.userName     = document.getElementById('loginUsername').value;
         L3.loginDat.userPassword = document.getElementById('loginPassword').value;
-        uiControl.loadHandler();
+        //uiControl.loadHandler();
         //L3.loginDat = loginObject;
 		if(L3.firstload){
             //loginObject.legitimationID = data.legitimationID;
@@ -105,6 +109,7 @@ var uiControl_typ = function global_typ(){
                 if(data.login.userRight < 5){
                     if(this.disconnectdata.file && this.disconnectdata.file != ""){
                         //dirCreator.openFile(this.disconnectdata.file);
+                        this.loadFile(this.disconnectdata.file);
                     }
                     if(this.lastview && this.lastview != ""){
                         this.view(this.lastview);
@@ -123,15 +128,16 @@ var uiControl_typ = function global_typ(){
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, dirCreator.lastDir, type);
+        L3.addFile(name, data.acutalDir, type);
     };
     
-    this.loadHandler = function(){
-        this.loadwait = setTimeout("uiControl.view('load');", this.loadtimeout);
+    this.loadHandler = function(text){
+        this.loadwait = setTimeout("data.set('loadinginfo', '"+text+"');", this.loadtimeout);
     };
     
     this.loadHandlerFin = function(){
         clearTimeout(this.loadwait);
+        data.set('loadinginfo', "");
     };
 
 	this.view = function (code){
@@ -188,10 +194,10 @@ var uiControl_typ = function global_typ(){
     
     this.disconnect = function(){
         this.disconnectdata.view = this.lastview;
-        this.disconnectdata.file = L3.file;
-        this.disconnectdata.lastDir = dirCreator.lastDir;
-        this.resetUI();
-        this.view('load');
+        this.disconnectdata.file = uiControl.file;
+        this.disconnectdata.lastDir = data.userDir;
+        //this.resetUI();
+        //this.view('load');
     };
 };
 

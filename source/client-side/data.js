@@ -33,6 +33,7 @@ var data_typ = function data_typ(){
     this.userDir = "";
     this.acutalDir = "";
     this.callbacks = { };
+    this.loadinginfo = "";
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;

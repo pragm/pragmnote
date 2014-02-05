@@ -60,7 +60,7 @@ $temp = str_replace ("\x0B","",$temp);
     <ul class="Tabs" id="tabsUL">
     </ul>
     </nobr>
-    <div class="TabsIn1" onclick="uiControl.unloadFile();"></div>
+    <div class="TabsIn1" onclick="uiControl.unloadFile(); tab.deactivateTab();"></div>
     <div class="TabsIn2"></div>
     <!--<ul class="draweditul" id="draweditul" style="">
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add rect (out of work)"><input class="unselectinput" type="button" onclick="addrect();"><img src="img/doc/rect.png"></li>
@@ -71,7 +71,9 @@ $temp = str_replace ("\x0B","",$temp);
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="delete element (out of work)"><input class="unselectinput" type="button" onclick="killfocusline();"><img src="img/doc/delete.png"></li>
      </ul>-->
     </div>
+    
     <div class="angularView" ng-view></div>
+    
 <!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('Print')"><img src="img/doc/print.png" unselectable="on"></li>

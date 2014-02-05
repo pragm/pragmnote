@@ -1,4 +1,4 @@
-var clientversion = "0.2.952"/******************************************************************************************
+var clientversion = "0.2.1002"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -856,6 +856,24 @@ var pragmApp = angular.module('pragmApp', []);
 		// create a message to display in our view
 		$scope.clientversion = clientversion;
 		$scope.lan = 'cool';
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            console.log("Update Angular "+$scope.loadinginfo);
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+            } else {
+		      $scope.loadshow = 'block';
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         /*$scope.lol = 'bla';
         data.databind('messages', function(x){
           console.log("Data: "+JSON.stringify(x));
@@ -869,6 +887,27 @@ var pragmApp = angular.module('pragmApp', []);
 
 	pragmApp.controller('filesController', function($scope) {
 		$scope.lan = 'cool';
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+              document.getElementById('fileTabs').style.height = "50px";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.loadshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
 		$scope.dirObject = { };
         if(data.acutalDir != ""){
             $scope.actualDir = data.acutalDir;
@@ -947,6 +986,27 @@ var pragmApp = angular.module('pragmApp', []);
 	pragmApp.controller('editorController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.message = 'Contact us! JK. This is just a demo.';
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+              document.getElementById('fileTabs').style.height = "";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.loadshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         uiControl.file = uiControl.takeFile;
         console.log("ANGU => L3: "+L3.file);
         console.log("ANGU => UI: "+uiControl.file);
@@ -1267,6 +1327,7 @@ var data_typ = function data_typ(){
     this.userDir = "";
     this.acutalDir = "";
     this.callbacks = { };
+    this.loadinginfo = "";
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -2765,6 +2826,7 @@ var L1_typ = function L1_typ(){
 		};
  
 	this.onload = function() {
+        data.set('loadinginfo', "connecting to server");
 		L1.state = 1;
         this.countErrors = 0;
 		//update_websocketstate();  //Test UI
@@ -2773,6 +2835,7 @@ var L1_typ = function L1_typ(){
 		this.Server = new SimplebSocket(address);
         this.socket = io.connect(address);
 		this.socket.on('connect', function () {
+            data.set('loadinginfo', "");
             console.log("open");
 			L1.state = 2;
             var L2 = new L2_typ();
@@ -2789,6 +2852,7 @@ var L1_typ = function L1_typ(){
 			});
 	 
 		this.socket.on('disconnect', function (msg) {
+            data.set('loadinginfo', "disconnected [trying to reconnect]");
 			L1.state = 0;
 			globalEvent.state(2);
             uiControl.disconnect();
@@ -3026,6 +3090,7 @@ var L3_typ = function L3_typ(){
                 data.fileList = daten;
                 data.set('dirObject', JSON.parse(daten));
                 //dirCreator.setDir(daten);
+                console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){
                         case "loadFirst":
                             if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
@@ -3039,20 +3104,20 @@ var L3_typ = function L3_typ(){
                                 //dirCreator.mainDir = data.login.userID;
                                 //dirCreator.showDir(dirCreator.mainDir);
                             }
+                            uiControl.view('files');
                             //dirCreator.refreshShow();
                             //uiControl.loadHandlerFin();
-                            uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "addFile":
                             //dirCreator.refreshShow();
-                            //uiControl.loadHandlerFin();
+                            uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
                             //dirCreator.refreshShow();
-                            //uiControl.loadHandlerFin();
+                            uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
@@ -3217,20 +3282,23 @@ var L3_typ = function L3_typ(){
         temp.dir = dir;
         temp.type = type;
         this.beforeEvent = "addFile";
-        uiControl.loadHandler();
+        uiControl.loadHandler('creating file');
         L2.send(sID.addFile, JSON.stringify(temp));
     }
     
     this.refreshDir = function(){
         this.beforeEvent = "refresh";
-        uiControl.loadHandler();
+        uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
     };
     
      this.reset = function(){
          data.reset();
-         this.file = false;
          this.beforeEvent = "loadFirst";
+         if(this.file && this.file != ""){
+             this.beforeEvent = "";
+         }
+         this.file = false;
          this.loadedFile = false;
          this.firstload = true;
          if(data.login){
@@ -3439,7 +3507,7 @@ var uiControl_typ = function global_typ(){
     this.file = false;
     this.takeFile = false;
     this.loadwait;
-    this.loadtimeout = 100;
+    this.loadtimeout = 200;
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
@@ -3457,11 +3525,15 @@ var uiControl_typ = function global_typ(){
 	}
     
     this.loadFile = function(id){
+        //data.set('loadinginfo', "loading file");
+        this.loadHandler("loading file");
         this.takeFile = id;
 		this.view('editor');
         tab.fileOpened(id);
         L3.loadFileCallback(id, function(){
             console.log("Callback => LOADED");
+            //data.set('loadinginfo', "");
+            uiControl.loadHandlerFin();
         });
     };
 
@@ -3494,7 +3566,7 @@ var uiControl_typ = function global_typ(){
     
         L3.loginDat.userName     = document.getElementById('loginUsername').value;
         L3.loginDat.userPassword = document.getElementById('loginPassword').value;
-        uiControl.loadHandler();
+        //uiControl.loadHandler();
         //L3.loginDat = loginObject;
 		if(L3.firstload){
             //loginObject.legitimationID = data.legitimationID;
@@ -3516,6 +3588,7 @@ var uiControl_typ = function global_typ(){
                 if(data.login.userRight < 5){
                     if(this.disconnectdata.file && this.disconnectdata.file != ""){
                         //dirCreator.openFile(this.disconnectdata.file);
+                        this.loadFile(this.disconnectdata.file);
                     }
                     if(this.lastview && this.lastview != ""){
                         this.view(this.lastview);
@@ -3534,15 +3607,16 @@ var uiControl_typ = function global_typ(){
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, dirCreator.lastDir, type);
+        L3.addFile(name, data.acutalDir, type);
     };
     
-    this.loadHandler = function(){
-        this.loadwait = setTimeout("uiControl.view('load');", this.loadtimeout);
+    this.loadHandler = function(text){
+        this.loadwait = setTimeout("data.set('loadinginfo', '"+text+"');", this.loadtimeout);
     };
     
     this.loadHandlerFin = function(){
         clearTimeout(this.loadwait);
+        data.set('loadinginfo', "");
     };
 
 	this.view = function (code){
@@ -3599,10 +3673,10 @@ var uiControl_typ = function global_typ(){
     
     this.disconnect = function(){
         this.disconnectdata.view = this.lastview;
-        this.disconnectdata.file = L3.file;
-        this.disconnectdata.lastDir = dirCreator.lastDir;
-        this.resetUI();
-        this.view('load');
+        this.disconnectdata.file = uiControl.file;
+        this.disconnectdata.lastDir = data.userDir;
+        //this.resetUI();
+        //this.view('load');
     };
 };
 
