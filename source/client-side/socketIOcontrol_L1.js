@@ -49,7 +49,7 @@ var L1_typ = function L1_typ(){
 		globalEvent.state(2);
         var address = global.get_websocket_server_address();
 		this.Server = new SimplebSocket(address);
-        this.socket = io.connect(address);
+        this.socket = io.connect(address, {'connect timeout': 5000});
 		this.socket.on('connect', function () {
             data.set('loadinginfo', "");
             console.log("open");
