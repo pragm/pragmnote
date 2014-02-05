@@ -1,6 +1,5 @@
-
 {
-    "serveraddress": "http://localhost:8080/",
+    "serveraddress": "http://demo.pragm.de:8080/",
     "addressalert": false
 }
 
