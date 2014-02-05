@@ -1,4 +1,16 @@
-@charset "ISO-8859-1";/******************************************************************************************
+@charset "ISO-8859-1";/*@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Open Sans Light'), local('OpenSans-Light'), url(fonts/opensanslight.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Open Sans Semibold'), local('OpenSans-Semibold'), url(fonts/opensanslsemibold.woff) format('woff');
+}*/
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -620,7 +632,7 @@
 }
 .Tabs li{
     position: relative;
-    padding: 16px;
+    padding: 15px;
     float: left;
     color: #ffffff;
     font-family: Helvetica;
@@ -641,17 +653,17 @@
     background: #222222;*/
 }
 .TabsIn1{
-    position: absolute;
-    height: 60px;
-    bottom: -40px;
+    position: fixed;
+    height: 50px;
+    top: 0px;
     width: 93px;
     left: 0px;
     background: transparent;
 }
 .TabsIn2{
-    position: absolute;
-    height: 60px;
-    bottom: -40px;
+    position: fixed;
+    height: 50px;
+    top: 0px;
     width: 100px;
     right: 0px;
     background: transparent;
@@ -666,20 +678,22 @@
     overflow-x: hidden;
     overflow-y: auto;
     position: absolute;
-    min-width: 500px;
-    left: 0px;
-    top: 40px;
+    right: 200px;
+    left: 190px;
+    top: 60px;
     bottom: 0px;
-    right: 0px;
     list-style-type: none;
-    border-top: 1px solid #C7C7C7;
+    border-top: 1px solid #a7a7a7;
     margin: 0;
-    box-shadow: inset 0px 6px 6px -6px #BDBDBD;
+    
+    /*box-shadow: inset 0px 6px 6px -6px #BDBDBD;*/
     padding-top: 20px;
+    /*border-left: 1px solid #a7a7a7;*/
+    /*border-right: 1px solid #a7a7a7;*/
 }
 .fileListUl li{
     text-align: left;
-    cursor: pointer;
+    /*cursor: pointer;*/
     font-size: 12px;
     position: relative;
     margin-left: -40px;
@@ -738,10 +752,13 @@
 }
 .fileOperationsBar{
     position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
+    top: 11px;
+    right: 200px;
+    left: 190px;
     height: 40px;
+    
+    /*border-right: 1px solid #a7a7a7;*/
+    /*border-left: 1px solid #a7a7a7;*/
 }
 .dirShow{
     bottom: 0px;
@@ -759,7 +776,7 @@
     text-align: left;
     float: left;
     cursor: pointer;
-    -webkit-transition: 0.2s ease-in-out;
+    /*-webkit-transition: 0.2s ease-in-out;*/
     font-size: 12px;
     position: relative;
     list-style-type: none;
@@ -770,8 +787,8 @@
 }
 .dirShow li:hover{
     z-index: 2;
-    box-shadow: 0px 0px 5px #B8B8B8;
-    background: whitesmoke;
+    /*box-shadow: 0px 0px 5px #B8B8B8;*/
+    background: rgb(243, 243, 243);
 }
 .dirShow li:active{
     z-index: 1;
@@ -789,7 +806,7 @@
 }
 .dirButtonsLi{
     z-index: 3;
-    border-left: 1px solid #CFCFCF;
+    /*border-left: 1px solid #CFCFCF;*/
     text-align: left;
     float: right;
     cursor: pointer;
@@ -804,8 +821,8 @@
 }
 .dirButtonsLi:hover{
     z-index: 4;
-    box-shadow: 0px 0px 5px #B8B8B8;
-    background: whitesmoke;
+    /*box-shadow: 0px 0px 5px #B8B8B8;*/
+    background: rgb(243, 243, 243);
 }
 .dirButtonsLi:active{
     z-index: 1;
@@ -813,7 +830,8 @@
 }
 .dirButtonsLiAdd{
     z-index: 1;
-    border-left: 1px solid #CFCFCF;
+    border-left: 5px solid #818181;
+    border-right: 5px solid #818181;
     text-align: left;
     float: right;
     cursor: pointer;
@@ -822,10 +840,11 @@
     list-style-type: none;
     padding: 13px;
     height: 14px;
-    box-shadow: inset 0px 0px 4px #D1D1D1;
-    background: whitesmoke;
+    /*box-shadow: inset 0px 0px 4px #D1D1D1;*/
+    background: rgb(243, 243, 243);
     width: 210px;
-    /*overflow: hidden;*/
+    border-radius: 5px;
+    overflow: hidden;
 }
 .AddFileInput{
     border: 0px;
@@ -853,6 +872,27 @@
 .fileIcon{
     position: absolute;
     top: 12px;
+}
+.ico5{
+    position: absolute;
+    top: 12px;
+    width: 20px;
+    height: 20px;
+    background: url('img/doc/user.png');
+}
+.ico4{
+    position: absolute;
+    top: 16px;
+    width: 20px;
+    height: 14px;
+    background: url('img/doc/folder.png');
+}
+.ico3{
+    position: absolute;
+    top: 12px;
+    width: 20px;
+    height: 20px;
+    background: url('img/doc/file.png');
 }
 .notecon{
 	position: absolute;
@@ -1614,5 +1654,194 @@ weis{
     left: 0px;
     right: 0px;
     text-align:center;
+}
+
+.filenameDir:hover {
+    color: #00f;
+    text-decoration:underline;
+    cursor: pointer;
+}
+
+.gearIcon{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 13px;
+    top: 13px;
+    cursor: pointer;
+    opacity: 0.2;
+}
+.gearIcon:hover{
+    opacity: 1;
+}
+.shareIcon{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    right: 56px;
+    top: 13px;
+    cursor: pointer;
+    opacity: 0.2;
+}
+.shareIcon:hover{
+    opacity: 1;
+}
+    
+
+.infoBox {
+    position:fixed;
+    top: 50px;
+    left: 0px;
+    bottom: 0px;
+    width: 190px;
+    padding-top: 90px;
+}
+
+.nameBox {
+    position:absolute;
+    left:20px; 
+    top: 20px; 
+    right: 0px;
+    height: 20px;
+    font-family: Open Sans, Arial;
+    font-size: 20px;
+    border-bottom: 1px solid #a7a7a7;
+    padding-bottom: 20px;
+}
+
+.datachoice {
+    position:absolute;
+    top: 100px;
+    left: 30px;
+    right: 20px;
+    list-style-type: none;
+    font-family: Open Sans, Arial;
+    font-size: 14px;
+}
+
+.datachoice li{
+    margin: 0;
+    padding: 0;
+    -webkit-transition: all 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+.newsBox {
+    position:fixed;
+    top: 60px;
+    right: 10px;
+    width: 180px;;
+    bottom: 10px;
+    background: white;
+    box-shadow: 0 0 2px 2px #e0e0e0;
+    padding-top: 80px;
+}
+
+.news {
+    position:absolute;
+    left:15px; 
+    top: 15px; 
+    right: 15px;
+    height: 20px;
+    font-family: Open Sans, Arial;
+    font-size: 20px;
+    border-bottom: 1px solid #a7a7a7;
+    padding-bottom: 15px;
+    
+}
+
+.userstate {
+    position: relative;
+    top: 3px;
+    left: 20px;
+    width: 150px;
+    height: 5px;
+    background: #E7E7E7;
+    /*border-left: 40px solid #00A3FF;*/
+}
+
+.infoline {
+    position: relative;
+    font-family: Open Sans, Arial;
+    font-size: 13px;
+    left: 20px;
+}
+
+.userstorage {
+    position:absolute;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    width: 20%;
+    background: #00A3FF;
+}
+
+.newsline {
+    position: relative;
+    font-family: Open Sans, Arial;
+    font-size: 13px;
+    left: 15px;
+}
+
+.angularView {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: #f5f5f5;
+    z-index: 9;
+}
+
+.loginwait {
+    position: fixed;
+    width: 300px;
+    height: 100px;
+    z-index: 45;
+    background: #FFFFFF;
+    left: 50%;
+    margin-left: -170px;
+    padding: 20px;
+    top: 50%;
+    text-align: center;
+    margin-top: -70px;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.29);
+    font-family: Open Sans;
+}
+
+.loginoverlay {
+    position:fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: rgba(0, 0, 0, 0.22);
+    z-index: 42;
+}
+
+.standartblack {
+    position:absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 10px;
+    background: #333;
+}
+
+.alertbutton {
+    outline: none;
+    background: #f3f3f3;
+    border: 1px solid #666;
+    cursor: pointer;
+    width: 60px;
+    padding: 8px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.alertbutton:active {
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.alertbutton:hover {
+    background: #eeeeee;
+    border: 1px solid #333;
 }
 

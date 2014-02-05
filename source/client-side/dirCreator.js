@@ -215,6 +215,7 @@ var dirCreator_typ = function dirCreator_typ(){
     };
     
     this.showDir = function(id){
+        uiControl.view('files');
         if(this.dirObject[id]){
             var content = this.dirObject[id].content;
             var contentArray = content.split(';');
@@ -225,7 +226,11 @@ var dirCreator_typ = function dirCreator_typ(){
                     html = html+this.createElement(contentArray[i], name);
                 }
             }
-            document.getElementById('fileListUl').innerHTML = html;
+            if(document.getElementById('fileListUl')){
+                //document.getElementById('fileListUl').innerHTML = html;
+            } else {
+                console.log('Error: Can not load filelist to DOM');
+            }
         } else {
             console.log("Error: Unknown Concept Bug [1] Issue #56");
         }
@@ -240,7 +245,9 @@ var dirCreator_typ = function dirCreator_typ(){
                 name = this.dirObject[id].name;
                 html = this.createFolderElement(id, name)+html;
             }
-            document.getElementById('dirShow').innerHTML = html;
+            if(document.getElementById('fileListUl')){
+                //document.getElementById('dirShow').innerHTML = html;
+            }
         } else {
             console.log("Error: Unknown Concept Bug [2] Issue #56");
         }
@@ -287,7 +294,7 @@ var dirCreator_typ = function dirCreator_typ(){
                 break;
         }
         id = "'"+id+"'";
-        var e = '<li onclick="dirCreator.openFile('+id+');"><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font style="position: relative; left: 30px;">'+name+'</font></li>';
+        var e = '<li><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font class="filenameDir" style="position: relative; left: 30px;" onclick="dirCreator.openFile('+id+');">'+name+'</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>';
         return e;
     };
     
@@ -300,3 +307,8 @@ var dirCreator_typ = function dirCreator_typ(){
 
 var dirCreator = new dirCreator_typ();
 //dirCreator.setDir(testtext);
+
+function OpenInNewTab(){
+  var win=window.open("https://github.com/pragm/pragmnote", '_blank');
+  win.focus();
+}

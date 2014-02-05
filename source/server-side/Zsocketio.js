@@ -133,7 +133,7 @@ server.listen(webSocketsServerPort, function() {
     
 });*/
 
-process.on('uncaughtException', function(err) {
+/*process.on('uncaughtException', function(err) {
   log(' C A U G H T    E X C E P T I O N : ' + err);
    //server.close();
     process.abort();

@@ -60,7 +60,7 @@ var tab_typ = function tab_typ(){
                 var tempId = "'"+this.tabArray[numb]+"'";
                 //var fullDirArray = testDir.split(":");
                 //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
-                var tempName = dirCreator.getName(this.tabArray[numb]);
+                var tempName = data.dirObject[this.tabArray[numb]].name;
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;

@@ -21,6 +21,8 @@
 #       Version/Release...............: 0.5xx
 #
 ******************************************************************************************/
+
+
 var fs = require('fs');
 
 var pfile_typ = function pfile_typ(){
@@ -188,41 +190,49 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.addLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        if(content === ""){
-    	   content = linkID;
-        } else {
-            var contentArr = content.split(";");
-            var vorhanden = false;
-            for(key in contentArr){
-                if(contentArr[key] == linkID){
-                    vorhanden = true;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            if(content === ""){
+               content = linkID;
+            } else {
+                var contentArr = content.split(";");
+                var vorhanden = false;
+                for(key in contentArr){
+                    if(contentArr[key] == linkID){
+                        vorhanden = true;
+                    }
                 }
+                if(!vorhanden){
+                    contentArr.push(linkID);
+                }
+                content = contentArr.join(";");
             }
-            if(!vorhanden){
-                contentArr.push(linkID);
-            }
-	        content = contentArr.join(";");
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:addLink]");
         }
-        this.dirObject[id].content = content;
     };
     
     this.removeLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        var contentArr = content.split(";");
-       
-        var lastkey;
-        for(key in contentArr){
-            if(contentArr[key] == linkID){
-                lastkey = key;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArr = content.split(";");
+           
+            var lastkey;
+            for(key in contentArr){
+                if(contentArr[key] == linkID){
+                    lastkey = key;
+                }
             }
+            
+            contentArr.splice(key, 1);
+            
+            content = contentArr.join(";");
+            
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:removeLink]");
         }
-        
-        contentArr.splice(key, 1);
-        
-	    content = contentArr.join(";");
-        
-        this.dirObject[id].content = content;
     };
     
     this.generateUserFilelist = function(clientID, userID){

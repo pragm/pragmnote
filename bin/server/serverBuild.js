@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.764
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.764 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1012
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1012 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -999,6 +999,9 @@ var error_typ = function error_typ(){
 		case 5:
 			this.text = "Fileserver Problem!";
 			break;
+		case 6:
+			this.text = "ID Zugriff fehlgeschlagen!";
+			break;
 		default:
 			this.text = "Fatalerror";
 			break;
@@ -1031,6 +1034,8 @@ var error = new error_typ();
 #       Version/Release...............: 0.5xx
 #
 ******************************************************************************************/
+
+
 var fs = require('fs');
 
 var pfile_typ = function pfile_typ(){
@@ -1198,41 +1203,49 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.addLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        if(content === ""){
-    	   content = linkID;
-        } else {
-            var contentArr = content.split(";");
-            var vorhanden = false;
-            for(key in contentArr){
-                if(contentArr[key] == linkID){
-                    vorhanden = true;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            if(content === ""){
+               content = linkID;
+            } else {
+                var contentArr = content.split(";");
+                var vorhanden = false;
+                for(key in contentArr){
+                    if(contentArr[key] == linkID){
+                        vorhanden = true;
+                    }
                 }
+                if(!vorhanden){
+                    contentArr.push(linkID);
+                }
+                content = contentArr.join(";");
             }
-            if(!vorhanden){
-                contentArr.push(linkID);
-            }
-	        content = contentArr.join(";");
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:addLink]");
         }
-        this.dirObject[id].content = content;
     };
     
     this.removeLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        var contentArr = content.split(";");
-       
-        var lastkey;
-        for(key in contentArr){
-            if(contentArr[key] == linkID){
-                lastkey = key;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArr = content.split(";");
+           
+            var lastkey;
+            for(key in contentArr){
+                if(contentArr[key] == linkID){
+                    lastkey = key;
+                }
             }
+            
+            contentArr.splice(key, 1);
+            
+            content = contentArr.join(";");
+            
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:removeLink]");
         }
-        
-        contentArr.splice(key, 1);
-        
-	    content = contentArr.join(";");
-        
-        this.dirObject[id].content = content;
     };
     
     this.generateUserFilelist = function(clientID, userID){
@@ -1644,9 +1657,16 @@ var L3_typ = function L3_typ(){
             delete this.users[clientID].files[this.users[clientID]['file']][change[1][key]];
             L2x1.send(clientID, "2000000005", change[1][key]);
         }
-        L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+        //L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+        //setTimeout(function(){
+            L3.clientUpdated(clientID);
+        //}, 1000);
         //this.users[clientID]['files'][this.users[clientID]['file']] = this.files[this.users[clientID]['file']];
     };
+    
+    this.clientUpdated = function(clientID){
+        L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+    }
 
     this.checkID = function (typ, id){
         var lID = strlen(id);
@@ -2006,7 +2026,7 @@ server.listen(webSocketsServerPort, function() {
     
 });*/
 
-process.on('uncaughtException', function(err) {
+/*process.on('uncaughtException', function(err) {
   log(' C A U G H T    E X C E P T I O N : ' + err);
    //server.close();
     process.abort();

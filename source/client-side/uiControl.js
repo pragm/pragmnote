@@ -25,8 +25,10 @@
 
 var uiControl_typ = function global_typ(){
     
+    this.file = false;
+    this.takeFile = false;
     this.loadwait;
-    this.loadtimeout = 100;
+    this.loadtimeout = 200;
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
@@ -35,28 +37,47 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
     
-	this.loadFile = function(id){
+	this.loadFileOld = function(id){
+        this.file = id;
+		this.view('editor');
+        console.log(1);
         tab.fileOpened(id);
 		L3.loadFile(id);
-		this.view('editor');
 	}
+    
+    this.loadFile = function(id){
+        //data.set('loadinginfo', "loading file");
+        this.loadHandler("loading file");
+        this.takeFile = id;
+		this.view('editor');
+        tab.fileOpened(id);
+        L3.loadFileCallback(id, function(){
+            console.log("Callback => LOADED");
+            //data.set('loadinginfo', "");
+            uiControl.loadHandlerFin();
+        });
+    };
 
 	this.unloadFile = function(){
-		L3.unloadFile(L3.file);
-        this.unloadfile = true;
+		L3.unloadFileCallback(L3.file, function(){
+            console.log('Callback => UNLOADED')
+        });
+        uiControl.view('files');
 	}
 
 	this.loadOtherFile = function(id){
-        this.switchfilebool = true;
+        this.loadFile(id);
+        /*this.switchfilebool = true;
         tab.fileOpened(id);
         this.switchfile = id;
-		L3.unloadFile(L3.file);
+        console.log("UNLOADING");
+		L3.unloadFile(L3.file);*/
 	}
 
 	this.resetUI = function(){
 		//document.getElementById("notecon").innerHMTL = global.notecon;
-		document.getElementById("notecon").innerHTML = "";
-		document.getElementById("notecon").innerHTML = global.notecon;
+		//document.getElementById("notecon").innerHTML = "";
+		//document.getElementById("notecon").innerHTML = global.notecon;
 	}
 
 	this.login = function (){
@@ -66,7 +87,7 @@ var uiControl_typ = function global_typ(){
     
         L3.loginDat.userName     = document.getElementById('loginUsername').value;
         L3.loginDat.userPassword = document.getElementById('loginPassword').value;
-        uiControl.loadHandler();
+        //uiControl.loadHandler();
         //L3.loginDat = loginObject;
 		if(L3.firstload){
             //loginObject.legitimationID = data.legitimationID;
@@ -87,7 +108,8 @@ var uiControl_typ = function global_typ(){
             if(data.login.userRight){
                 if(data.login.userRight < 5){
                     if(this.disconnectdata.file && this.disconnectdata.file != ""){
-                        dirCreator.openFile(this.disconnectdata.file);
+                        //dirCreator.openFile(this.disconnectdata.file);
+                        this.loadFile(this.disconnectdata.file);
                     }
                     if(this.lastview && this.lastview != ""){
                         this.view(this.lastview);
@@ -99,52 +121,64 @@ var uiControl_typ = function global_typ(){
 	};
 
 	this.loginBad = function (){
-		alert("Bad Login");
+		uiControl.alert("Bad Login");
         this.loadHandlerFin();
 		this.view('start');
 	};
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, dirCreator.lastDir, type);
+        L3.addFile(name, data.acutalDir, type);
     };
     
-    this.loadHandler = function(){
-        this.loadwait = setTimeout("uiControl.view('load');", this.loadtimeout);
+    this.loadHandler = function(text){
+        this.loadwait = setTimeout("data.set('loadinginfo', '"+text+"');", this.loadtimeout);
     };
     
     this.loadHandlerFin = function(){
         clearTimeout(this.loadwait);
+        data.set('loadinginfo', "");
+    };
+    
+    this.alert = function(text){
+        data.set('alertinfo', text);
     };
 
 	this.view = function (code){
         this.lastview = code;
+            console.log("Viewchange => "+code);
 		switch (code) {
 	        case "start":
-				document.getElementById('noteconBackground').style.display = "none";
+                this.file = false;
+                window.location.href = "#";
+				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
-				document.getElementById('pleasewait').style.display = "none";
-				document.getElementById('fileTabs').style.height = "50px";
+				document.getElementById('pleasewait').style.display = "none";*/
+				document.getElementById('fileTabs').style.height = "0px";
                 document.title = "pragm note";
 				break;
 	        case "files":
-				document.getElementById('noteconBackground').style.display = "";
+                this.file = false;
+                window.location.href = "#files";
+				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note";
 				break;
 	        case "editor":
-				document.getElementById('loginHTML').style.display = "none";
+                window.location.href = "#editor";
+				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "";
-                document.title = dirCreator.getName(L3.file);
+                document.title = data.dirObject[uiControl.takeFile].name;
 	            break;
 	        case "load":
+                //window.location.href = "#loading";
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
-				document.getElementById('pleasewait').style.display = "";
+				//document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
@@ -164,10 +198,10 @@ var uiControl_typ = function global_typ(){
     
     this.disconnect = function(){
         this.disconnectdata.view = this.lastview;
-        this.disconnectdata.file = L3.file;
-        this.disconnectdata.lastDir = dirCreator.lastDir;
-        this.resetUI();
-        this.view('load');
+        this.disconnectdata.file = uiControl.file;
+        this.disconnectdata.lastDir = data.userDir;
+        //this.resetUI();
+        //this.view('load');
     };
 };
 

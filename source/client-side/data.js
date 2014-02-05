@@ -29,21 +29,50 @@ var data_typ = function data_typ(){
 	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
     this.legitimationID = "";
+    this.dirObject;
+    this.userDir = "";
+    this.acutalDir = "";
+    this.callbacks = { };
+    this.loadinginfo = "";
+    this.alertinfo = "";
+    
+    this.databind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.set = function(object, value){
+        this[object] = value;
+        if(this.callbacks[object]){
+            this.callbacks[object](value);
+        }
+    };
+    
+    this.update = function(object){
+        if(this.callbacks[object]){
+            this.callbacks[object](data[object]);
+        }
+    };
     
     this.edited_sync = function(fileID, contentID){
-        var type = contentID.substr(0,3);
-        switch(type){
-            case '100':
-                textbox.setid(contentID, data.files[fileID][contentID]);
-                break;
-            case '103':
-                staticItems.setid(contentID, data.files[fileID][contentID]);
-                break;
+        if(fileID == uiControl.file){
+            var type = contentID.substr(0,3);
+            switch(type){
+                case '100':
+                    textbox.setid(contentID, data.files[fileID][contentID]);
+                    break;
+                case '103':
+                    staticItems.setid(contentID, data.files[fileID][contentID]);
+                    break;
+            }
+        } else {
+            console.log("Error: UI is not in sync with L3");
         }
     };
     
     this.edited_UI = function(contentID){
-        L3.send(contentID);
+        //L3.send(contentID);
+        L3.uiEdit(uiControl.file, contentID);
     };
     
     this.reset = function(){
@@ -62,6 +91,21 @@ var data_typ = function data_typ(){
         delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
+    
+    
+    this.showCache = function(){
+        if(uiControl.file){
+            if(!data.files[uiControl.file]) {
+                data.files[uiControl.file] =  { };
+            } else {
+                for(key in data.files[uiControl.file]){
+                    data.edited_sync(uiControl.file, key);
+                }
+            }
+        } else {
+            console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
     
 };
 var data = new data_typ();
