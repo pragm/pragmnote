@@ -147,7 +147,7 @@ var L3_typ = function L3_typ(){
                 break;
 
             case sID.message:
-                alert(daten);
+                uiControl.alert(daten);
                 break;
 
             case sID.Login:

@@ -34,6 +34,7 @@ var data_typ = function data_typ(){
     this.acutalDir = "";
     this.callbacks = { };
     this.loadinginfo = "";
+    this.alertinfo = "";
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;

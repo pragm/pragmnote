@@ -121,7 +121,7 @@ var uiControl_typ = function global_typ(){
 	};
 
 	this.loginBad = function (){
-		alert("Bad Login");
+		uiControl.alert("Bad Login");
         this.loadHandlerFin();
 		this.view('start');
 	};
@@ -138,6 +138,10 @@ var uiControl_typ = function global_typ(){
     this.loadHandlerFin = function(){
         clearTimeout(this.loadwait);
         data.set('loadinginfo', "");
+    };
+    
+    this.alert = function(text){
+        data.set('alertinfo', text);
     };
 
 	this.view = function (code){
