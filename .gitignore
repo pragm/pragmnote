@@ -1,7 +1,4 @@
-
-bin/server/data/3ngcnefa8u.json
-
-bin/server/data/38f7mn71rp.json
-
-bin/server/data/3ngcnefa8u.json
+bin/client/config.json
+bin/server/config.json
+bin/server/data/DirIndexFile.json
 bin/server/data/3*.json
