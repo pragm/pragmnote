@@ -1,4 +1,4 @@
-var clientversion = "0.2.1016"/******************************************************************************************
+var clientversion = "0.2.1057"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -844,6 +844,10 @@ var pragmApp = angular.module('pragmApp', []);
 				templateUrl : 'templates/fileExplorer.html',
 				controller  : 'filesController'
 			})
+			.when('/crash', {
+				templateUrl : 'templates/crash.html',
+				controller  : 'crashController'
+			})
 			.when('/loading', {
 				templateUrl : 'templates/loading.html',
 				controller  : 'loadingController'
@@ -856,7 +860,10 @@ var pragmApp = angular.module('pragmApp', []);
 		// create a message to display in our view
 		$scope.clientversion = clientversion;
 		$scope.lan = 'cool';
+		//$scope.loadslide = '';
         
+        
+		
         // Wait handler  ------------------------------------------------------
 		$scope.loadinginfo = "";
 		$scope.loadshow = 'none';
@@ -866,6 +873,9 @@ var pragmApp = angular.module('pragmApp', []);
 		      $scope.loadshow = 'none';
             } else {
 		      $scope.loadshow = 'block';
+              //$scope.loadslide = 'width: 100%;';
+                document.getElementById('loadingslide').className = 'loadingslideIN';
+              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
         data.databind('loadinginfo', function(x){
@@ -931,6 +941,7 @@ var pragmApp = angular.module('pragmApp', []);
 		      $scope.loadshow = 'block';
               document.getElementById('fileTabs').style.height = "0px";
               document.getElementById('fileTabs').style.top = "-50px";
+              document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
         data.databind('loadinginfo', function(x){
@@ -1067,6 +1078,7 @@ var pragmApp = angular.module('pragmApp', []);
 		      $scope.loadshow = 'block';
               document.getElementById('fileTabs').style.height = "0px";
               document.getElementById('fileTabs').style.top = "-50px";
+              document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
         data.databind('loadinginfo', function(x){
@@ -1121,6 +1133,18 @@ var pragmApp = angular.module('pragmApp', []);
 	pragmApp.controller('loadingController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.message = 'Please wait us! JK. This is just a demo.';
+	});
+
+	pragmApp.controller('crashController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.crashinfo = 'unknown crash';
+        
+        data.databind('crashinfo', function(x){
+		  $scope.crashinfo = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
 	});
 
     pragmApp.factory('cont', function($rootScope){
@@ -1434,6 +1458,7 @@ var data_typ = function data_typ(){
     this.callbacks = { };
     this.loadinginfo = "";
     this.alertinfo = "";
+    this.crashinfo = "unknown crash";
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -2922,6 +2947,9 @@ var L1_typ = function L1_typ(){
     this.socket;
     this.beforedisconnect = 0;
     this.beforeFile;
+    this.reconnectcounter = 0;
+    this.firstConnection = true;
+    this.firstTimeout;
 	
 	this.send = function(text) {
 		this.socket.send(text);
@@ -2930,6 +2958,11 @@ var L1_typ = function L1_typ(){
         nTime = parseInt(aTime) - parseInt(global.time);
         //console.log("TIME: "+nTime);
 		};
+    
+    this.noServer = function(){
+        uiControl.crash('cannot reach server - reload in 2 seconds');
+        setTimeout('location.reload();', 2000);
+    };
  
 	this.onload = function() {
         data.set('loadinginfo', "connecting to server");
@@ -2939,8 +2972,14 @@ var L1_typ = function L1_typ(){
 		globalEvent.state(2);
         var address = global.get_websocket_server_address();
 		this.Server = new SimplebSocket(address);
-        this.socket = io.connect(address, {'connect timeout': 5000});
+        this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});
+        if(L1.firstConnection){
+            L1.firstTimeout = setTimeout("L1.noServer();", 8000);
+            L1.firstConnection = false;
+        }
 		this.socket.on('connect', function () {
+            clearTimeout(L1.firstTimeout);
+            this.reconnectcounter = 0;
             data.set('loadinginfo', "");
             console.log("open");
 			L1.state = 2;
@@ -2958,7 +2997,9 @@ var L1_typ = function L1_typ(){
 			});
 	 
 		this.socket.on('disconnect', function (msg) {
+            console.log('dissi');
             data.set('loadinginfo', "disconnected [trying to reconnect]");
+            setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT20';", 100);
 			L1.state = 0;
 			globalEvent.state(2);
             uiControl.disconnect();
@@ -2989,6 +3030,36 @@ var L1_typ = function L1_typ(){
 			L2.recieve(msg);
 			//newmsg(msg); //Test UI
 			});
+        
+        this.socket.on('reconnect_failed', function () {
+            console.log('reconnect_failed');
+            uiControl.crash('connection lost - please reload');
+        });
+        
+        this.socket.on('connecting', function () {
+            console.log('connecting');
+        });
+        
+        this.socket.on('connect_failed', function () {
+            console.log('connect_failed');
+        });
+        
+        this.socket.on('error', function () {
+            console.log('error');
+            //uiControl.crash('connection crashed - please reload');
+        });
+        
+        this.socket.on('reconnect', function () {
+            console.log('reconnect');
+        });
+        
+        this.socket.on('reconnecting', function () {
+            console.log('reconnecting');
+            this.reconnectcounter++;
+            if(this.reconnectcounter>9){
+                uiControl.crash('connection lost - please reload');
+            }
+        });
 	     
 		//this.Server.connect();
 		};
@@ -3728,6 +3799,11 @@ var uiControl_typ = function global_typ(){
     this.alert = function(text){
         data.set('alertinfo', text);
     };
+    
+    this.crash = function(text){
+        data.crashinfo = text;
+        this.view("crash");
+    };
 
 	this.view = function (code){
         this.lastview = code;
@@ -3766,6 +3842,14 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
+	            break;
+	        case "crash":
+                window.location.href = "#crash";
+				/*document.getElementById('loginHTML').style.display = "none";
+				document.getElementById('noteconBackground').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
+				document.getElementById('fileTabs').style.height = "0px";
+                document.title = "CRASH - pragm";
 	            break;
             default:
 	            console.log("command '"+code+"' does not exist");

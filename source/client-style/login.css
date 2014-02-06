@@ -74,7 +74,7 @@
 	.alertinput{
 		outline:none;
 		border-radius:3px;
-    	-webkit-border-radius:3px;
+    	border-radius:3px;
     	-moz-border-radius:3px;
 		padding: 6px;
 		background-color: #f3f3f3;
@@ -84,16 +84,16 @@
 		cursor: text;
 		font-size: 14px;
 		font-weight: bold;
-		-webkit-transition: all 0.03s ease-in-out;
+		transition: all 0.03s ease-in-out;
 		}
 	.alertinput:hover{
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 		}
 	.alertinput:focus{
 		background-color: #FFFFFF;
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 	}
 	.loginSubmit{
 		outline:none;
@@ -106,11 +106,11 @@
 		cursor: pointer;
 		font-size: 14px;
 		font-weight: bold;
-		-webkit-transition: all 0.03s ease-in-out;
+		transition: all 0.03s ease-in-out;
 		}
 	.loginSubmit:hover{
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 		}
 	.loginSubmit:focus{
 		background-color: #FFFFFF;
