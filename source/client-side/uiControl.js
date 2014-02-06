@@ -143,6 +143,11 @@ var uiControl_typ = function global_typ(){
     this.alert = function(text){
         data.set('alertinfo', text);
     };
+    
+    this.crash = function(text){
+        data.crashinfo = text;
+        this.view("crash");
+    };
 
 	this.view = function (code){
         this.lastview = code;
@@ -181,6 +186,14 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
+	            break;
+	        case "crash":
+                window.location.href = "#crash";
+				/*document.getElementById('loginHTML').style.display = "none";
+				document.getElementById('noteconBackground').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
+				document.getElementById('fileTabs').style.height = "0px";
+                document.title = "CRASH - pragm";
 	            break;
             default:
 	            console.log("command '"+code+"' does not exist");
