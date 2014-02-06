@@ -1,4 +1,3 @@
 bin/client/config.json
 bin/server/config.json
-bin/server/data/DirIndexFile.json
-bin/server/data/3*.json
+bin/server/data/
