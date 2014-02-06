@@ -1865,6 +1865,7 @@ weis{
     color: #ffffff;
     font-family: fantasy;
     -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
 }
 
 .crashinfo {
