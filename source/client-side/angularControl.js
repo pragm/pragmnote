@@ -21,6 +21,10 @@ var pragmApp = angular.module('pragmApp', []);
 				templateUrl : 'templates/fileExplorer.html',
 				controller  : 'filesController'
 			})
+			.when('/crash', {
+				templateUrl : 'templates/crash.html',
+				controller  : 'crashController'
+			})
 			.when('/loading', {
 				templateUrl : 'templates/loading.html',
 				controller  : 'loadingController'
@@ -33,7 +37,10 @@ var pragmApp = angular.module('pragmApp', []);
 		// create a message to display in our view
 		$scope.clientversion = clientversion;
 		$scope.lan = 'cool';
+		//$scope.loadslide = '';
         
+        
+		
         // Wait handler  ------------------------------------------------------
 		$scope.loadinginfo = "";
 		$scope.loadshow = 'none';
@@ -43,6 +50,9 @@ var pragmApp = angular.module('pragmApp', []);
 		      $scope.loadshow = 'none';
             } else {
 		      $scope.loadshow = 'block';
+              //$scope.loadslide = 'width: 100%;';
+                document.getElementById('loadingslide').className = 'loadingslideIN';
+              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
         data.databind('loadinginfo', function(x){
@@ -75,6 +85,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";                    
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -107,6 +118,7 @@ var pragmApp = angular.module('pragmApp', []);
 		      $scope.loadshow = 'block';
               document.getElementById('fileTabs').style.height = "0px";
               document.getElementById('fileTabs').style.top = "-50px";
+              document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
         data.databind('loadinginfo', function(x){
@@ -143,6 +155,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -242,6 +255,7 @@ var pragmApp = angular.module('pragmApp', []);
 		      $scope.loadshow = 'block';
               document.getElementById('fileTabs').style.height = "0px";
               document.getElementById('fileTabs').style.top = "-50px";
+              document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
         data.databind('loadinginfo', function(x){
@@ -278,6 +292,7 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
@@ -295,6 +310,18 @@ var pragmApp = angular.module('pragmApp', []);
 	pragmApp.controller('loadingController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.message = 'Please wait us! JK. This is just a demo.';
+	});
+
+	pragmApp.controller('crashController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.crashinfo = 'unknown crash';
+        
+        data.databind('crashinfo', function(x){
+		  $scope.crashinfo = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
 	});
 
     pragmApp.factory('cont', function($rootScope){
