@@ -37,6 +37,13 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
     
+    this.deleteButton = function(){
+        for(i in data.selectionarray){
+            console.log("sel"+data.selectionarray[i]);
+            L2.send(sID.deleteFile, data.selectionarray[i]);
+        }
+    };
+    
 	this.loadFileOld = function(id){
         this.file = id;
 		this.view('editor');

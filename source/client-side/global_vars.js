@@ -38,6 +38,8 @@ var global_typ = function global_typ(){
     this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
+    this.ctrl = false;
+    this.shift = false;
     
     this.get_websocket_server_address = function(){
         if(this.config.addressalert){

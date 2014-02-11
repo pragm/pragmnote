@@ -174,6 +174,105 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.mainDir = data.login.userID;
         $scope.dirShow = [ ];
         $scope.superFolder = [ ];
+        $scope.activeObject = {};
+        $scope.activeArray = [];
+        $scope.actactive = "";
+        $scope.inactivetimer;
+        $scope.lastactivate;
+        $scope.activenum = 0;
+        
+        addFile.AddFile = false;
+        addFile.AddFileChoice = false;
+        
+        $scope.getactive = function(key){
+            if($scope.activeArray[key]){
+                return "fileListUlactive";
+            } 
+            return "fileListUlli";
+        }
+        
+        $scope.setactive = function(key){
+            if(!global.ctrl && !global.shift){
+                $scope.lastactivate = null;
+                $scope.lastactivate;
+                $scope.activeArray = null;
+                $scope.activeArray = [];
+            }
+            if($scope.activeArray != [] && global.shift){
+                if($scope.lastactivate){
+                    var i = $scope.getPos(key);
+                    var k = $scope.getPos($scope.lastactivate);
+                    console.log("von "+i+" nach "+k);
+                    if(i>k){
+                        var o = i;
+                        i = k;
+                        k = o;
+                    }
+                    while(i<=k){
+                        console.log("count"+i);
+                        $scope.activeArray[$scope.dirShow[i]] = true;
+                        i++;
+                    }
+                } else {
+                    $scope.activeArray[key] = true;
+                    $scope.lastactivate = key;
+                }
+            }
+            if(!global.shift){
+                if($scope.activeArray[key]){
+                    $scope.activeArray[key] = false;
+                } else {
+                    $scope.activeArray[key] = true;
+                    $scope.lastactivate = key;
+                }
+            }
+            var selectionarray = [];
+            var activecount = 0;
+            for(i in $scope.activeArray){
+                if($scope.activeArray[i] == true){
+                    activecount++;
+                    selectionarray.push(i);
+                }
+            }
+            data.selectionarray = selectionarray;
+            selectionarray = null;
+            $scope.activenum = activecount;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
+        
+        $scope.getPos = function(key){
+            var i = 0;
+            while($scope.dirShow[i] != key && $scope.dirShow.length >= i){
+                i++;
+            }
+            return i;   
+        }
+        
+        $scope.setinactive = function(){
+            if(!global.ctrl && !global.shift){
+                $scope.forceinactiv();
+            }
+        }
+        
+        $scope.forceinactiv = function(){
+            $scope.lastactivate = null;
+            $scope.lastactivate;
+            $scope.activeArray = null;
+            $scope.activeArray = [];
+            var selectionarray = [];
+            var activecount = 0;
+            for(i in $scope.activeArray){
+                if($scope.activeArray[i] == true){
+                    activecount++;
+                    selectionarray.push(i);
+                }
+            }
+            data.selectionarray = selectionarray;
+            selectionarray = null;
+            $scope.activenum = activecount;
+        }
         
         $scope.update = function () {
             var id = $scope.actualDir;
@@ -183,6 +282,7 @@ var pragmApp = angular.module('pragmApp', []);
                 tempdir = [];
             }
             $scope.dirShow = tempdir;
+            console.log($scope.dirShow);
             var temparray = [ ];
             temparray[counter] = id;
             while(id != $scope.mainDir){
@@ -204,6 +304,7 @@ var pragmApp = angular.module('pragmApp', []);
                     uiControl.loadFile(id);
                     break;
                 case "4":
+                    $scope.forceinactiv();
                     $scope.actualDir = id;
                     data.acutalDir = id;
                     $scope.update();
@@ -217,6 +318,7 @@ var pragmApp = angular.module('pragmApp', []);
                     //this.lastDir = id;
                     break;
                 case "5":
+                    $scope.forceinactiv();
                     $scope.actualDir = id;
                     data.acutalDir = id;
                     $scope.update();

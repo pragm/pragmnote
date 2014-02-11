@@ -1,4 +1,4 @@
-var clientversion = "0.2.1113"/******************************************************************************************
+var clientversion = "0.2.1169"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1013,6 +1013,105 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.mainDir = data.login.userID;
         $scope.dirShow = [ ];
         $scope.superFolder = [ ];
+        $scope.activeObject = {};
+        $scope.activeArray = [];
+        $scope.actactive = "";
+        $scope.inactivetimer;
+        $scope.lastactivate;
+        $scope.activenum = 0;
+        
+        addFile.AddFile = false;
+        addFile.AddFileChoice = false;
+        
+        $scope.getactive = function(key){
+            if($scope.activeArray[key]){
+                return "fileListUlactive";
+            } 
+            return "fileListUlli";
+        }
+        
+        $scope.setactive = function(key){
+            if(!global.ctrl && !global.shift){
+                $scope.lastactivate = null;
+                $scope.lastactivate;
+                $scope.activeArray = null;
+                $scope.activeArray = [];
+            }
+            if($scope.activeArray != [] && global.shift){
+                if($scope.lastactivate){
+                    var i = $scope.getPos(key);
+                    var k = $scope.getPos($scope.lastactivate);
+                    console.log("von "+i+" nach "+k);
+                    if(i>k){
+                        var o = i;
+                        i = k;
+                        k = o;
+                    }
+                    while(i<=k){
+                        console.log("count"+i);
+                        $scope.activeArray[$scope.dirShow[i]] = true;
+                        i++;
+                    }
+                } else {
+                    $scope.activeArray[key] = true;
+                    $scope.lastactivate = key;
+                }
+            }
+            if(!global.shift){
+                if($scope.activeArray[key]){
+                    $scope.activeArray[key] = false;
+                } else {
+                    $scope.activeArray[key] = true;
+                    $scope.lastactivate = key;
+                }
+            }
+            var selectionarray = [];
+            var activecount = 0;
+            for(i in $scope.activeArray){
+                if($scope.activeArray[i] == true){
+                    activecount++;
+                    selectionarray.push(i);
+                }
+            }
+            data.selectionarray = selectionarray;
+            selectionarray = null;
+            $scope.activenum = activecount;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
+        
+        $scope.getPos = function(key){
+            var i = 0;
+            while($scope.dirShow[i] != key && $scope.dirShow.length >= i){
+                i++;
+            }
+            return i;   
+        }
+        
+        $scope.setinactive = function(){
+            if(!global.ctrl && !global.shift){
+                $scope.forceinactiv();
+            }
+        }
+        
+        $scope.forceinactiv = function(){
+            $scope.lastactivate = null;
+            $scope.lastactivate;
+            $scope.activeArray = null;
+            $scope.activeArray = [];
+            var selectionarray = [];
+            var activecount = 0;
+            for(i in $scope.activeArray){
+                if($scope.activeArray[i] == true){
+                    activecount++;
+                    selectionarray.push(i);
+                }
+            }
+            data.selectionarray = selectionarray;
+            selectionarray = null;
+            $scope.activenum = activecount;
+        }
         
         $scope.update = function () {
             var id = $scope.actualDir;
@@ -1022,6 +1121,7 @@ var pragmApp = angular.module('pragmApp', []);
                 tempdir = [];
             }
             $scope.dirShow = tempdir;
+            console.log($scope.dirShow);
             var temparray = [ ];
             temparray[counter] = id;
             while(id != $scope.mainDir){
@@ -1043,6 +1143,7 @@ var pragmApp = angular.module('pragmApp', []);
                     uiControl.loadFile(id);
                     break;
                 case "4":
+                    $scope.forceinactiv();
                     $scope.actualDir = id;
                     data.acutalDir = id;
                     $scope.update();
@@ -1056,6 +1157,7 @@ var pragmApp = angular.module('pragmApp', []);
                     //this.lastDir = id;
                     break;
                 case "5":
+                    $scope.forceinactiv();
                     $scope.actualDir = id;
                     data.acutalDir = id;
                     $scope.update();
@@ -1479,6 +1581,7 @@ var data_typ = function data_typ(){
     this.loadinginfo = "";
     this.alertinfo = "";
     this.crashinfo = "unknown crash";
+    this.selectionarray = [ ];
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -2093,6 +2196,30 @@ var globalEvent_typ = function globalEvent_typ(){
 	//   stateupdate();
     //}
     
+    this.keydown = function(event){
+        var key = event.keyCode;
+        switch(key){
+                case 17:
+                    global.ctrl = true;
+                break;
+                case 16:
+                    global.shift = true;                
+                break;
+        }
+    };
+    
+    this.keyup = function(event){
+        var key = event.keyCode;
+        switch(key){
+                case 17:
+                    global.ctrl = false;
+                break;
+                case 16:
+                    global.shift = false;                
+                break;
+        }
+    };
+    
     this.fpsTimer = false;
     this.fpsTimer2 = false;
     this.fpsControl = false;
@@ -2181,6 +2308,8 @@ var globalEvent_typ = function globalEvent_typ(){
 
 var globalEvent = new globalEvent_typ();
 
+window.onkeydown = globalEvent.keydown;
+window.onkeyup = globalEvent.keyup;
 
 /******************************************************************************************
 #
@@ -2222,6 +2351,8 @@ var global_typ = function global_typ(){
     this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
+    this.ctrl = false;
+    this.shift = false;
     
     this.get_websocket_server_address = function(){
         if(this.config.addressalert){
@@ -3719,6 +3850,13 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata = { };
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
+    
+    this.deleteButton = function(){
+        for(i in data.selectionarray){
+            console.log("sel"+data.selectionarray[i]);
+            L2.send(sID.deleteFile, data.selectionarray[i]);
+        }
+    };
     
 	this.loadFileOld = function(id){
         this.file = id;

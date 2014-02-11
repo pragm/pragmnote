@@ -11,7 +11,7 @@
     <div class="loginTop">
         <div class="loginLogo"></div>
     </div>
-<div class="noteconBackground" id="noteconBackground">
+<div class="noteconBackground" id="noteconBackground"><!--ng-mousedown="setinactive();"-->
     <div class="fileListOverlay">
         <div class="infoBox" id="Infobox">
             <div class="nameBox" id="nameBox">Bob King</div>
@@ -44,7 +44,7 @@
             <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}">{{dirObject[id].name}}</li>
         </ul>
         <ul class="dirButtons">
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="alert('out of work - Out of order');" title="delete file (out of work)"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>
             <li class="dirButtonsLi" id="AddFile" title="add file/folder">
                 <nobr>
                     <img src="img/doc/addFile.png" style="margin-top: -3px; opacity: 0.6;">
@@ -57,8 +57,8 @@
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li id="filelistHeadline"><font style="position: relative; left: 30px;">TITLE</font><div class="ownerFile">OWNER</div><div class="lastChange">LAST MODIFIED</div></li>
-        <li ng-repeat="key in dirShow"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}<font class="privateFile">Shared</font></font><div class="ownerFile">{{dirObject[key].owner}}</div><div class="lastChange">{{dirObject[key].lastmodform}}</div><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
+        <li id="filelistHeadline" ng-click="setinactive();"><div class="selectcounter">{{activenum}}</div><font style="position: relative; left: 30px;">TITLE</font><div class="ownerFile">OWNER</div><div class="lastChange">LAST MODIFIED</div></li>
+        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}<font class="privateFile">Shared</font></font><div class="ownerFile">{{dirObject[key].owner}}</div><div class="lastChange">{{dirObject[key].lastmodform}}</div><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
     </ul>
         <div class="fileListCut">
             

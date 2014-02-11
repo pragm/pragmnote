@@ -36,6 +36,7 @@ var data_typ = function data_typ(){
     this.loadinginfo = "";
     this.alertinfo = "";
     this.crashinfo = "unknown crash";
+    this.selectionarray = [ ];
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;

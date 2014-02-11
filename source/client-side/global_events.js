@@ -29,6 +29,30 @@ var globalEvent_typ = function globalEvent_typ(){
 	//   stateupdate();
     //}
     
+    this.keydown = function(event){
+        var key = event.keyCode;
+        switch(key){
+                case 17:
+                    global.ctrl = true;
+                break;
+                case 16:
+                    global.shift = true;                
+                break;
+        }
+    };
+    
+    this.keyup = function(event){
+        var key = event.keyCode;
+        switch(key){
+                case 17:
+                    global.ctrl = false;
+                break;
+                case 16:
+                    global.shift = false;                
+                break;
+        }
+    };
+    
     this.fpsTimer = false;
     this.fpsTimer2 = false;
     this.fpsControl = false;
@@ -117,3 +141,5 @@ var globalEvent_typ = function globalEvent_typ(){
 
 var globalEvent = new globalEvent_typ();
 
+window.onkeydown = globalEvent.keydown;
+window.onkeyup = globalEvent.keyup;

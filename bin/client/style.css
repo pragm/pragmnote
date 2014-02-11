@@ -691,7 +691,7 @@
     /*border-left: 1px solid #a7a7a7;*/
     /*border-right: 1px solid #a7a7a7;*/
 }
-.fileListUl li{
+.fileListUlli{
     text-align: left;
     /*cursor: pointer;*/
     font-size: 12px;
@@ -707,7 +707,7 @@
     border-top: 1px solid transparent;
     /*-webkit-transition: ease-in-out 0.1s;*/
 }
-.fileListUl li:hover{
+.fileListUlli:hover{
     background: white; /*rgba(230, 230, 230, 0.3)*/
     color: black;
     border-bottom: 1px solid #aaa;
@@ -715,15 +715,51 @@
     /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222;*/
     opacity: 1;
 }
-.fileListUl li:active{
+.fileListUlli:active{
+    background: rgba(0, 184, 255, 1);
+    color: white;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
+    opacity: 1;
+}
+.fileListUlli:focus{
     background: rgba(0, 184, 255, 1);
     color: white;
     /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
     opacity: 1;
 }
 .fileListUlactive {
+    text-align: left;
+    /*cursor: pointer;*/
+    font-size: 12px;
+    position: relative;
+    margin-left: -40px;
+    list-style-type: none;
+    border-bottom: 1px solid #eeeeee;
+    font-family: Helvetica;
+    padding: 15px;
+    max-height: 46px;
+    border-top: 1px solid transparent;
+    /*-webkit-transition: ease-in-out 0.1s;*/
     background: rgba(0, 184, 255, 1);
     color: white;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
+    opacity: 1;
+}
+.fileListUlactive:hover{
+    background: rgba(0, 184, 255, 1);
+    color: white;
+    /*background: white; rgba(230, 230, 230, 0.3)
+    color: black;*/
+    border-bottom: 1px solid #aaa;
+    border-top: 1px solid #aaa;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222;*/
+    opacity: 1;
+}
+.fileListUlactive:active{
+    background: rgba(0, 184, 255, 1);
+    color: white;
+    /*background: rgba(0, 184, 255, 1);
+    color: white;*/
     /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
     opacity: 1;
 }
@@ -1971,5 +2007,19 @@ weis{
     top: 15px;
     cursor: pointer;
     opacity: 0.7;    
+}
+
+.selectcounter {
+    position: absolute;
+    top: 14px;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 184, 255, 1);
+    color: white;
+    text-align: center;
+    cursor: pointer;
+}
+.selectcounter:hover{
+    background: #B10000;
 }
 
