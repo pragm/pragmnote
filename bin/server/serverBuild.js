@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1059
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1059 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1113
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1113 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -36,6 +36,22 @@ var date_typ = function date_typ(){
         var StdAusgabe = ((Std < 10) ? "0" + Std : Std);
         var MinAusgabe = ((Min < 10) ? "0" + Min : Min);
         return this.day[now.getDay()]+" "+now.getDate()+"."+this.month[now.getMonth()]+" "+now.getFullYear()+"<br>"+StdAusgabe+":"+MinAusgabe; 
+	};
+    
+    this.showDate = function(timestamp){
+	    var now = new Date();
+	    var fil = new Date(timestamp);
+        var Std = fil.getHours();
+        Std = Std.toString();
+        while(Std.length < 2){Std="0"+Std;}
+        var Min = fil.getMinutes();
+        Min = Min.toString();
+        while(Min.length < 2){Min="0"+Min;}
+        var day = fil.getDate();
+        var mon = fil.getMonth();
+        mon++;
+        var yea = fil.getFullYear();
+        return mon+"/"+day+"/"+yea+" - "+Std+":"+Min; 
 	};
 
 };
@@ -1103,6 +1119,10 @@ var pfile_typ = function pfile_typ(){
             fs.writeFile(global.config.dir+id+'.json', text, function (err) {
                 if (err) {error.report(3, 'tryed to write file: '+file);} else {
                     log("Saved file "+pfile.dir+id+'.json');
+                    if(operation=='file'){
+                        pfile.dirObject[id].lastmod = new Date().getTime();
+                        pfile.writeStr('x', 'dir', 12);
+                    }
                     if(id != this.dirFile){
                         L3.killData(id);
                     }
@@ -1153,6 +1173,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].name = name;
             this.dirObject[id].content = "";
             this.dirObject[id].share = "";
+            this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
         }
         if(type==="p"){
@@ -1166,6 +1187,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].parent = dir;
             this.dirObject[id].name = name;
             this.dirObject[id].share = "";
+            this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
             pfile.writeStr(id, 'newfile', name);
         }

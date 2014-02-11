@@ -1,4 +1,4 @@
-var clientversion = "0.2.1059"/******************************************************************************************
+var clientversion = "0.2.1113"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -34,6 +34,22 @@ var date_typ = function date_typ(){
         var StdAusgabe = ((Std < 10) ? "0" + Std : Std);
         var MinAusgabe = ((Min < 10) ? "0" + Min : Min);
         return this.day[now.getDay()]+" "+now.getDate()+"."+this.month[now.getMonth()]+" "+now.getFullYear()+"<br>"+StdAusgabe+":"+MinAusgabe; 
+	};
+    
+    this.showDate = function(timestamp){
+	    var now = new Date();
+	    var fil = new Date(timestamp);
+        var Std = fil.getHours();
+        Std = Std.toString();
+        while(Std.length < 2){Std="0"+Std;}
+        var Min = fil.getMinutes();
+        Min = Min.toString();
+        while(Min.length < 2){Min="0"+Min;}
+        var day = fil.getDate();
+        var mon = fil.getMonth();
+        mon++;
+        var yea = fil.getFullYear();
+        return mon+"/"+day+"/"+yea+" - "+Std+":"+Min; 
 	};
 
 };
@@ -1001,7 +1017,11 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.update = function () {
             var id = $scope.actualDir;
             var counter = 0;
-            $scope.dirShow = $scope.dirObject[id].content.split(";");
+            var tempdir = $scope.dirObject[id].content.split(";");
+            if(tempdir[0]==""){
+                tempdir = [];
+            }
+            $scope.dirShow = tempdir;
             var temparray = [ ];
             temparray[counter] = id;
             while(id != $scope.mainDir){
@@ -3264,8 +3284,15 @@ var L3_typ = function L3_typ(){
 
         switch(id){
             case sID.fileList:
+                var tempdir = JSON.parse(daten);
+                for(key in tempdir){
+                    console.log("Flist"+key);
+                    if(tempdir[key].lastmod){
+                        tempdir[key].lastmodform = date.showDate(tempdir[key].lastmod);
+                    }
+                }
                 data.fileList = daten;
-                data.set('dirObject', JSON.parse(daten));
+                data.set('dirObject', tempdir);
                 //dirCreator.setDir(daten);
                 console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){

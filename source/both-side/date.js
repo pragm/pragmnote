@@ -35,6 +35,22 @@ var date_typ = function date_typ(){
         var MinAusgabe = ((Min < 10) ? "0" + Min : Min);
         return this.day[now.getDay()]+" "+now.getDate()+"."+this.month[now.getMonth()]+" "+now.getFullYear()+"<br>"+StdAusgabe+":"+MinAusgabe; 
 	};
+    
+    this.showDate = function(timestamp){
+	    var now = new Date();
+	    var fil = new Date(timestamp);
+        var Std = fil.getHours();
+        Std = Std.toString();
+        while(Std.length < 2){Std="0"+Std;}
+        var Min = fil.getMinutes();
+        Min = Min.toString();
+        while(Min.length < 2){Min="0"+Min;}
+        var day = fil.getDate();
+        var mon = fil.getMonth();
+        mon++;
+        var yea = fil.getFullYear();
+        return mon+"/"+day+"/"+yea+" - "+Std+":"+Min; 
+	};
 
 };
 

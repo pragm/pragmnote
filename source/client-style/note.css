@@ -116,18 +116,27 @@
     color: black;
     max-height: 46px;
     opacity: 0.6;
+    border-top: 1px solid transparent;
     /*-webkit-transition: ease-in-out 0.1s;*/
 }
 .fileListUl li:hover{
-    background: rgba(230, 230, 230, 0.3);
+    background: white; /*rgba(230, 230, 230, 0.3)*/
     color: black;
-    box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222;
+    border-bottom: 1px solid #aaa;
+    border-top: 1px solid #aaa;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222;*/
     opacity: 1;
 }
 .fileListUl li:active{
-    background: rgba(230, 230, 230, 0.3);
-    color: black;
-    box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;
+    background: rgba(0, 184, 255, 1);
+    color: white;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
+    opacity: 1;
+}
+.fileListUlactive {
+    background: rgba(0, 184, 255, 1);
+    color: white;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
     opacity: 1;
 }
 .fileListOverlay{
@@ -1320,4 +1329,58 @@ weis{
     background: #09F;
     transition: all 28s linear;
     width: 100%;
+}
+
+#filelistHeadline{
+    text-align: left;
+    /*cursor: pointer;*/
+    font-size: 13px;
+    position: relative;
+    margin-left: -40px;
+    list-style-type: none;
+    border-bottom: 1px solid #bababa;
+    font-family: Open Sans, Arial;
+    font-weight: bold;
+    padding: 15px;
+    color: black;
+    max-height: 46px;
+    opacity: 0.6;
+    /*-webkit-transition: ease-in-out 0.1s;*/
+}
+#filelistHeadline:hover{
+    background: transparent;
+    color: black;
+    box-shadow: none;
+    opacity: 1;
+}
+#filelistHeadline:active{
+    background: transparent;
+    color: black;
+    /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222, inset 0px 0px 6px 0px #222;*/
+    opacity: 1;
+}
+.lastChange {    
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    right: 125px;
+    top: 15px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.privateFile {  
+    opacity: 0.3;
+    margin-left: 7px;
+    font-size: 10px;
+}
+
+.ownerFile {    
+    position: absolute;
+    width: 40px;
+    height: 20px;
+    right: 290px;
+    top: 15px;
+    cursor: pointer;
+    opacity: 0.7;    
 }

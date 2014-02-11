@@ -178,7 +178,11 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.update = function () {
             var id = $scope.actualDir;
             var counter = 0;
-            $scope.dirShow = $scope.dirObject[id].content.split(";");
+            var tempdir = $scope.dirObject[id].content.split(";");
+            if(tempdir[0]==""){
+                tempdir = [];
+            }
+            $scope.dirShow = tempdir;
             var temparray = [ ];
             temparray[counter] = id;
             while(id != $scope.mainDir){

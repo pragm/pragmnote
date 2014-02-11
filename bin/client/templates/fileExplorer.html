@@ -57,7 +57,8 @@
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li ng-repeat="key in dirShow"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
+        <li id="filelistHeadline"><font style="position: relative; left: 30px;">TITLE</font><div class="ownerFile">OWNER</div><div class="lastChange">LAST MODIFIED</div></li>
+        <li ng-repeat="key in dirShow"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}<font class="privateFile">Shared</font></font><div class="ownerFile">{{dirObject[key].owner}}</div><div class="lastChange">{{dirObject[key].lastmodform}}</div><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
     </ul>
         <div class="fileListCut">
             

@@ -99,8 +99,15 @@ var L3_typ = function L3_typ(){
 
         switch(id){
             case sID.fileList:
+                var tempdir = JSON.parse(daten);
+                for(key in tempdir){
+                    console.log("Flist"+key);
+                    if(tempdir[key].lastmod){
+                        tempdir[key].lastmodform = date.showDate(tempdir[key].lastmod);
+                    }
+                }
                 data.fileList = daten;
-                data.set('dirObject', JSON.parse(daten));
+                data.set('dirObject', tempdir);
                 //dirCreator.setDir(daten);
                 console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){

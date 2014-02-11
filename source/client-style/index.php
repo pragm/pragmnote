@@ -30,7 +30,7 @@ $temp = str_replace ("\0","",$temp);
 $temp = str_replace ("\x0B","",$temp);
 ?>
 <!DOCTYPE HTML>
-<html ng-app="pragmApp">
+<html ng-app="pragmApp" id="ng-app">
 <head>
 
 

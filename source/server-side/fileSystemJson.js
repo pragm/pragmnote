@@ -90,6 +90,10 @@ var pfile_typ = function pfile_typ(){
             fs.writeFile(global.config.dir+id+'.json', text, function (err) {
                 if (err) {error.report(3, 'tryed to write file: '+file);} else {
                     log("Saved file "+pfile.dir+id+'.json');
+                    if(operation=='file'){
+                        pfile.dirObject[id].lastmod = new Date().getTime();
+                        pfile.writeStr('x', 'dir', 12);
+                    }
                     if(id != this.dirFile){
                         L3.killData(id);
                     }
@@ -140,6 +144,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].name = name;
             this.dirObject[id].content = "";
             this.dirObject[id].share = "";
+            this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
         }
         if(type==="p"){
@@ -153,6 +158,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].parent = dir;
             this.dirObject[id].name = name;
             this.dirObject[id].share = "";
+            this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
             pfile.writeStr(id, 'newfile', name);
         }
