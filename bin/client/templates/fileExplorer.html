@@ -11,9 +11,9 @@
     <div class="loginTop">
         <div class="loginLogo"></div>
     </div>
-<div class="noteconBackground" id="noteconBackground"><!--ng-mousedown="setinactive();"-->
+<div class="noteconBackground" id="noteconBackground" ng-mouseup="mouseup();" ng-mousemove="mousemove($event);"><!--ng-mousedown="setinactive();"-->
     <div class="fileListOverlay">
-        <div class="infoBox" id="Infobox">
+        <div class="infoBox" id="Infobox" ng-mouseover="mouseout();">
             <div class="nameBox" id="nameBox">Bob King</div>
             
             <div class="infoline" id="infoline">data storage (80% free)</div>
@@ -35,17 +35,17 @@
             </ul>-->
         
         </div>
-        <div class="newsBox" id="newsbox">
+        <div class="newsBox" id="newsbox" ng-mouseover="mouseout();">
             <div class="news" id="news">News</div>
             <div class="newsline" id="newsline">pragm is cool</div>
         </div>
     <div class="fileOperationsBar">
         <ul class="dirShow" id="dirShow">
-            <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}">{{dirObject[id].name}}</li>
+            <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name}}</li>
         </ul>
         <ul class="dirButtons">
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>
-            <li class="dirButtonsLi" id="AddFile" title="add file/folder">
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection" ng-mouseover="mouseover('4DELETED00');"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>
+            <li class="dirButtonsLi" id="AddFile" title="add file/folder" ng-mouseover="mouseout();">
                 <nobr>
                     <img src="img/doc/addFile.png" style="margin-top: -3px; opacity: 0.6;">
                     <div class="AddFileOverlay" onclick="addFile.toggleAddFile();"></div>
@@ -53,15 +53,20 @@
                     <input type="text" class="AddFileInput" id="AddFileInput" onkeydown="addFile.checkEnter();">
                 </nobr>
             </li>
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDir();" title="refresh dir"><img src="img/doc/refresh.png" style="margin-top: -3px; opacity: 0.6;"></li>
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDir();" title="refresh dir" ng-mouseover="mouseout();"><img src="img/doc/refresh.png" style="margin-top: -3px; opacity: 0.6;"></li>
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li id="filelistHeadline" ng-click="setinactive();"><div class="selectcounter">{{activenum}}</div><font style="position: relative; left: 30px;">TITLE</font><div class="ownerFile">OWNER</div><div class="lastChange">LAST MODIFIED</div></li>
-        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}<font class="privateFile">Shared</font></font><div class="ownerFile">{{dirObject[key].owner}}</div><div class="lastChange">{{dirObject[key].lastmodform}}</div><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
+        <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();"><div class="selectcounter">{{activenum}}</div><font style="position: relative; left: 30px;">TITLE</font><div class="ownerFile">OWNER</div><div class="lastChange">LAST MODIFIED</div></li>
+        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);" ng-mousedown="mousedown(key, $event);" ng-mouseover="mouseover(key);"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}<font class="privateFile">Shared</font></font><div class="ownerFile">{{dirObject[key].owner}}</div><div class="lastChange">{{dirObject[key].lastmodform}}</div><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
     </ul>
         <div class="fileListCut">
             
         </div>
     </div>
+    <div class="filemoveShow" style="top: {{elmtop}}px; left: {{elmleft}}px; display: {{elmdisplay}};"><ng-pluralize count="activenum"
+                    when="{'0': 'Nothing selected!',
+                           'one': 'Move 1 file to ',
+                           'other': 'Move {} files to '}">
+      </ng-pluralize>{{moveto}}</div>
 </div>

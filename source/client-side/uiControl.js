@@ -39,7 +39,7 @@ var uiControl_typ = function global_typ(){
     
     this.deleteButton = function(){
         for(i in data.selectionarray){
-            console.log("sel"+data.selectionarray[i]);
+            console.log("DELETE "+data.selectionarray[i]);
             L2.send(sID.deleteFile, data.selectionarray[i]);
         }
     };

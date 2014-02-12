@@ -28,8 +28,13 @@ var globalEvent_typ = function globalEvent_typ(){
     //function update_websocketstate(){
 	//   stateupdate();
     //}
+    this.ctrl = {};
     
-    this.keydown = function(event){
+    this.ctrlbind = function(i, callback){
+        globalEvent.ctrl[i] = callback;
+    };
+    
+    this.keydown = function(event){  // X=88 C=67 V=86 A=65
         var key = event.keyCode;
         switch(key){
                 case 17:
@@ -37,6 +42,34 @@ var globalEvent_typ = function globalEvent_typ(){
                 break;
                 case 16:
                     global.shift = true;                
+                break;
+                case 88:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.X){
+                            globalEvent.ctrl.X();
+                        }
+                    }
+                break;
+                case 86:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.V){
+                            globalEvent.ctrl.V();
+                        }
+                    }
+                break;
+                case 67:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.C){
+                            globalEvent.ctrl.C();
+                        }
+                    }
+                break;
+                case 65:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.A){
+                            globalEvent.ctrl.A();
+                        }
+                    }
                 break;
         }
     };
@@ -51,6 +84,14 @@ var globalEvent_typ = function globalEvent_typ(){
                     global.shift = false;                
                 break;
         }
+    };
+    
+    this.mousedown = function(){
+        global.mousedown = true;
+    };
+    
+    this.mouseup = function(){
+        global.mousedown = false;
     };
     
     this.fpsTimer = false;
@@ -143,3 +184,5 @@ var globalEvent = new globalEvent_typ();
 
 window.onkeydown = globalEvent.keydown;
 window.onkeyup = globalEvent.keyup;
+window.onmousedown = globalEvent.mousedown;
+window.onmouseup = globalEvent.mouseup;

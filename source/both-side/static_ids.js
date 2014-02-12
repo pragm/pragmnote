@@ -43,6 +43,7 @@ var sID_typ = function sID_typ(){
 	this.addFile		   = "2001000002"; //Fügt eine Datei ins Verzeichnis hinzu
 	this.deleteFile		   = "2001000003"; //Löscht eine Datei von ID
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
+	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 
     
     //GET_FROM_SERVER

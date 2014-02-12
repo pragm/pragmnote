@@ -161,9 +161,9 @@
     background: rgba(0, 184, 255, 1);
     color: white;
     /*background: white; rgba(230, 230, 230, 0.3)
-    color: black;*/
+    color: black;
     border-bottom: 1px solid #aaa;
-    border-top: 1px solid #aaa;
+    border-top: 1px solid #aaa;*/
     /*box-shadow: inset 0px 2px 2px -2px #222, inset 0px -2px 2px -2px #222;*/
     opacity: 1;
 }
@@ -1433,4 +1433,14 @@ weis{
 }
 .selectcounter:hover{
     background: #B10000;
+}
+
+.filemoveShow {
+    position: absolute;
+    padding: 5px;
+    background: black;
+    color: white;
+    font-family: Helvetica, Arial;
+    font-size: 11px;
+    z-index: 5;
 }

@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1169
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1169 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1233
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1233 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -717,6 +717,7 @@ var sID_typ = function sID_typ(){
 	this.addFile		   = "2001000002"; //Fügt eine Datei ins Verzeichnis hinzu
 	this.deleteFile		   = "2001000003"; //Löscht eine Datei von ID
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
+	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 
     
     //GET_FROM_SERVER
@@ -1171,7 +1172,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].owner = userID;
             this.dirObject[id].parent = dir;
             this.dirObject[id].name = name;
-            this.dirObject[id].content = "";
+            this.dirObject[id].content = [];
             this.dirObject[id].share = "";
             this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
@@ -1205,7 +1206,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].username = name;
             this.dirObject[id].password = "initial";
             this.dirObject[id].userRight = 3;
-            this.dirObject[id].content = "";
+            this.dirObject[id].content = [];
             this.dirObject[id].share = "";
             this.addLink(dir, id);
         }
@@ -1215,7 +1216,12 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.deleteFile = function (clientID, userID, id){
-        if(userID === "5000000000" || this.dirObject[id].owner === userID){
+        dlog("Deleteclient = "+clientID);
+        dlog("DeleteuserID = "+userID);
+        dlog("Delete    ID = "+id);
+        dlog("Delete Owner = "+this.dirObject[id].owner);
+        if(userID === "5000000000" || this.dirObject[id].owner == userID){
+            dlog("Delete TRUE");
             this.removeLink(this.dirObject[id].parent, id);
             this.dirObject[id].parent = this.deleteDir;
             this.addLink(this.deleteDir, id);
@@ -1224,25 +1230,28 @@ var pfile_typ = function pfile_typ(){
         pfile.writeStr(12, 'dir', 12);
     };
     
+    this.moveFileList = function (clientID, userID, moveObject){
+        for(i in moveObject.files){
+            this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid);
+        }
+        this.generateUserFilelist(clientID, userID);
+        pfile.writeStr(12, 'dir', 12);
+    };
+    
+    this.moveFile = function (clientID, userID, id, toid){
+        if(userID === "5000000000" || this.dirObject[id].owner == userID){
+            this.removeLink(this.dirObject[id].parent, id);
+            this.dirObject[id].parent = toid;
+            this.addLink(toid, id);
+        }
+    };
+    
     this.addLink = function (id, linkID){
         if(this.dirObject[id]){
-            var content = this.dirObject[id].content;
-            if(content === ""){
-               content = linkID;
-            } else {
-                var contentArr = content.split(";");
-                var vorhanden = false;
-                for(key in contentArr){
-                    if(contentArr[key] == linkID){
-                        vorhanden = true;
-                    }
-                }
-                if(!vorhanden){
-                    contentArr.push(linkID);
-                }
-                content = contentArr.join(";");
+            var key = this.dirObject[id].content.indexOf(linkID);
+            if(key == -1){
+                this.dirObject[id].content.push(linkID);
             }
-            this.dirObject[id].content = content;
         } else {
             error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:addLink]");
         }
@@ -1250,21 +1259,8 @@ var pfile_typ = function pfile_typ(){
     
     this.removeLink = function (id, linkID){
         if(this.dirObject[id]){
-            var content = this.dirObject[id].content;
-            var contentArr = content.split(";");
-           
-            var lastkey;
-            for(key in contentArr){
-                if(contentArr[key] == linkID){
-                    lastkey = key;
-                }
-            }
-            
-            contentArr.splice(key, 1);
-            
-            content = contentArr.join(";");
-            
-            this.dirObject[id].content = content;
+            var key = this.dirObject[id].content.indexOf(linkID);
+            this.dirObject[id].content.splice(key, 1);
         } else {
             error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:removeLink]");
         }
@@ -1599,7 +1595,10 @@ var L3_typ = function L3_typ(){
                 break;     
             case sID.deleteFile:
                 pfile.deleteFile(clientID, L3.users[clientID]['userID'], data);
-                break;     
+                break;   
+            case sID.moveFile:
+                pfile.moveFileList(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;       
             default: 
                 error.report(2,"static id $id not given or wrong");
                 break;

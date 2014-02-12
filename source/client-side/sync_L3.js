@@ -101,7 +101,7 @@ var L3_typ = function L3_typ(){
             case sID.fileList:
                 var tempdir = JSON.parse(daten);
                 for(key in tempdir){
-                    console.log("Flist"+key);
+                    //console.log("Flist"+key);
                     if(tempdir[key].lastmod){
                         tempdir[key].lastmodform = date.showDate(tempdir[key].lastmod);
                     }
@@ -309,6 +309,13 @@ var L3_typ = function L3_typ(){
         this.beforeEvent = "refresh";
         uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
+    };
+    
+    this.moveFileList = function(files, toid){
+        var x = {};
+        x.files = files;
+        x.toid = toid;
+        L2.send(sID.moveFile, JSON.stringify(x));
     };
     
      this.reset = function(){

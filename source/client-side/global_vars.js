@@ -40,6 +40,7 @@ var global_typ = function global_typ(){
     this.firstTry = true;
     this.ctrl = false;
     this.shift = false;
+    this.mousedown = false;
     
     this.get_websocket_server_address = function(){
         if(this.config.addressalert){

@@ -1,4 +1,4 @@
-var clientversion = "0.2.1169"/******************************************************************************************
+var clientversion = "0.2.1233"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -715,6 +715,7 @@ var sID_typ = function sID_typ(){
 	this.addFile		   = "2001000002"; //Fügt eine Datei ins Verzeichnis hinzu
 	this.deleteFile		   = "2001000003"; //Löscht eine Datei von ID
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
+	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 
     
     //GET_FROM_SERVER
@@ -884,7 +885,7 @@ var pragmApp = angular.module('pragmApp', []);
 		$scope.loadinginfo = "";
 		$scope.loadshow = 'none';
         $scope.updateLoad = function(){
-            console.log("Update Angular "+$scope.loadinginfo);
+            //console.log("Update Angular "+$scope.loadinginfo);
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
             } else {
@@ -907,7 +908,7 @@ var pragmApp = angular.module('pragmApp', []);
 		$scope.alertinfo = "";
 		$scope.alertshow = 'none';
         $scope.updateAlert = function(){
-            console.log("Update Angular "+$scope.alertinfo);
+            //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
             } else {
@@ -973,7 +974,7 @@ var pragmApp = angular.module('pragmApp', []);
 		$scope.alertinfo = "";
 		$scope.alertshow = 'none';
         $scope.updateAlert = function(){
-            console.log("Update Angular "+$scope.alertinfo);
+            //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
               document.getElementById('fileTabs').style.height = "50px";
@@ -1031,53 +1032,55 @@ var pragmApp = angular.module('pragmApp', []);
         }
         
         $scope.setactive = function(key){
-            if(!global.ctrl && !global.shift){
-                $scope.lastactivate = null;
-                $scope.lastactivate;
-                $scope.activeArray = null;
-                $scope.activeArray = [];
-            }
-            if($scope.activeArray != [] && global.shift){
-                if($scope.lastactivate){
-                    var i = $scope.getPos(key);
-                    var k = $scope.getPos($scope.lastactivate);
-                    console.log("von "+i+" nach "+k);
-                    if(i>k){
-                        var o = i;
-                        i = k;
-                        k = o;
+            if($scope.draganddropactive != true){
+                if(!global.ctrl && !global.shift){
+                    $scope.lastactivate = null;
+                    $scope.lastactivate;
+                    $scope.activeArray = null;
+                    $scope.activeArray = [];
+                }
+                if($scope.activeArray != [] && global.shift){
+                    if($scope.lastactivate){
+                        var i = $scope.getPos(key);
+                        var k = $scope.getPos($scope.lastactivate);
+                        //console.log("von "+i+" nach "+k);
+                        if(i>k){
+                            var o = i;
+                            i = k;
+                            k = o;
+                        }
+                        while(i<=k){
+                            //console.log("count"+i);
+                            $scope.activeArray[$scope.dirShow[i]] = true;
+                            i++;
+                        }
+                    } else {
+                        $scope.activeArray[key] = true;
+                        $scope.lastactivate = key;
                     }
-                    while(i<=k){
-                        console.log("count"+i);
-                        $scope.activeArray[$scope.dirShow[i]] = true;
-                        i++;
+                }
+                if(!global.shift){
+                    if($scope.activeArray[key]){
+                        $scope.activeArray[key] = false;
+                    } else {
+                        $scope.activeArray[key] = true;
+                        $scope.lastactivate = key;
                     }
-                } else {
-                    $scope.activeArray[key] = true;
-                    $scope.lastactivate = key;
                 }
-            }
-            if(!global.shift){
-                if($scope.activeArray[key]){
-                    $scope.activeArray[key] = false;
-                } else {
-                    $scope.activeArray[key] = true;
-                    $scope.lastactivate = key;
+                var selectionarray = [];
+                var activecount = 0;
+                for(i in $scope.activeArray){
+                    if($scope.activeArray[i] == true){
+                        activecount++;
+                        selectionarray.push(i);
+                    }
                 }
-            }
-            var selectionarray = [];
-            var activecount = 0;
-            for(i in $scope.activeArray){
-                if($scope.activeArray[i] == true){
-                    activecount++;
-                    selectionarray.push(i);
+                data.selectionarray = selectionarray;
+                selectionarray = null;
+                $scope.activenum = activecount;
+                if(!$scope.$$phase) {
+                    $scope.$apply();
                 }
-            }
-            data.selectionarray = selectionarray;
-            selectionarray = null;
-            $scope.activenum = activecount;
-            if(!$scope.$$phase) {
-                $scope.$apply();
             }
         }
         
@@ -1111,17 +1114,115 @@ var pragmApp = angular.module('pragmApp', []);
             data.selectionarray = selectionarray;
             selectionarray = null;
             $scope.activenum = activecount;
-        }
+        };
         
+        // Drag and Drop -----------------------------------------------
+        
+        $scope.draganddrop = false;
+        $scope.draganddropactive = false;
+        $scope.elmdisplay  = "none";
+        $scope.moveto  = "none";
+        $scope.movetofile  = "";
+        $scope.elmtop  = 300;
+        $scope.elmleft  = 300;
+        
+        $scope.mousedown = function(key, $event){
+            if($scope.activeArray[key] == true){
+                //$scope.elmtop   = $event.clientY-global.chY;
+                //$scope.elmleft  = $event.clientX;
+                $scope.draganddrop = true;
+                //$scope.elmdisplay = "block";
+            }
+        };
+        
+        $scope.mouseup = function(){
+            if($scope.draganddrop == true && $scope.movetofile != "" && $scope.movetofile != $scope.actualDir){
+                console.log("Move files "+JSON.stringify(data.selectionarray)+" to "+$scope.movetofile);
+                L3.moveFileList(data.selectionarray, $scope.movetofile);
+            }
+            $scope.draganddrop = false;
+            $scope.elmdisplay = "none";
+            $scope.draganddropactive = false;
+        };
+        
+        $scope.mousemove = function($event){
+            if($scope.draganddrop == true){
+                $scope.elmtop   = $event.clientY-global.chY;
+                $scope.elmleft  = $event.clientX+5;
+                $scope.elmdisplay = "block";
+                $scope.draganddropactive = true;
+            }
+        };
+        
+        $scope.mouseover = function(key){
+            if($scope.activeArray[key] == true || key.substr(0,1) == 3){
+                $scope.moveto = "...";
+                $scope.movetofile  = "";
+            } else {
+                if($scope.dirObject[key]){
+                    $scope.moveto = $scope.dirObject[key].name;
+                } else {
+                    if(key == "4DELETED00"){
+                        $scope.moveto = "DELETED";
+                    } else {
+                        $scope.moveto = "NO NAME FOUND";
+                    }
+                }
+                $scope.movetofile  = key;
+            }
+        };
+        
+        $scope.mouseout = function(){
+            $scope.moveto = "...";
+            $scope.movetofile  = "";
+        };
+        
+        
+        // Move / Copy  ---------------------------------------------
+        
+        $scope.moveclipboard;
+        
+        globalEvent.ctrlbind('X', function(){
+            $scope.moveclipboard = data.selectionarray;
+            //data.set('alertinfo', 'Saved to clipboard!');
+        });
+        
+        globalEvent.ctrlbind('V', function(){
+            console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+            L3.moveFileList($scope.moveclipboard, $scope.actualDir);
+        });
+        
+        globalEvent.ctrlbind('A', function(){
+            for(i in $scope.dirShow){
+                $scope.activeArray[$scope.dirShow[i]] = true;
+            }
+            var selectionarray = [];
+            var activecount = 0;
+            for(i in $scope.activeArray){
+                if($scope.activeArray[i] == true){
+                    activecount++;
+                    selectionarray.push(i);
+                }
+            }
+            data.selectionarray = selectionarray;
+            selectionarray = null;
+            $scope.activenum = activecount;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        
+        // Filelist creation --------------------------------------------
         $scope.update = function () {
             var id = $scope.actualDir;
             var counter = 0;
-            var tempdir = $scope.dirObject[id].content.split(";");
+            var tempdir = $scope.dirObject[id].content;
             if(tempdir[0]==""){
                 tempdir = [];
             }
             $scope.dirShow = tempdir;
-            console.log($scope.dirShow);
+            //console.log($scope.dirShow);
             var temparray = [ ];
             temparray[counter] = id;
             while(id != $scope.mainDir){
@@ -1216,7 +1317,7 @@ var pragmApp = angular.module('pragmApp', []);
 		$scope.alertinfo = "";
 		$scope.alertshow = 'none';
         $scope.updateAlert = function(){
-            console.log("Update Angular "+$scope.alertinfo);
+            //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
               document.getElementById('fileTabs').style.height = "";
@@ -1247,8 +1348,8 @@ var pragmApp = angular.module('pragmApp', []);
         
         // Something else -------------------------------------------
         uiControl.file = uiControl.takeFile;
-        console.log("ANGU => L3: "+L3.file);
-        console.log("ANGU => UI: "+uiControl.file);
+        //console.log("ANGU => L3: "+L3.file);
+        //console.log("ANGU => UI: "+uiControl.file);
         data.showCache();
 	});
 
@@ -2195,8 +2296,13 @@ var globalEvent_typ = function globalEvent_typ(){
     //function update_websocketstate(){
 	//   stateupdate();
     //}
+    this.ctrl = {};
     
-    this.keydown = function(event){
+    this.ctrlbind = function(i, callback){
+        globalEvent.ctrl[i] = callback;
+    };
+    
+    this.keydown = function(event){  // X=88 C=67 V=86 A=65
         var key = event.keyCode;
         switch(key){
                 case 17:
@@ -2204,6 +2310,34 @@ var globalEvent_typ = function globalEvent_typ(){
                 break;
                 case 16:
                     global.shift = true;                
+                break;
+                case 88:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.X){
+                            globalEvent.ctrl.X();
+                        }
+                    }
+                break;
+                case 86:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.V){
+                            globalEvent.ctrl.V();
+                        }
+                    }
+                break;
+                case 67:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.C){
+                            globalEvent.ctrl.C();
+                        }
+                    }
+                break;
+                case 65:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.A){
+                            globalEvent.ctrl.A();
+                        }
+                    }
                 break;
         }
     };
@@ -2218,6 +2352,14 @@ var globalEvent_typ = function globalEvent_typ(){
                     global.shift = false;                
                 break;
         }
+    };
+    
+    this.mousedown = function(){
+        global.mousedown = true;
+    };
+    
+    this.mouseup = function(){
+        global.mousedown = false;
     };
     
     this.fpsTimer = false;
@@ -2310,6 +2452,8 @@ var globalEvent = new globalEvent_typ();
 
 window.onkeydown = globalEvent.keydown;
 window.onkeyup = globalEvent.keyup;
+window.onmousedown = globalEvent.mousedown;
+window.onmouseup = globalEvent.mouseup;
 
 /******************************************************************************************
 #
@@ -2353,6 +2497,7 @@ var global_typ = function global_typ(){
     this.firstTry = true;
     this.ctrl = false;
     this.shift = false;
+    this.mousedown = false;
     
     this.get_websocket_server_address = function(){
         if(this.config.addressalert){
@@ -3417,7 +3562,7 @@ var L3_typ = function L3_typ(){
             case sID.fileList:
                 var tempdir = JSON.parse(daten);
                 for(key in tempdir){
-                    console.log("Flist"+key);
+                    //console.log("Flist"+key);
                     if(tempdir[key].lastmod){
                         tempdir[key].lastmodform = date.showDate(tempdir[key].lastmod);
                     }
@@ -3625,6 +3770,13 @@ var L3_typ = function L3_typ(){
         this.beforeEvent = "refresh";
         uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
+    };
+    
+    this.moveFileList = function(files, toid){
+        var x = {};
+        x.files = files;
+        x.toid = toid;
+        L2.send(sID.moveFile, JSON.stringify(x));
     };
     
      this.reset = function(){
@@ -3853,7 +4005,7 @@ var uiControl_typ = function global_typ(){
     
     this.deleteButton = function(){
         for(i in data.selectionarray){
-            console.log("sel"+data.selectionarray[i]);
+            console.log("DELETE "+data.selectionarray[i]);
             L2.send(sID.deleteFile, data.selectionarray[i]);
         }
     };
