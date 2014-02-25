@@ -1,4 +1,4 @@
-var clientversion = "0.2.1233"/******************************************************************************************
+var clientversion = "0.2.1305"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -716,6 +716,7 @@ var sID_typ = function sID_typ(){
 	this.deleteFile		   = "2001000003"; //Löscht eine Datei von ID
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
 	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
+	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
 
     
     //GET_FROM_SERVER
@@ -1126,11 +1127,15 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.elmtop  = 300;
         $scope.elmleft  = 300;
         
+        $scope.clog = function(){
+            //console.log('mousemove cLOG');
+        }
+        
         $scope.mousedown = function(key, $event){
             if($scope.activeArray[key] == true){
                 //$scope.elmtop   = $event.clientY-global.chY;
                 //$scope.elmleft  = $event.clientX;
-                $scope.draganddrop = true;
+                $scope.draganddrop = true;  // INCOMMENT
                 //$scope.elmdisplay = "block";
             }
         };
@@ -1181,18 +1186,43 @@ var pragmApp = angular.module('pragmApp', []);
         // Move / Copy  ---------------------------------------------
         
         $scope.moveclipboard;
+        $scope.cilpboardaction;
         
         globalEvent.ctrlbind('X', function(){
-            $scope.moveclipboard = data.selectionarray;
-            //data.set('alertinfo', 'Saved to clipboard!');
+            if(uiControl.lastview == 'files'){
+                console.log("CRTL+X");
+                $scope.moveclipboard = data.selectionarray;
+                $scope.cilpboardaction = 'move';
+                //data.set('alertinfo', 'Saved to clipboard!');
+            }
+        });
+        
+        globalEvent.ctrlbind('C', function(){
+            if(uiControl.lastview == 'files'){
+                console.log("CRTL+C");
+                $scope.moveclipboard = data.selectionarray;
+                $scope.cilpboardaction = 'copy';
+                //data.set('alertinfo', 'Saved to clipboard!');
+            }
         });
         
         globalEvent.ctrlbind('V', function(){
-            console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
-            L3.moveFileList($scope.moveclipboard, $scope.actualDir);
+            if(uiControl.lastview == 'files'){
+                console.log("CRTL+V");
+                if($scope.cilpboardaction == 'move'){
+                    console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+                    L3.moveFileList($scope.moveclipboard, $scope.actualDir);
+                }
+                if($scope.cilpboardaction == 'copy'){
+                    console.log("Copy files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+                    L3.copyFileList($scope.moveclipboard, $scope.actualDir);
+                }
+                $scope.cilpboardaction = '';
+            }
         });
         
         globalEvent.ctrlbind('A', function(){
+            console.log("CRTL+A");
             for(i in $scope.dirShow){
                 $scope.activeArray[$scope.dirShow[i]] = true;
             }
@@ -1241,6 +1271,7 @@ var pragmApp = angular.module('pragmApp', []);
             switch(id.substr(0,1)){
                 case "3":
                     //Datei Oeffnen
+                    $scope.cilpboardaction = '';
                     uiControl.loadFile(id);
                     break;
                 case "4":
@@ -1279,6 +1310,18 @@ var pragmApp = angular.module('pragmApp', []);
           //console.log("Data: "+JSON.stringify(x));
 		  $scope.dirObject = x;
           $scope.update();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        // Share Popup handler ------------------------------------------
+        
+        $scope.shareshow = 'none';
+        data.databind('shareshow', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.shareshow = x;
+          $scope.updateAlert();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -1683,6 +1726,7 @@ var data_typ = function data_typ(){
     this.alertinfo = "";
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
+    this.shareshow = 'none';
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -3773,10 +3817,33 @@ var L3_typ = function L3_typ(){
     };
     
     this.moveFileList = function(files, toid){
-        var x = {};
-        x.files = files;
-        x.toid = toid;
-        L2.send(sID.moveFile, JSON.stringify(x));
+        var abort = false;
+        var start = toid.substr(0,1);
+        if(files.indexOf(toid) != -1 && (start == '4' || start == '5')){
+            console.log("Move Abort! Not allowed to move folder in itself! Not allowed to move into file!");
+            abort = true;
+        }
+        if(abort==false){
+            var x = {};
+            x.files = files;
+            x.toid = toid;
+            L2.send(sID.moveFile, JSON.stringify(x));
+        }
+    };
+    
+    this.copyFileList = function(files, toid){
+        var abort = false;
+        var start = toid.substr(0,1);
+        if(start != '4' && start != '5'){
+            console.log("Copy Abort! Not allowed to copy into file!");
+            abort = true;
+        }
+        if(abort==false){
+            var x = {};
+            x.files = files;
+            x.toid = toid;
+            L2.send(sID.copyFile, JSON.stringify(x));
+        }
     };
     
      this.reset = function(){

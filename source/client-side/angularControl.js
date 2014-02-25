@@ -286,11 +286,15 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.elmtop  = 300;
         $scope.elmleft  = 300;
         
+        $scope.clog = function(){
+            //console.log('mousemove cLOG');
+        }
+        
         $scope.mousedown = function(key, $event){
             if($scope.activeArray[key] == true){
                 //$scope.elmtop   = $event.clientY-global.chY;
                 //$scope.elmleft  = $event.clientX;
-                $scope.draganddrop = true;
+                $scope.draganddrop = true;  // INCOMMENT
                 //$scope.elmdisplay = "block";
             }
         };
@@ -341,18 +345,43 @@ var pragmApp = angular.module('pragmApp', []);
         // Move / Copy  ---------------------------------------------
         
         $scope.moveclipboard;
+        $scope.cilpboardaction;
         
         globalEvent.ctrlbind('X', function(){
-            $scope.moveclipboard = data.selectionarray;
-            //data.set('alertinfo', 'Saved to clipboard!');
+            if(uiControl.lastview == 'files'){
+                console.log("CRTL+X");
+                $scope.moveclipboard = data.selectionarray;
+                $scope.cilpboardaction = 'move';
+                //data.set('alertinfo', 'Saved to clipboard!');
+            }
+        });
+        
+        globalEvent.ctrlbind('C', function(){
+            if(uiControl.lastview == 'files'){
+                console.log("CRTL+C");
+                $scope.moveclipboard = data.selectionarray;
+                $scope.cilpboardaction = 'copy';
+                //data.set('alertinfo', 'Saved to clipboard!');
+            }
         });
         
         globalEvent.ctrlbind('V', function(){
-            console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
-            L3.moveFileList($scope.moveclipboard, $scope.actualDir);
+            if(uiControl.lastview == 'files'){
+                console.log("CRTL+V");
+                if($scope.cilpboardaction == 'move'){
+                    console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+                    L3.moveFileList($scope.moveclipboard, $scope.actualDir);
+                }
+                if($scope.cilpboardaction == 'copy'){
+                    console.log("Copy files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+                    L3.copyFileList($scope.moveclipboard, $scope.actualDir);
+                }
+                $scope.cilpboardaction = '';
+            }
         });
         
         globalEvent.ctrlbind('A', function(){
+            console.log("CRTL+A");
             for(i in $scope.dirShow){
                 $scope.activeArray[$scope.dirShow[i]] = true;
             }
@@ -401,6 +430,7 @@ var pragmApp = angular.module('pragmApp', []);
             switch(id.substr(0,1)){
                 case "3":
                     //Datei Oeffnen
+                    $scope.cilpboardaction = '';
                     uiControl.loadFile(id);
                     break;
                 case "4":
@@ -439,6 +469,18 @@ var pragmApp = angular.module('pragmApp', []);
           //console.log("Data: "+JSON.stringify(x));
 		  $scope.dirObject = x;
           $scope.update();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        // Share Popup handler ------------------------------------------
+        
+        $scope.shareshow = 'none';
+        data.databind('shareshow', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.shareshow = x;
+          $scope.updateAlert();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }

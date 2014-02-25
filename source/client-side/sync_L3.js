@@ -312,10 +312,33 @@ var L3_typ = function L3_typ(){
     };
     
     this.moveFileList = function(files, toid){
-        var x = {};
-        x.files = files;
-        x.toid = toid;
-        L2.send(sID.moveFile, JSON.stringify(x));
+        var abort = false;
+        var start = toid.substr(0,1);
+        if(files.indexOf(toid) != -1 && (start == '4' || start == '5')){
+            console.log("Move Abort! Not allowed to move folder in itself! Not allowed to move into file!");
+            abort = true;
+        }
+        if(abort==false){
+            var x = {};
+            x.files = files;
+            x.toid = toid;
+            L2.send(sID.moveFile, JSON.stringify(x));
+        }
+    };
+    
+    this.copyFileList = function(files, toid){
+        var abort = false;
+        var start = toid.substr(0,1);
+        if(start != '4' && start != '5'){
+            console.log("Copy Abort! Not allowed to copy into file!");
+            abort = true;
+        }
+        if(abort==false){
+            var x = {};
+            x.files = files;
+            x.toid = toid;
+            L2.send(sID.copyFile, JSON.stringify(x));
+        }
     };
     
      this.reset = function(){
