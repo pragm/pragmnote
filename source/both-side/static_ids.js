@@ -45,6 +45,7 @@ var sID_typ = function sID_typ(){
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
 	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
+    this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
 
     
     //GET_FROM_SERVER

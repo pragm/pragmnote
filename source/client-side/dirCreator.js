@@ -202,6 +202,18 @@ var dirCreator_typ = function dirCreator_typ(){
     this.lastDir = "";
     this.mainDir = "";
     
+    this.searchParent = function(id){
+        for(key in data.dirObject){
+            var first = key.substr(0,1);
+            if(first == "4" || first == "5"){
+                if(data.dirObject[key].content.indexOf(id) != -1){
+                    return key;
+                }
+            }
+        }
+        return false;
+    };
+    
     this.setDir = function(jsontext){
         this.dirObject = JSON.parse(jsontext);
     };

@@ -11,7 +11,37 @@
     </div>
 
     <div class="loginoverlay" style="display:{{shareshow}};">
-        <div class="loginwait">Share Popup<br><br><input class="alertbutton" type="button" value="CLOSE" onclick="data.set('shareshow', 'none');">
+        <div class="sharefield">
+            <div class="sharefieldline">
+                <div class="icon3"></div>
+                <input type="text" class="renameFile" contenteditable="true" title="rename" onclick="this.select();" value="Bob's Testdatei">
+                <input class="alertbutton" id="closeStyle" type="button" value="CLOSE" ng-click="shareclose();">
+                <input class="alertbutton" id="saveStyle" type="button" value="Save" onclick="data.set('shareshow', 'none');">
+                </div>
+            <div class="cutline">
+                Shareing Configuration:
+                <ul class="shareconfigul">
+                    <li id="shareconfighead">
+                        <font class="shareUserId">USER ID</font>
+                        <font class="shareUserName">NAME</font>
+                        <font class="shareUserRights">RIGHTS</font>
+                        <font class="shareUserDelete">DELETE</font>
+                        </li>
+                    <li class="shareconfigulli">
+                        <font class="shareUserId">5f03dk3k34</font>
+                        <font class="shareUserName">Bob King</font>
+                        <font class="shareUserRights"><input class="rangeInput" type="range" min="0" max="2" value="0" step="1"> readonly</font>
+                        <font class="shareUserDelete"><input class="deleteInput" type="button" value="DELETE"></font>
+                    </li>
+                    <li class="shareconfigulli">
+                        <font class="shareUserId">582939cdkf</font>
+                        <font class="shareUserName">Steve Jobs</font>
+                        <font class="shareUserRights"><input class="rangeInput" type="range" min="0" max="2" value="0" step="1"> readonly</font>
+                        <font class="shareUserDelete"><input class="deleteInput" type="button" value="DELETE"></font>
+                    </li>
+                </ul>
+            
+            </div>
         </div>
     </div>
 
@@ -35,7 +65,7 @@
             <div class="infoline" id="infoline">Please help <br>to keep pragm free!</div>
             <input class="infoline" type="button" value="Get Involved" onclick="OpenInNewTab();">
             <div class="infoline" id="infoline">or</div>
-            <input class="infoline" type="button" value="Donate" onclick="alert('out of order');">
+            <input class="infoline" type="button" value="Donate" onclick="data.set('shareshow', true);">
             <!--<ul class="datachoice">
                 <li>files</li>
                 <li>settings</li>
@@ -57,7 +87,7 @@ elmleft             = {{elmleft}}
         </div>
     <div class="fileOperationsBar">
         <ul class="dirShow" id="dirShow">
-            <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name}}</li>
+            <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name || "..."}}</li>
         </ul>
         <ul class="dirButtons">
             <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection" ng-mouseover="mouseover('4DELETED00');"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>

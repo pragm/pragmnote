@@ -341,6 +341,24 @@ var L3_typ = function L3_typ(){
         }
     };
     
+    this.rememberCheckKillLink = {};
+    
+    this.checkKillLink = function(folderID, linkID){
+        var doit = true;
+        if(linkID in this.rememberCheckKillLink) {
+            if(this.rememberCheckKillLink[linkID] == folderID) {
+                //doit = false;
+            }
+        }
+        if(doit){
+            this.rememberCheckKillLink[linkID] = folderID;
+            var x = {};
+            x.folderID = folderID;
+            x.linkID = linkID;
+            L2.send(sID.checkKillLink, JSON.stringify(x));
+        }
+    };
+    
      this.reset = function(){
          data.reset();
          this.beforeEvent = "loadFirst";

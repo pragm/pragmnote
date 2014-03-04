@@ -112,12 +112,10 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.updateLoad = function(){
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
-              document.getElementById('fileTabs').style.height = "50px";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slide10In");
             } else {
 		      $scope.loadshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("slideOut");
               document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
@@ -137,12 +135,10 @@ var pragmApp = angular.module('pragmApp', []);
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
-              document.getElementById('fileTabs').style.height = "50px";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slideOut");
             } else {
 		      $scope.alertshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("slideIn");
             }
         }
         data.databind('alertinfo', function(x){
@@ -404,20 +400,45 @@ var pragmApp = angular.module('pragmApp', []);
         
         // Filelist creation --------------------------------------------
         $scope.update = function () {
+            $scope.forceinactiv();
             var id = $scope.actualDir;
-            var counter = 0;
             var tempdir = $scope.dirObject[id].content;
             if(tempdir[0]==""){
                 tempdir = [];
             }
+            var tempdirX = [];
+            for(i in tempdir){
+                if(!(tempdir[i] in $scope.dirObject)){
+                    tempdirX.push(tempdir[i]);
+                    tempdir.splice(i,1);
+                }
+            }
+            for(i in tempdirX){
+                L3.checkKillLink(id, tempdirX[i]);
+            }
             $scope.dirShow = tempdir;
             //console.log($scope.dirShow);
             var temparray = [ ];
-            temparray[counter] = id;
+            temparray.push(id);
             while(id != $scope.mainDir){
-                id = $scope.dirObject[id].parent;
-                counter++;
-                temparray[counter] = id;
+                if(id in $scope.dirObject){
+                    if($scope.dirObject[id].parent in $scope.dirObject){
+                        id = $scope.dirObject[id].parent;
+                    } else {
+                        id = dirCreator.searchParent(id);
+                        if(!id){
+                            id = $scope.mainDir;
+                        }
+                    }
+                } else {
+                    console.log("Search "+id);
+                    //id = dirCreator.searchParent(id);
+                    console.log("Found  "+id);
+                    if(!id){
+                    //    id = $scope.mainDir;
+                    }
+                }
+                temparray.push(id);
             }
             temparray.reverse();
             $scope.superFolder = null;
@@ -477,10 +498,30 @@ var pragmApp = angular.module('pragmApp', []);
         // Share Popup handler ------------------------------------------
         
         $scope.shareshow = 'none';
+        $scope.shareshowbool = false;
+        
+        $scope.updateShare = function(){
+            //console.log("Update Angular "+$scope.alertinfo);
+            if(!$scope.shareshowbool){
+		      $scope.shareshow = 'none';
+                tab.position("slideOut");
+                console.log("deactivate bboo");
+            } else {
+		      $scope.shareshow = 'block';
+                tab.position("fastIn");
+            }
+        }
+        
+        $scope.shareclose = function(){
+            if(true){
+                data.set('shareshow', false);
+            }
+        };
+        
         data.databind('shareshow', function(x){
           //console.log("Data: "+JSON.stringify(x));
-		  $scope.shareshow = x;
-          $scope.updateAlert();
+          $scope.shareshowbool = x;
+          $scope.updateShare();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -497,12 +538,10 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.updateLoad = function(){
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
-              document.getElementById('fileTabs').style.height = "";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slide10In");
             } else {
 		      $scope.loadshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("fastIn");
               document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
@@ -522,12 +561,10 @@ var pragmApp = angular.module('pragmApp', []);
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
-              document.getElementById('fileTabs').style.height = "";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slideOut");
             } else {
 		      $scope.alertshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("slideIn");
             }
         }
         data.databind('alertinfo', function(x){

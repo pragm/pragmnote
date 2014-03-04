@@ -1,4 +1,4 @@
-var clientversion = "0.2.1305"/******************************************************************************************
+var clientversion = "0.2.1407"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -717,6 +717,7 @@ var sID_typ = function sID_typ(){
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
 	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
+    this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
 
     
     //GET_FROM_SERVER
@@ -953,12 +954,10 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.updateLoad = function(){
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
-              document.getElementById('fileTabs').style.height = "50px";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slide10In");
             } else {
 		      $scope.loadshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("slideOut");
               document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
@@ -978,12 +977,10 @@ var pragmApp = angular.module('pragmApp', []);
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
-              document.getElementById('fileTabs').style.height = "50px";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slideOut");
             } else {
 		      $scope.alertshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("slideIn");
             }
         }
         data.databind('alertinfo', function(x){
@@ -1245,20 +1242,45 @@ var pragmApp = angular.module('pragmApp', []);
         
         // Filelist creation --------------------------------------------
         $scope.update = function () {
+            $scope.forceinactiv();
             var id = $scope.actualDir;
-            var counter = 0;
             var tempdir = $scope.dirObject[id].content;
             if(tempdir[0]==""){
                 tempdir = [];
             }
+            var tempdirX = [];
+            for(i in tempdir){
+                if(!(tempdir[i] in $scope.dirObject)){
+                    tempdirX.push(tempdir[i]);
+                    tempdir.splice(i,1);
+                }
+            }
+            for(i in tempdirX){
+                L3.checkKillLink(id, tempdirX[i]);
+            }
             $scope.dirShow = tempdir;
             //console.log($scope.dirShow);
             var temparray = [ ];
-            temparray[counter] = id;
+            temparray.push(id);
             while(id != $scope.mainDir){
-                id = $scope.dirObject[id].parent;
-                counter++;
-                temparray[counter] = id;
+                if(id in $scope.dirObject){
+                    if($scope.dirObject[id].parent in $scope.dirObject){
+                        id = $scope.dirObject[id].parent;
+                    } else {
+                        id = dirCreator.searchParent(id);
+                        if(!id){
+                            id = $scope.mainDir;
+                        }
+                    }
+                } else {
+                    console.log("Search "+id);
+                    //id = dirCreator.searchParent(id);
+                    console.log("Found  "+id);
+                    if(!id){
+                    //    id = $scope.mainDir;
+                    }
+                }
+                temparray.push(id);
             }
             temparray.reverse();
             $scope.superFolder = null;
@@ -1318,10 +1340,30 @@ var pragmApp = angular.module('pragmApp', []);
         // Share Popup handler ------------------------------------------
         
         $scope.shareshow = 'none';
+        $scope.shareshowbool = false;
+        
+        $scope.updateShare = function(){
+            //console.log("Update Angular "+$scope.alertinfo);
+            if(!$scope.shareshowbool){
+		      $scope.shareshow = 'none';
+                tab.position("slideOut");
+                console.log("deactivate bboo");
+            } else {
+		      $scope.shareshow = 'block';
+                tab.position("fastIn");
+            }
+        }
+        
+        $scope.shareclose = function(){
+            if(true){
+                data.set('shareshow', false);
+            }
+        };
+        
         data.databind('shareshow', function(x){
           //console.log("Data: "+JSON.stringify(x));
-		  $scope.shareshow = x;
-          $scope.updateAlert();
+          $scope.shareshowbool = x;
+          $scope.updateShare();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
@@ -1338,12 +1380,10 @@ var pragmApp = angular.module('pragmApp', []);
         $scope.updateLoad = function(){
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
-              document.getElementById('fileTabs').style.height = "";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slide10In");
             } else {
 		      $scope.loadshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("fastIn");
               document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
@@ -1363,12 +1403,10 @@ var pragmApp = angular.module('pragmApp', []);
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
-              document.getElementById('fileTabs').style.height = "";
-              document.getElementById('fileTabs').style.top = "";
+                tab.position("slideOut");
             } else {
 		      $scope.alertshow = 'block';
-              document.getElementById('fileTabs').style.height = "0px";
-              document.getElementById('fileTabs').style.top = "-50px";
+                tab.position("slideIn");
             }
         }
         data.databind('alertinfo', function(x){
@@ -1726,7 +1764,7 @@ var data_typ = function data_typ(){
     this.alertinfo = "";
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
-    this.shareshow = 'none';
+    this.shareshow = false;
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -2148,6 +2186,18 @@ var dirCreator_typ = function dirCreator_typ(){
     this.dirObject = {};
     this.lastDir = "";
     this.mainDir = "";
+    
+    this.searchParent = function(id){
+        for(key in data.dirObject){
+            var first = key.substr(0,1);
+            if(first == "4" || first == "5"){
+                if(data.dirObject[key].content.indexOf(id) != -1){
+                    return key;
+                }
+            }
+        }
+        return false;
+    };
     
     this.setDir = function(jsontext){
         this.dirObject = JSON.parse(jsontext);
@@ -3846,6 +3896,24 @@ var L3_typ = function L3_typ(){
         }
     };
     
+    this.rememberCheckKillLink = {};
+    
+    this.checkKillLink = function(folderID, linkID){
+        var doit = true;
+        if(linkID in this.rememberCheckKillLink) {
+            if(this.rememberCheckKillLink[linkID] == folderID) {
+                //doit = false;
+            }
+        }
+        if(doit){
+            this.rememberCheckKillLink[linkID] = folderID;
+            var x = {};
+            x.folderID = folderID;
+            x.linkID = linkID;
+            L2.send(sID.checkKillLink, JSON.stringify(x));
+        }
+    };
+    
      this.reset = function(){
          data.reset();
          this.beforeEvent = "loadFirst";
@@ -3956,6 +4024,26 @@ var tab_typ = function tab_typ(){
             document.getElementById('TabActive').id = "";
         }
     }
+    
+    this.position = function(key){
+        switch(key){
+            case "slideOut":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "50px";
+                break;
+            case "slideIn":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "0px";
+                break;
+            case "slide10In":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "";
+                break;
+            case "fastIn":
+                document.getElementById('fileTabs').style.display = "none";
+                break;
+        }
+    };
 }
     
 var tab = new tab_typ();
@@ -4199,7 +4287,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "0px";
+				//document.getElementById('fileTabs').style.height = "0px";
+                tab.position("slideIn");
                 document.title = "pragm note";
 				break;
 	        case "files":
@@ -4208,7 +4297,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "50px";
+                tab.position("slideOut");
+				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note";
 				break;
 	        case "editor":
@@ -4216,7 +4306,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "";
+				//document.getElementById('fileTabs').style.height = "";
+                tab.position("slide10In");
                 document.title = data.dirObject[uiControl.takeFile].name;
 	            break;
 	        case "load":
@@ -4232,7 +4323,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "0px";
+				//document.getElementById('fileTabs').style.height = "0px";
+                tab.position("slideIn");
                 document.title = "CRASH - pragm";
 	            break;
             default:

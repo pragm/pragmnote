@@ -40,34 +40,6 @@ var global_typ = function global_typ(){
 	this.rWrite = 1; // Is able to read/write/rename/move/copy file
 	this.rRead = 2;  // Is able to view/copy file
 	this.rDefault = 3;
-    
-    this.getRights = function(num){
-        var out = { };
-        out.read = false, out.write = false, out.rename = false, out.move = false, out.copy = false, out.perm = false;
-        var bin = num.toString(2);
-        while(bin.length < 6){bin = "0"+bin;}
-        var count = 0;
-        for(i in out){
-            if(bin.substr(count,1) == "1"){
-                out[i] = true;
-            }
-            count++;
-        }
-        return out;
-    };
-    
-    this.setRights = function(out){
-        var bin = num.toString(2);
-        while(bin.length < 6){bin = "0"+bin;}
-        var count = 0;
-        for(i in out){
-            if(bin.substr(count,1) == "1"){
-                out[i] = true;
-            }
-            count++;
-        }
-        return num;
-    };
 
 
     this.firewall = new Array();

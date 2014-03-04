@@ -82,6 +82,26 @@ var tab_typ = function tab_typ(){
             document.getElementById('TabActive').id = "";
         }
     }
+    
+    this.position = function(key){
+        switch(key){
+            case "slideOut":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "50px";
+                break;
+            case "slideIn":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "0px";
+                break;
+            case "slide10In":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "";
+                break;
+            case "fastIn":
+                document.getElementById('fileTabs').style.display = "none";
+                break;
+        }
+    };
 }
     
 var tab = new tab_typ();

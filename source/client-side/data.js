@@ -37,7 +37,7 @@ var data_typ = function data_typ(){
     this.alertinfo = "";
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
-    this.shareshow = 'none';
+    this.shareshow = false;
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;

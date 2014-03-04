@@ -435,3 +435,33 @@
     background: #fff111;
     z-index: 999;
 }
+
+.shareconfigul {
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    right: 20px;
+    left: 20px;
+    top: 60px;
+    bottom: 0px;
+    list-style-type: none;
+    border-top: 1px solid #a7a7a7;
+    margin: 0;
+    padding-top: 20px;
+}
+.shareconfigulli{
+    text-align: left;
+    /*cursor: pointer;*/
+    font-size: 12px;
+    position: relative;
+    margin-left: -40px;
+    list-style-type: none;
+    border-bottom: 1px solid #eeeeee;
+    font-family: Helvetica;
+    padding: 5px;
+    color: black;
+    max-height: 46px;
+    opacity: 0.6;
+    border-top: 1px solid transparent;
+    /*-webkit-transition: ease-in-out 0.1s;*/
+}

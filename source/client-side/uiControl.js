@@ -166,7 +166,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "0px";
+				//document.getElementById('fileTabs').style.height = "0px";
+                tab.position("slideIn");
                 document.title = "pragm note";
 				break;
 	        case "files":
@@ -175,7 +176,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "50px";
+                tab.position("slideOut");
+				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note";
 				break;
 	        case "editor":
@@ -183,7 +185,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "";
+				//document.getElementById('fileTabs').style.height = "";
+                tab.position("slide10In");
                 document.title = data.dirObject[uiControl.takeFile].name;
 	            break;
 	        case "load":
@@ -199,7 +202,8 @@ var uiControl_typ = function global_typ(){
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
-				document.getElementById('fileTabs').style.height = "0px";
+				//document.getElementById('fileTabs').style.height = "0px";
+                tab.position("slideIn");
                 document.title = "CRASH - pragm";
 	            break;
             default:

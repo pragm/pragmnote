@@ -1444,3 +1444,137 @@ weis{
     font-size: 11px;
     z-index: 5;
 }
+
+.sharefield {
+    position: fixed;
+    width: 600px;
+    height: 400px;
+    z-index: 45;
+    background: #FFFFFF;
+    left: 50%;
+    margin-left: -320px;
+    padding: 20px;
+    top: 50%;
+    text-align: left;
+    margin-top: -220px;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.29);
+    font-family: Open Sans;
+}
+
+.icon4{
+    position: absolute;
+    width: 20px;
+    height: 14px;
+    background: url('img/doc/folder.png');
+}
+.icon3{
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: url('img/doc/fileBigger.png');
+}
+
+.renameFile {
+    position: relative;
+    left: 50px;
+    outline: none;
+    padding: 8px;
+    border: 1px solid transparent;
+    font-size: 18px;
+    font-family: Arial;
+    top: -2px;
+    background: transparent;
+}
+
+.renameFile:hover {
+    border-bottom: 1px solid black;
+}
+
+.renameFile:focus {
+    border-bottom: 1px solid #666666;
+}
+
+
+
+.sharefieldline {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    height: 40px;
+    padding: 20px;
+    border-bottom: 1px solid #DADADA;
+    background: #f1f1f1;
+}
+
+.cutline {
+    position: absolute;
+    top: 81px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    padding: 20px;
+    background: #FFFFFF;
+}
+
+
+
+#closeStyle {
+    position: absolute;
+    right: 21px;
+    top: 21px;
+}
+
+#saveStyle {
+    position: absolute;
+    top: 21px;
+    right: 101px;
+    background: #00a700;
+    color: white;    
+}
+
+.rangeInput {
+    width: 50px;
+    height: 9px;
+}
+
+#shareconfighead {
+    text-align: left;
+    /*cursor: pointer;*/
+    font-size: 13px;
+    position: relative;
+    margin-left: -40px;
+    list-style-type: none;
+    border-bottom: 1px solid #bababa;
+    font-family: Open Sans, Arial;
+    font-weight: bold;
+    padding: 5px;
+    color: black;
+    max-height: 46px;
+    opacity: 0.6;
+}
+
+.shareUserId {
+    position: absolute;
+    left: 10px;
+}
+
+.shareUserName {
+    position: absolute;
+    left: 130px;
+}
+
+.shareUserRights {
+    position: inherit;
+    left: 280px;
+}
+
+.shareUserDelete {
+    position: absolute;
+    left: 520px;
+}
+
+.deleteInput {
+    margin-top: -4px;
+    margin-left: 0px;
+}

@@ -57,29 +57,43 @@ var L3_typ = function L3_typ(){
 	};
 
     this.shareContentById = function (clientID, id, data){
+        
+        if(fRights.isUserAllowedTo(this.users[clientID].file, this.users[clientID].userID, 'write')){
+            this.files[this.users[clientID].file][id] = data;
     
-        this.files[this.users[clientID]['file']][id] = data;
-    
-    
-        for(var key in this.users){
-            if(this.users[key]['file'] == this.users[clientID]['file']){
-                this.users[key].files[this.users[key]['file']][id] = data;
-                if(key!=clientID){	
-                    L2x1.send(key, id, data);
+            for(var key in this.users){
+                if(this.users[key].file == this.users[clientID].file){
+                    this.users[key].files[this.users[key].file][id] = data;
+                    if(key!=clientID){	
+                        L2x1.send(key, id, data);
+                    }
                 }
+            }
+        } else {
+            if(id in this.files[this.users[clientID].file]){
+                L2x1.send(clientID, id, this.files[this.users[clientID].file][id]);
+            } else {
+                L2x1.send(clientID, sID.deleteID, id);
             }
         }
     };
 
     this.deleteItemID = function (clientID, id, data){
-        delete this.files[this.users[clientID]['file']][data];
+        
+        if(fRights.isUserAllowedTo(this.users[clientID].file, this.users[clientID].userID, 'write')){
+            delete this.files[this.users[clientID].file][data];
 
-        for(var key in this.users){
-            if(this.users[key]['file'] == this.users[clientID]['file']){
-                delete this.users[key].files[this.users[key]['file']][data];
-                if(key!=clientID){	
-                    L2x1.send(key, id, data);
+            for(var key in this.users){
+                if(this.users[key].file == this.users[clientID].file){
+                    delete this.users[key].files[this.users[key].file][data];
+                    if(key!=clientID){	
+                        L2x1.send(key, id, data);
+                    }
                 }
+            }
+        } else {
+            if(id in this.files[this.users[clientID].file]){
+                L2x1.send(clientID, id, this.files[this.users[clientID].file][id]);
             }
         }
     };
@@ -128,7 +142,10 @@ var L3_typ = function L3_typ(){
                 break;     
             case sID.copyFile:
                 pfile.copyFileList(clientID, L3.users[clientID]['userID'], JSON.parse(data));
-                break;         
+                break;     
+            case sID.checkKillLink:
+                fileSystemControl.checkKillLink(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;          
             default: 
                 error.report(2,"static id $id not given or wrong");
                 break;
@@ -136,8 +153,9 @@ var L3_typ = function L3_typ(){
     };
 
     this.clientName = function (clientID, id, data) {
-        this.users[clientID]['name'] = data;
+        this.users[clientID].name = data;
         this.users[clientID].files = { };
+        //this.users[clientID].fileRights = { };
         this.staticSave[clientID] = { };
         secure.legitimationSet(clientID);
     };
@@ -173,22 +191,29 @@ var L3_typ = function L3_typ(){
         }
     };
 
-    this.switchFile = function (clientID, id, data) {   
-        this.users[clientID]['file'] = data; 
-        if(!(data in this.files)) {
-        this.files[data] = { };
-            // Todo: NEUE JSON DateiSystemcheck
-        pfile.readStr(data, 'file', clientID);
+    this.switchFile = function (clientID, id, data) {
+        //var rights = fRights.getUserFilePermissions(data, this.users[clientID].userID);
+        if(fRights.isUserAllowedTo(data, this.users[clientID].userID, 'read')){
+            //this.users[clientID].fileRights[this.users[clientID].file] = rights;
+
+            this.users[clientID].file = data; 
+            if(!(data in this.files)) {
+            this.files[data] = { };
+                // Todo: NEUE JSON DateiSystemcheck
+            pfile.readStr(data, 'file', clientID);
+            } else {
+                L3.updateUser(clientID);
+            }
         } else {
-            L3.updateUser(clientID);
+            L2x1.send(clientID, sID.message, 'Access Denied!');
         }
     };
 
     this.unloadFile = function (clientID){
-        this.saveFileOP(this.users[clientID]['file']);
-        var tempid = this.users[clientID]['file'];
+        this.saveFileOP(this.users[clientID].file);
+        var tempid = this.users[clientID].file;
         //delete this.users[clientID].files[this.users[clientID]['file']];
-        this.users[clientID]['file'] = "";
+        this.users[clientID].file = "";
         L2x1.send(clientID, sID.fileunloadtrue, tempid);
     };
 
