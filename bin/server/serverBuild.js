@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1407
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1407 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1476
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1476 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -720,6 +720,7 @@ var sID_typ = function sID_typ(){
 	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
     this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
+    this.fileInfo          = "2001000008";
 
     
     //GET_FROM_SERVER
@@ -1076,10 +1077,14 @@ var fRights_typ = function fRights_typ(){
                 return out;
             }
             if(userID in pfile.dirObject[fileID].share){
-                return pfile.dirObject[fileID].share[userID];
+                var out = { };
+                out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                return out;
             }
             if(pfile.guestUser in pfile.dirObject[fileID].share){
-                return pfile.dirObject[fileID].share[this.guestUser];
+                var out = { };
+                out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                return out;
             }
             var out = { };
             out.read = false, out.write = false, out.perm = false;
@@ -1659,6 +1664,17 @@ var pfile_typ = function pfile_typ(){
         return false;
     };
     
+    this.setFileInfo = function(clientID, userID, fileInfo){
+        if(fRights.isUserAllowedTo(fileInfo.id, userID, 'write') && 'name' in fileInfo){
+            this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
+        }
+        if(fRights.isUserAllowedTo(fileInfo.id, userID, 'perm') && 'share' in fileInfo){
+            this.dirObject[fileInfo.id].share = fileInfo.share;
+        }
+        this.generateUserFilelist(clientID, userID);
+        pfile.writeStr(12, 'dir', 12);
+    };
+    
     this.makeid = function (type){
 	   var id = Math.random().toString(36).substring(2,11);
 	   return type+""+id;
@@ -1670,6 +1686,16 @@ var pfile_typ = function pfile_typ(){
             id = this.makeid(type);
         }
         return id;
+    };
+        
+    this.unescape = function(str){
+        while(str[0]==" "){
+            str = str.substr(1);
+        }
+        while(str[str.length-1]==" "){
+            str = str.substr(0,str.length-1);
+        }
+        return str;
     };
 };
 
@@ -1978,6 +2004,9 @@ var L3_typ = function L3_typ(){
                 break;     
             case sID.checkKillLink:
                 fileSystemControl.checkKillLink(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;      
+            case sID.fileInfo:
+                pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;          
             default: 
                 error.report(2,"static id $id not given or wrong");

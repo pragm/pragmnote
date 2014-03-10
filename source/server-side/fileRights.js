@@ -37,10 +37,14 @@ var fRights_typ = function fRights_typ(){
                 return out;
             }
             if(userID in pfile.dirObject[fileID].share){
-                return pfile.dirObject[fileID].share[userID];
+                var out = { };
+                out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                return out;
             }
             if(pfile.guestUser in pfile.dirObject[fileID].share){
-                return pfile.dirObject[fileID].share[this.guestUser];
+                var out = { };
+                out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                return out;
             }
             var out = { };
             out.read = false, out.write = false, out.perm = false;

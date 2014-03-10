@@ -145,6 +145,9 @@ var L3_typ = function L3_typ(){
                 break;     
             case sID.checkKillLink:
                 fileSystemControl.checkKillLink(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;      
+            case sID.fileInfo:
+                pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;          
             default: 
                 error.report(2,"static id $id not given or wrong");

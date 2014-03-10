@@ -536,6 +536,17 @@ var pfile_typ = function pfile_typ(){
         return false;
     };
     
+    this.setFileInfo = function(clientID, userID, fileInfo){
+        if(fRights.isUserAllowedTo(fileInfo.id, userID, 'write') && 'name' in fileInfo){
+            this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
+        }
+        if(fRights.isUserAllowedTo(fileInfo.id, userID, 'perm') && 'share' in fileInfo){
+            this.dirObject[fileInfo.id].share = fileInfo.share;
+        }
+        this.generateUserFilelist(clientID, userID);
+        pfile.writeStr(12, 'dir', 12);
+    };
+    
     this.makeid = function (type){
 	   var id = Math.random().toString(36).substring(2,11);
 	   return type+""+id;
@@ -547,6 +558,16 @@ var pfile_typ = function pfile_typ(){
             id = this.makeid(type);
         }
         return id;
+    };
+        
+    this.unescape = function(str){
+        while(str[0]==" "){
+            str = str.substr(1);
+        }
+        while(str[str.length-1]==" "){
+            str = str.substr(0,str.length-1);
+        }
+        return str;
     };
 };
 

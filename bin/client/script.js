@@ -1,4 +1,4 @@
-var clientversion = "0.2.1407"/******************************************************************************************
+var clientversion = "0.2.1476"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -718,6 +718,7 @@ var sID_typ = function sID_typ(){
 	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
 	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
     this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
+    this.fileInfo          = "2001000008";
 
     
     //GET_FROM_SERVER
@@ -875,26 +876,316 @@ var pragmApp = angular.module('pragmApp', []);
 
 
 	// create the controller and inject Angular's $scope
-	pragmApp.controller('loginController', function($scope) {
-		// create a message to display in our view
-		$scope.clientversion = clientversion;
-		$scope.lan = 'cool';
-		//$scope.loadslide = '';
+	
+
+	
+
+	
+
+	
+
+	
+
+    pragmApp.factory('cont', function($rootScope){
         
-        
+    });
+/*
+    pragmApp.directive('contenteditable', function() {
+    return {
+      restrict: 'A', // only activate on element attribute
+      require: '?ngModel', // get a hold of NgModelController
+      link: function(scope, element, attrs, ngModel) {
+        if(!ngModel) return; // do nothing if no ng-model
+ 
+        // Specify how UI should be updated
+        ngModel.$render = function() {
+          element.html(ngModel.$viewValue || '');
+        };
+ 
+        // Listen for change events to enable binding
+        element.on('blur keyup change', function() {
+          scope.$apply(read);
+            //console.log("change"+read);
+            //data.messages[element] = scope.message;
+        });
+        read(); // initialize
+ 
+        // Write data to the model
+        function read() {
+          var html = element.html();
+          // When we clear the content editable the browser leaves a <br> behind
+          // If strip-br attribute is provided then we strip this out
+          if( attrs.stripBr && html == '<br>' ) {
+            html = '';
+          }
+          ngModel.$setViewValue(html);
+        }
+      }
+    }
+    });*/
+
+    var makeid = function (type){
+	   var id = (Math.random()*100000000000000000);
+	   id = id.toString();
+	   id = id.substring(0,7);
+	   return type+""+id;
+	   };
+
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: check.js
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+
+var check_typ = function check_typ(){
+    
+    this.id = function(typ, id){
+        this.aID = String(id);
+        this.lID = this.aID.length;
+        this.idType = parseInt(this.aID.substr(0, 3));
+        if(this.idType == parseInt(typ) && this.lID == 10){
+            return true;   
+        }
+        return false; 
+    };
+    
+};
+var check = new check_typ();
+
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: colorshemer.js
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+
+var color_typ = function color_typ(){
+    this.colorswitchid = false;
+	this.switchline = 0;
+	this.switchbox = 0;
+	this.switchrect = 0;
+    
+    this.setcolorswitch = function (id){
+	    color.colorswitchid = id;
+        var idstring = id.toString();
+        var type = idstring.substring(0, 3);
+	   
+        switch (type) {
+			    case "100":
+				    //unfocusline();
+				    if(color.switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";}
+				    break;
+			    case "101":
+				    //unfocusline();
+				    if(color.switchrect==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect color";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect border width";}
+                    break;
+                case "102":
+				    if(color.switchline==1){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line width";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line color";}
+				    break;
+			    case "104":
+				    document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Pfeilfarbe";
+				    break;
+			    default:
+				    break;
+		}
+	};
+    
+    this.togglecolor = function (){
+        var idstring = color.colorswitchid.toString();
+        var type = idstring.substring(0, 3);
+	   
+        switch (type) {
+			    case "100":
+				    //unfocusline();
+					if(color.switchbox==0){color.switchbox=1;}else{color.switchbox=0;}
+				    if(color.switchbox==0){
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";
+				    }else{
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";
+				    }
+				    break;
+			    case "101":
+				    //unfocusline();
+					if(color.switchrect==0){color.switchrect=1;}else{color.switchrect=0;}
+				    if(color.switchrect==0){
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect color";
+				    }else{
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect border width";
+				    }
+                    break;
+                case "102":
+					if(color.switchline==0){color.switchline=1;}else{color.switchline=0;}
+				    if(color.switchline==1){
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line width";
+				    }else{
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line color";
+				    }
+				    break;
+			    case "104":
+				    document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Pfeilfarbe";
+				    break;
+			    default:
+				    break;
+		}
+        return false;
+	};
+
+	this.setcolor = function(mycolor){
+		var idstring = color.colorswitchid.toString();
+		var type = idstring.substring(0, 3);
 		
-        // Wait handler  ------------------------------------------------------
+		switch (type) {
+				case "100":
+					if(color.switchbox==0){rich.fontEdit('ForeColor', mycolor);}else{rich.fontEdit('BackColor', mycolor);}
+					break;
+				case "101":
+					if(color.switchrect==0){setdrawrectcolor(colorswitchid, mycolor);}else{alert('not available!');}
+					break;
+				case "102":
+					if(color.switchline==0){setdrawlinecolor(colorswitchid, mycolor);}else{}
+					break;
+				case "104":
+					if(color.switchline==0){setdrawarrowcolor(colorswitchid, mycolor);}else{}
+					break;
+				default:
+					alert('Please chose an object!');
+					break;
+		}
+	};
+};
+/*
+var switchline=0;
+var switchbox=0;
+var switchrect=0;
+
+function makecolorshemer(){
+	var counter = 0;
+	var colorcontent="";
+	while(colorarray2[counter]){
+		colorcontent=colorcontent+'<li unselectable="on" id="color'+counter+'" onclick="setcolor(this.style.background);" style="background: #'+colorarray2[counter]+';"><input type="button" unselectable="on" class="unselectinput"></input></li>';
+		counter++;
+		}
+	colorcontent=colorcontent+'<li unselectable="on" id="color'+counter+'" onclick="setcolor(this.style.background);" style="background: transparent; border: 1px solid black;"><input type="button" unselectable="on" class="unselectinput"></input></li>';
+	document.getElementById('colorshemer').innerHTML = colorcontent;	
+	}
+	
+
+	
+function togglecolor(){
+	var idstring = colorswitchid.toString();
+	var type = idstring.substring(0, 3);
+	
+	switch (type) {
+			case "100":
+				if(switchbox==0){switchbox=1;}else{switchbox=0;}
+				if(switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Schriftfarbe";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Schrifthintergrund";}
+				break;
+			case "101":
+				if(switchrect==0){switchrect=1;}else{switchrect=0;}
+				if(switchrect==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Rechteckfarbe";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Rechteckrahmen";}
+				break;
+			case "102":
+				if(switchline==0){switchline=1;}else{switchline=0;}
+				if(switchline==1){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Liniendicke";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Linienfarbe";}
+				break;
+			case "104":
+				document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Pfeilfarbe";
+				break;
+			default:
+				break;
+	}
+	
+	}
+	
+	
+function setcolor(mycolor){
+	var idstring = colorswitchid.toString();
+	var type = idstring.substring(0, 3);
+	
+	switch (type) {
+			case "100":
+				if(switchbox==0){fontEdit('ForeColor', mycolor);}else{fontEdit('BackColor', mycolor);}
+				break;
+			case "101":
+				if(switchrect==0){setdrawrectcolor(colorswitchid, mycolor);}else{alert('Rahmenfarbe nicht verfuegbar!');}
+				break;
+			case "102":
+				if(switchline==0){setdrawlinecolor(colorswitchid, mycolor);}else{}
+				break;
+			case "104":
+				if(switchline==0){setdrawarrowcolor(colorswitchid, mycolor);}else{}
+				break;
+			default:
+				alert('Bitte waehlen sie ein Objekt aus!');
+				break;
+	}
+	}
+//*/	
+var color = new color_typ();
+
+pragmApp.controller('crashController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.crashinfo = 'unknown crash';
+        
+        data.databind('crashinfo', function(x){
+		  $scope.crashinfo = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+	});
+pragmApp.controller('editorController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.message = 'Contact us! JK. This is just a demo.';
+        
+        // Load -----------------------------------------------
 		$scope.loadinginfo = "";
 		$scope.loadshow = 'none';
         $scope.updateLoad = function(){
-            //console.log("Update Angular "+$scope.loadinginfo);
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
+                tab.position("slide10In");
             } else {
 		      $scope.loadshow = 'block';
-              //$scope.loadslide = 'width: 100%;';
-                document.getElementById('loadingslide').className = 'loadingslideIN';
-              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
+                tab.position("fastIn");
+              document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
         data.databind('loadinginfo', function(x){
@@ -913,8 +1204,10 @@ var pragmApp = angular.module('pragmApp', []);
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
+                tab.position("slideOut");
             } else {
 		      $scope.alertshow = 'block';
+                tab.position("slideIn");
             }
         }
         data.databind('alertinfo', function(x){
@@ -927,25 +1220,21 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
-            data.alertinfo = "";                    
+            data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
         }
-        /*$scope.lol = 'bla';
-        data.databind('messages', function(x){
-          console.log("Data: "+JSON.stringify(x));
-		  $scope.messages = x;
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });*/
-   
+        
+        // Something else -------------------------------------------
+        uiControl.file = uiControl.takeFile;
+        //console.log("ANGU => L3: "+L3.file);
+        //console.log("ANGU => UI: "+uiControl.file);
+        data.showCache();
 	});
-
-	pragmApp.controller('filesController', function($scope) {
+pragmApp.controller('filesController', function($scope) {
 		$scope.lan = 'cool';
         
         // Load Handler ----------------------------
@@ -1341,6 +1630,22 @@ var pragmApp = angular.module('pragmApp', []);
         
         $scope.shareshow = 'none';
         $scope.shareshowbool = false;
+        $scope.filedata = {};
+        $scope.sharedata = [];
+        $scope.fileinfoid = '3e9qk7srti';
+        $scope.filedata = data.dirObject[$scope.fileinfoid];
+        $scope.rightinfo = ['readonly', 'write', 'admin'];
+        $scope.addvalue = 0;
+        $scope.addname = "no name";
+    
+        $scope.loadfileshare = function(){
+            $scope.sharedata = null;
+            $scope.sharedata = [];
+            for(key in $scope.filedata.share){
+                $scope.sharedata.push({"id": key, "value": $scope.filedata.share[key]});
+            }
+            console.log(JSON.stringify($scope.sharedata));
+        };
         
         $scope.updateShare = function(){
             //console.log("Update Angular "+$scope.alertinfo);
@@ -1368,23 +1673,74 @@ var pragmApp = angular.module('pragmApp', []);
                 $scope.$apply();
             }
         });
-	});
+    
 
-	pragmApp.controller('editorController', function($scope) {
-		$scope.lan = 'cool';
-		$scope.message = 'Contact us! JK. This is just a demo.';
+        $scope.shareUpdater = function(){
+            var out = {};
+            for(key in $scope.sharedata){
+                if($scope.sharedata[key].id == "5GUESTUSER" && $scope.sharedata[key].value > 1){
+                    $scope.sharedata[key].value = 1;
+                    uiControl.alert("Guest can not be admin!");
+                }
+                out[$scope.sharedata[key].id] = $scope.sharedata[key].value;
+                
+                console.log("KEY=>"+key);
+            };
+            console.log(JSON.stringify($scope.sharedata));
+            console.log(JSON.stringify(out));
+            $scope.filedata.share = out;
+            L3.setFileInfo('share', $scope.fileinfoid, out);
+        };
+    
+        $scope.pushsharedata =  function(){
+            if($scope.addname.length == 10 && $scope.addname.substr(0,1) == "5"){
+                if($scope.addname == "5GUESTUSER" && $scope.addvalue > 1){
+                    $scope.addvalue = 1;
+                    uiControl.alert("Guest can not be admin!");
+                }
+                $scope.filedata.share[$scope.addname] = $scope.addvalue;
+                $scope.loadfileshare();
+                L3.setFileInfo('share', $scope.fileinfoid, $scope.filedata.share);
+            } else {
+                uiControl.alert("ID '"+$scope.addname+"' is invalid!");
+            }
+        };
         
-        // Load -----------------------------------------------
+        $scope.changeName = function(){
+            L3.setFileInfo('name', $scope.fileinfoid, $scope.filedata.name);
+        };
+        
+        $scope.deleteshare = function(index){
+            $scope.sharedata.splice(index,1);
+            $scope.shareUpdater();
+        };
+        
+        $scope.loadfileshare();
+	});
+pragmApp.controller('loadingController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.message = 'Please wait us! JK. This is just a demo.';
+	});
+pragmApp.controller('loginController', function($scope) {
+		// create a message to display in our view
+		$scope.clientversion = clientversion;
+		$scope.lan = 'cool';
+		//$scope.loadslide = '';
+        
+        
+		
+        // Wait handler  ------------------------------------------------------
 		$scope.loadinginfo = "";
 		$scope.loadshow = 'none';
         $scope.updateLoad = function(){
+            //console.log("Update Angular "+$scope.loadinginfo);
             if($scope.loadinginfo==""){
 		      $scope.loadshow = 'none';
-                tab.position("slide10In");
             } else {
 		      $scope.loadshow = 'block';
-                tab.position("fastIn");
-              document.getElementById('loadingslide').className = 'loadingslideIN';
+              //$scope.loadslide = 'width: 100%;';
+                document.getElementById('loadingslide').className = 'loadingslideIN';
+              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
         data.databind('loadinginfo', function(x){
@@ -1403,10 +1759,8 @@ var pragmApp = angular.module('pragmApp', []);
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
-                tab.position("slideOut");
             } else {
 		      $scope.alertshow = 'block';
-                tab.position("slideIn");
             }
         }
         data.databind('alertinfo', function(x){
@@ -1419,312 +1773,23 @@ var pragmApp = angular.module('pragmApp', []);
         });
         
         $scope.unalert = function(){
-            data.alertinfo = "";
+            data.alertinfo = "";                    
             $scope.alertinfo = "";
             $scope.updateAlert();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
         }
-        
-        // Something else -------------------------------------------
-        uiControl.file = uiControl.takeFile;
-        //console.log("ANGU => L3: "+L3.file);
-        //console.log("ANGU => UI: "+uiControl.file);
-        data.showCache();
-	});
-
-	pragmApp.controller('loadingController', function($scope) {
-		$scope.lan = 'cool';
-		$scope.message = 'Please wait us! JK. This is just a demo.';
-	});
-
-	pragmApp.controller('crashController', function($scope) {
-		$scope.lan = 'cool';
-		$scope.crashinfo = 'unknown crash';
-        
-        data.databind('crashinfo', function(x){
-		  $scope.crashinfo = x;
+        /*$scope.lol = 'bla';
+        data.databind('messages', function(x){
+          console.log("Data: "+JSON.stringify(x));
+		  $scope.messages = x;
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
-        });
+        });*/
+   
 	});
-
-    pragmApp.factory('cont', function($rootScope){
-        
-    });
-
-    pragmApp.directive('contenteditable', function() {
-    return {
-      restrict: 'A', // only activate on element attribute
-      require: '?ngModel', // get a hold of NgModelController
-      link: function(scope, element, attrs, ngModel) {
-        if(!ngModel) return; // do nothing if no ng-model
- 
-        // Specify how UI should be updated
-        ngModel.$render = function() {
-          element.html(ngModel.$viewValue || '');
-        };
- 
-        // Listen for change events to enable binding
-        element.on('blur keyup change', function() {
-          scope.$apply(read);
-            //console.log("change"+read);
-            //data.messages[element] = scope.message;
-        });
-        read(); // initialize
- 
-        // Write data to the model
-        function read() {
-          var html = element.html();
-          // When we clear the content editable the browser leaves a <br> behind
-          // If strip-br attribute is provided then we strip this out
-          if( attrs.stripBr && html == '<br>' ) {
-            html = '';
-          }
-          ngModel.$setViewValue(html);
-        }
-      }
-    }
-    });
-
-    var makeid = function (type){
-	   var id = (Math.random()*100000000000000000);
-	   id = id.toString();
-	   id = id.substring(0,7);
-	   return type+""+id;
-	   };
-
-/******************************************************************************************
-#
-#       Copyright 2014 Dustin Robert Hoffner
-#
-#       Licensed under the Apache License, Version 2.0 (the "License");
-#       you may not use this file except in compliance with the License.
-#       You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#       Unless required by applicable law or agreed to in writing, software
-#       distributed under the License is distributed on an "AS IS" BASIS,
-#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#       See the License for the specific language governing permissions and
-#       limitations under the License.
-#       
-#       Projectname...................: pragm
-#
-#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
-#       Filename......................: check.js
-#       Version/Release...............: 0.5xx
-#
-******************************************************************************************/
-
-
-var check_typ = function check_typ(){
-    
-    this.id = function(typ, id){
-        this.aID = String(id);
-        this.lID = this.aID.length;
-        this.idType = parseInt(this.aID.substr(0, 3));
-        if(this.idType == parseInt(typ) && this.lID == 10){
-            return true;   
-        }
-        return false; 
-    };
-    
-};
-var check = new check_typ();
-
-/******************************************************************************************
-#
-#       Copyright 2014 Dustin Robert Hoffner
-#
-#       Licensed under the Apache License, Version 2.0 (the "License");
-#       you may not use this file except in compliance with the License.
-#       You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#       Unless required by applicable law or agreed to in writing, software
-#       distributed under the License is distributed on an "AS IS" BASIS,
-#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#       See the License for the specific language governing permissions and
-#       limitations under the License.
-#       
-#       Projectname...................: pragm
-#
-#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
-#       Filename......................: colorshemer.js
-#       Version/Release...............: 0.5xx
-#
-******************************************************************************************/
-
-
-var color_typ = function color_typ(){
-    this.colorswitchid = false;
-	this.switchline = 0;
-	this.switchbox = 0;
-	this.switchrect = 0;
-    
-    this.setcolorswitch = function (id){
-	    color.colorswitchid = id;
-        var idstring = id.toString();
-        var type = idstring.substring(0, 3);
-	   
-        switch (type) {
-			    case "100":
-				    //unfocusline();
-				    if(color.switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";}
-				    break;
-			    case "101":
-				    //unfocusline();
-				    if(color.switchrect==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect color";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect border width";}
-                    break;
-                case "102":
-				    if(color.switchline==1){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line width";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line color";}
-				    break;
-			    case "104":
-				    document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Pfeilfarbe";
-				    break;
-			    default:
-				    break;
-		}
-	};
-    
-    this.togglecolor = function (){
-        var idstring = color.colorswitchid.toString();
-        var type = idstring.substring(0, 3);
-	   
-        switch (type) {
-			    case "100":
-				    //unfocusline();
-					if(color.switchbox==0){color.switchbox=1;}else{color.switchbox=0;}
-				    if(color.switchbox==0){
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";
-				    }else{
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";
-				    }
-				    break;
-			    case "101":
-				    //unfocusline();
-					if(color.switchrect==0){color.switchrect=1;}else{color.switchrect=0;}
-				    if(color.switchrect==0){
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect color";
-				    }else{
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>rect border width";
-				    }
-                    break;
-                case "102":
-					if(color.switchline==0){color.switchline=1;}else{color.switchline=0;}
-				    if(color.switchline==1){
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line width";
-				    }else{
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>line color";
-				    }
-				    break;
-			    case "104":
-				    document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Pfeilfarbe";
-				    break;
-			    default:
-				    break;
-		}
-        return false;
-	};
-
-	this.setcolor = function(mycolor){
-		var idstring = color.colorswitchid.toString();
-		var type = idstring.substring(0, 3);
-		
-		switch (type) {
-				case "100":
-					if(color.switchbox==0){rich.fontEdit('ForeColor', mycolor);}else{rich.fontEdit('BackColor', mycolor);}
-					break;
-				case "101":
-					if(color.switchrect==0){setdrawrectcolor(colorswitchid, mycolor);}else{alert('not available!');}
-					break;
-				case "102":
-					if(color.switchline==0){setdrawlinecolor(colorswitchid, mycolor);}else{}
-					break;
-				case "104":
-					if(color.switchline==0){setdrawarrowcolor(colorswitchid, mycolor);}else{}
-					break;
-				default:
-					alert('Please chose an object!');
-					break;
-		}
-	};
-};
-/*
-var switchline=0;
-var switchbox=0;
-var switchrect=0;
-
-function makecolorshemer(){
-	var counter = 0;
-	var colorcontent="";
-	while(colorarray2[counter]){
-		colorcontent=colorcontent+'<li unselectable="on" id="color'+counter+'" onclick="setcolor(this.style.background);" style="background: #'+colorarray2[counter]+';"><input type="button" unselectable="on" class="unselectinput"></input></li>';
-		counter++;
-		}
-	colorcontent=colorcontent+'<li unselectable="on" id="color'+counter+'" onclick="setcolor(this.style.background);" style="background: transparent; border: 1px solid black;"><input type="button" unselectable="on" class="unselectinput"></input></li>';
-	document.getElementById('colorshemer').innerHTML = colorcontent;	
-	}
-	
-
-	
-function togglecolor(){
-	var idstring = colorswitchid.toString();
-	var type = idstring.substring(0, 3);
-	
-	switch (type) {
-			case "100":
-				if(switchbox==0){switchbox=1;}else{switchbox=0;}
-				if(switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Schriftfarbe";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Schrifthintergrund";}
-				break;
-			case "101":
-				if(switchrect==0){switchrect=1;}else{switchrect=0;}
-				if(switchrect==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Rechteckfarbe";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Rechteckrahmen";}
-				break;
-			case "102":
-				if(switchline==0){switchline=1;}else{switchline=0;}
-				if(switchline==1){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Liniendicke";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Linienfarbe";}
-				break;
-			case "104":
-				document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>Pfeilfarbe";
-				break;
-			default:
-				break;
-	}
-	
-	}
-	
-	
-function setcolor(mycolor){
-	var idstring = colorswitchid.toString();
-	var type = idstring.substring(0, 3);
-	
-	switch (type) {
-			case "100":
-				if(switchbox==0){fontEdit('ForeColor', mycolor);}else{fontEdit('BackColor', mycolor);}
-				break;
-			case "101":
-				if(switchrect==0){setdrawrectcolor(colorswitchid, mycolor);}else{alert('Rahmenfarbe nicht verfuegbar!');}
-				break;
-			case "102":
-				if(switchline==0){setdrawlinecolor(colorswitchid, mycolor);}else{}
-				break;
-			case "104":
-				if(switchline==0){setdrawarrowcolor(colorswitchid, mycolor);}else{}
-				break;
-			default:
-				alert('Bitte waehlen sie ein Objekt aus!');
-				break;
-	}
-	}
-//*/	
-var color = new color_typ();
-
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -3912,6 +3977,13 @@ var L3_typ = function L3_typ(){
             x.linkID = linkID;
             L2.send(sID.checkKillLink, JSON.stringify(x));
         }
+    };
+    
+    this.setFileInfo = function(job, id, data){
+        var sendinfo = {};
+        sendinfo[job] = data;
+        sendinfo.id = id;
+        L2.send(sID.fileInfo, JSON.stringify(sendinfo));
     };
     
      this.reset = function(){

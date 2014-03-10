@@ -359,6 +359,13 @@ var L3_typ = function L3_typ(){
         }
     };
     
+    this.setFileInfo = function(job, id, data){
+        var sendinfo = {};
+        sendinfo[job] = data;
+        sendinfo.id = id;
+        L2.send(sID.fileInfo, JSON.stringify(sendinfo));
+    };
+    
      this.reset = function(){
          data.reset();
          this.beforeEvent = "loadFirst";

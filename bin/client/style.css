@@ -592,12 +592,11 @@
     position: absolute;
     right: 20px;
     left: 20px;
-    top: 60px;
+    top: 39px;
     bottom: 0px;
     list-style-type: none;
-    border-top: 1px solid #a7a7a7;
+    /*border-top: 1px solid #a7a7a7;*/
     margin: 0;
-    padding-top: 20px;
 }
 .shareconfigulli{
     text-align: left;
@@ -2175,6 +2174,7 @@ weis{
 .shareUserId {
     position: absolute;
     left: 10px;
+    font-family: 'Courier New';
 }
 
 .shareUserName {
@@ -2195,5 +2195,28 @@ weis{
 .deleteInput {
     margin-top: -4px;
     margin-left: 0px;
+}
+
+.addShareUser {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    outline: none;
+    padding-left: 5px;
+    width: 100px;
+    font-family: 'Courier New';
+}
+
+.shareconfigulhead {
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    right: 20px;
+    left: 20px;
+    top: 10px;
+    bottom: 0px;
+    list-style-type: none;
+    /*border-top: 1px solid #a7a7a7;*/
+    margin: 0;
 }
 
