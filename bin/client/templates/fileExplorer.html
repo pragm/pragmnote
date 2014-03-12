@@ -6,7 +6,7 @@
                 <div class="icon3"></div>
                 <input ng-model="filedata.name" type="text" class="renameFile" title="rename" onclick="this.select();" ng-value="filedata.name" ng-change="changeName();">
                 <input class="alertbutton" id="closeStyle" type="button" value="CLOSE" ng-click="shareclose();">
-                <input class="alertbutton" id="saveStyle" type="button" value="Save" onclick="data.set('shareshow', 'none');">
+                <!--<input class="alertbutton" id="saveStyle" type="button" value="Save" onclick="data.set('shareshow', 'none');">-->
                 </div>
             <div class="cutline">
                 <ul class="shareconfigulhead">
@@ -72,7 +72,7 @@
             <div class="infoline" id="infoline">Please help <br>to keep pragm free!</div>
             <input class="infoline" type="button" value="Get Involved" onclick="OpenInNewTab();">
             <div class="infoline" id="infoline">or</div>
-            <input class="infoline" type="button" value="Donate" onclick="data.set('shareshow', true);">
+            <input class="infoline" type="button" value="Donate" onclick="uiControl.alert();">
             <!--<ul class="datachoice">
                 <li>files</li>
                 <li>settings</li>
@@ -110,8 +110,22 @@ elmleft             = {{elmleft}}
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();"><div class="selectcounter">{{activenum}}</div><font style="position: relative; left: 30px;">TITLE</font><div class="ownerFile">OWNER</div><div class="lastChange">LAST MODIFIED</div></li>
-        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);" ng-mousedown="mousedown(key, $event);" ng-mouseover="mouseover(key);"><div class="ico{{key.substr(0,1);}}"></div><font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}<font class="privateFile">Shared</font></font><div class="ownerFile">{{dirObject[key].owner}}</div><div class="lastChange">{{dirObject[key].lastmodform}}</div><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>
+        <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();">
+            <div class="selectcounter">{{activenum}}</div>
+            <font style="position: relative; left: 30px;">TITLE</font>
+            <div class="ownerFile">OWNER</div>
+            <div class="lastChange">LAST MODIFIED</div>
+        </li>
+        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);" ng-mousedown="mousedown(key, $event);" ng-mouseover="mouseover(key);" ng-dblclick="configFile(key);">
+            <div class="ico{{key.substr(0,1);}}"></div>
+            <font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}
+                <font class="privateFile">{{sharedinfo(key)}}
+                </font>
+            </font>
+            <div class="ownerFile">{{dirObject[key].owner}}</div>
+            <div class="lastChange">{{dirObject[key].lastmodform}}</div>
+            <!--<img src="img/gear.png" class="gearIcon">
+            <img src="img/share.png" class="shareIcon"></li>-->
     </ul>
         <div class="fileListCut">
             

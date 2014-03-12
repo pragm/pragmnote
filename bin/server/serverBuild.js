@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1476
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1476 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1516
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1516 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1083,7 +1083,7 @@ var fRights_typ = function fRights_typ(){
             }
             if(pfile.guestUser in pfile.dirObject[fileID].share){
                 var out = { };
-                out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                out.read = true, out.write = pfile.dirObject[fileID].share[pfile.guestUser] > 0, out.perm = pfile.dirObject[fileID].share[pfile.guestUser] > 1;
                 return out;
             }
             var out = { };
@@ -1266,7 +1266,7 @@ var pfile_typ = function pfile_typ(){
     }
     
     this.checkLogin = function (clientID, username, password){
-        log("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
+        dlog("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
         console.log('check');
         var userID = null;
         var temp = { }
@@ -1310,6 +1310,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].parent = dir;
             this.dirObject[id].name = name;
             this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
+            log("SAVESHARE => "+JSON.stringify(this.dirObject[dir].share));
             this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
             pfile.writeStr(id, 'newfile', name);
@@ -1665,14 +1666,56 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.setFileInfo = function(clientID, userID, fileInfo){
-        if(fRights.isUserAllowedTo(fileInfo.id, userID, 'write') && 'name' in fileInfo){
-            this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
+        if('name' in fileInfo){
+            if(fRights.isUserAllowedTo(fileInfo.id, userID, 'write')){
+                this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
+                log("NAME  => "+JSON.stringify(fileInfo));
+                var list = pfile.getFileClients(fileInfo.id);
+                log("Client "+clientID);
+                log("LIST After "+JSON.stringify(list));
+                for(key in list){
+                    if(list[key] != clientID){
+                        if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
+                            this.generateUserFilelist(list[key], L3.users[list[key]].userID);
+                            log("LIST FOR HIM => "+list[key]);
+                        } else {
+                            log("Cannot find Client "+list[key]);
+                        }
+                    }
+                }
+                pfile.writeStr(12, 'dir', 12);
+            } else {
+                this.generateUserFilelist(clientID, userID);
+                L2x1.send(clientID, sID.message, "Rename file abort! Permission Denied!");
+            }
         }
-        if(fRights.isUserAllowedTo(fileInfo.id, userID, 'perm') && 'share' in fileInfo){
-            this.dirObject[fileInfo.id].share = fileInfo.share;
+        if('share' in fileInfo){
+            if(fRights.isUserAllowedTo(fileInfo.id, userID, 'perm')){
+                var list1 = pfile.getFileClients(fileInfo.id);
+                this.dirObject[fileInfo.id].share = fileInfo.share;
+                log("SHARE => "+JSON.stringify(fileInfo));
+                var list2 = pfile.getFileClients(fileInfo.id);
+                
+                log("Client "+clientID);
+                var list = this.joinArrays(list1, list2);
+                log("LIST After "+JSON.stringify(list));
+                for(key in list){
+                    if(list[key] != clientID){
+                        if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
+                            this.generateUserFilelist(list[key], L3.users[list[key]].userID);
+                            log("LIST FOR HIM => "+list[key]);
+                        } else {
+                            log("Cannot find Client "+list[key]);
+                        }
+                    }
+                }
+                pfile.writeStr(12, 'dir', 12);
+            } else {
+                this.generateUserFilelist(clientID, userID);
+                L2x1.send(clientID, sID.message, "Change file config abort! Permission Denied!");
+            }
         }
-        this.generateUserFilelist(clientID, userID);
-        pfile.writeStr(12, 'dir', 12);
+        //this.generateUserFilelist(clientID, userID);
     };
     
     this.makeid = function (type){
@@ -1696,6 +1739,32 @@ var pfile_typ = function pfile_typ(){
             str = str.substr(0,str.length-1);
         }
         return str;
+    };
+    
+    this.joinArrays = function(l1,l2){
+        for(i in l1){
+            if(l2.indexOf(l1[i]) == -1){
+                l2.push(l1[i]);
+            }
+        }
+        return l2;
+    }
+    
+    this.getFileClients = function(id){
+        var userList = [];
+        var clientList = [];
+        userList.push(this.dirObject[id].owner);
+        for(key in this.dirObject[id].share){
+            userList.push(key);
+        }
+        for(key in userList){
+            for(data in L3.users){
+                if(L3.users[data].userID == userList[key]){
+                    clientList.push(data);
+                }
+            }
+        }
+        return clientList;
     };
 };
 
@@ -2201,7 +2270,10 @@ var L3_typ = function L3_typ(){
             L3.saveFileOP(this.users[clientID]['file']);
         }
     
-        if(this.users[clientID]){delete this.users[clientID]};
+        if(clientID in this.users){
+            delete this.users[clientID];
+            dlog("DELETED "+clientID+" "+JSON.stringify(this.users));
+        };
     };
     
     this.killData = function(fkey){

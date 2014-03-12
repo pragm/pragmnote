@@ -83,6 +83,7 @@ var data_typ = function data_typ(){
 	    this.files = { };
 	    this.users = "";
         this.legitimationID = "";
+        this.shareshow = false;
     }
         
     this.delete_UI = function(id){

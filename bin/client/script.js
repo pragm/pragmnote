@@ -1,4 +1,4 @@
-var clientversion = "0.2.1476"/******************************************************************************************
+var clientversion = "0.2.1516"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1266,7 +1266,9 @@ pragmApp.controller('filesController', function($scope) {
             //console.log("Update Angular "+$scope.alertinfo);
             if($scope.alertinfo==""){
 		      $scope.alertshow = 'none';
-                tab.position("slideOut");
+                if(!$scope.shareshowbool){
+                    tab.position("slideOut");
+                }
             } else {
 		      $scope.alertshow = 'block';
                 tab.position("slideIn");
@@ -1617,23 +1619,18 @@ pragmApp.controller('filesController', function($scope) {
     
         
         
-        data.databind('dirObject', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.dirObject = x;
-          $scope.update();
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
         
         // Share Popup handler ------------------------------------------
         
         $scope.shareshow = 'none';
         $scope.shareshowbool = false;
+        //if($scope.sharedata == undefined){$scope.sharedata = [];}
+        //if($scope.fileinfoid == undefined){$scope.fileinfoid = '';}
+        //if($scope.filedata == undefined){$scope.filedata = {}; $scope.filedata = data.dirObject[$scope.fileinfoid];}
         $scope.filedata = {};
         $scope.sharedata = [];
-        $scope.fileinfoid = '3e9qk7srti';
-        $scope.filedata = data.dirObject[$scope.fileinfoid];
+        $scope.fileinfoid = '';
+        //$scope.filedata = data.dirObject[$scope.fileinfoid];
         $scope.rightinfo = ['readonly', 'write', 'admin'];
         $scope.addvalue = 0;
         $scope.addname = "no name";
@@ -1641,10 +1638,14 @@ pragmApp.controller('filesController', function($scope) {
         $scope.loadfileshare = function(){
             $scope.sharedata = null;
             $scope.sharedata = [];
-            for(key in $scope.filedata.share){
-                $scope.sharedata.push({"id": key, "value": $scope.filedata.share[key]});
+            if($scope.filedata){
+                for(key in $scope.filedata.share){
+                    $scope.sharedata.push({"id": key, "value": $scope.filedata.share[key]});
+                }
+                console.log(JSON.stringify($scope.sharedata));
+            } else {
+                $scope.shareclose();
             }
-            console.log(JSON.stringify($scope.sharedata));
         };
         
         $scope.updateShare = function(){
@@ -1656,6 +1657,7 @@ pragmApp.controller('filesController', function($scope) {
             } else {
 		      $scope.shareshow = 'block';
                 tab.position("fastIn");
+                $scope.loadfileshare();
             }
         }
         
@@ -1714,8 +1716,33 @@ pragmApp.controller('filesController', function($scope) {
             $scope.sharedata.splice(index,1);
             $scope.shareUpdater();
         };
+    
+        $scope.configFile = function(id){
+            $scope.fileinfoid = id;
+            $scope.filedata = data.dirObject[$scope.fileinfoid];
+            data.set('shareshow', true);
+        }
         
-        $scope.loadfileshare();
+        //$scope.loadfileshare();
+    
+        $scope.sharedinfo = function(key){
+            if($scope.dirObject[key].shared != { }){
+                return "Shared";
+            }
+            return "";
+        };
+    
+        
+        data.databind('dirObject', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.dirObject = x;
+          $scope.update();
+          $scope.filedata = data.dirObject[$scope.fileinfoid];
+          $scope.updateShare();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
 	});
 pragmApp.controller('loadingController', function($scope) {
 		$scope.lan = 'cool';
@@ -1875,6 +1902,7 @@ var data_typ = function data_typ(){
 	    this.files = { };
 	    this.users = "";
         this.legitimationID = "";
+        this.shareshow = false;
     }
         
     this.delete_UI = function(id){

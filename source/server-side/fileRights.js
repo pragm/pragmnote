@@ -43,7 +43,7 @@ var fRights_typ = function fRights_typ(){
             }
             if(pfile.guestUser in pfile.dirObject[fileID].share){
                 var out = { };
-                out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                out.read = true, out.write = pfile.dirObject[fileID].share[pfile.guestUser] > 0, out.perm = pfile.dirObject[fileID].share[pfile.guestUser] > 1;
                 return out;
             }
             var out = { };

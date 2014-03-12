@@ -342,7 +342,10 @@ var L3_typ = function L3_typ(){
             L3.saveFileOP(this.users[clientID]['file']);
         }
     
-        if(this.users[clientID]){delete this.users[clientID]};
+        if(clientID in this.users){
+            delete this.users[clientID];
+            dlog("DELETED "+clientID+" "+JSON.stringify(this.users));
+        };
     };
     
     this.killData = function(fkey){
