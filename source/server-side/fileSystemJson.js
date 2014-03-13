@@ -171,6 +171,9 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].name = name;
             this.dirObject[id].content = [];
             this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
+            if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
+                this.dirObject[id].share[this.dirObject[dir].owner] = 2;
+            }
             this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
         }
@@ -182,7 +185,9 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].parent = dir;
             this.dirObject[id].name = name;
             this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-            log("SAVESHARE => "+JSON.stringify(this.dirObject[dir].share));
+            if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
+                this.dirObject[id].share[this.dirObject[dir].owner] = 2;
+            }
             this.dirObject[id].lastmod = new Date().getTime();
             this.addLink(dir, id);
             pfile.writeStr(id, 'newfile', name);
@@ -268,13 +273,13 @@ var pfile_typ = function pfile_typ(){
     this.moveFileList = function (clientID, userID, moveObject){
         var k = 0;
         for(i in moveObject.files){
-            if(!this.moveFilePosible(clientID, userID, moveObject.files[i], moveObject.toid)){
+            if(!this.moveFilePosible(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid)){
                 k++;
             }
         }
         if(k==0){
             for(i in moveObject.files){
-                this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid);
+                this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid);
             }
             this.generateUserFilelist(clientID, userID);
             pfile.writeStr(12, 'dir', 12);
@@ -285,13 +290,16 @@ var pfile_typ = function pfile_typ(){
         }
     };
     
-    this.moveFile = function (clientID, userID, id, toid){
-        if(fRights.isUserAllowedTo(id, userID, 'write') && !this.isSubOrdered(toid, id)){
-            this.removeLink(this.dirObject[id].parent, id);
-            this.dirObject[id].parent = toid;
+    this.moveFile = function (clientID, userID, id, toid, fromid){
+        if(((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)){
+            
+            this.removeLink(fromid, id);
+            if(this.dirObject[id].parent == fromid){
+                this.dirObject[id].parent = toid;
+            }
             this.addLink(toid, id);
         } else {
-            if(!fRights.isUserAllowedTo(id, userID, 'write')){
+            if(!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))){
                 L2x1.send(clientID, sID.message, "Moving file abort! Permission Denied!");
             } else {
                 if(this.isSubOrdered(toid, id)){
@@ -303,11 +311,11 @@ var pfile_typ = function pfile_typ(){
         }
     };
     
-    this.moveFilePosible = function (clientID, userID, id, toid){
-        if(fRights.isUserAllowedTo(id, userID, 'write') && !this.isSubOrdered(toid, id)){
+    this.moveFilePosible = function (clientID, userID, id, toid, fromid){
+        if(((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)){
             return true;
         } else {
-            if(!fRights.isUserAllowedTo(id, userID, 'write')){
+            if(!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))){
                 L2x1.send(clientID, sID.message, "Moving file abort! Permission Denied!");
             } else {
                 if(this.isSubOrdered(toid, id)){
@@ -564,6 +572,7 @@ var pfile_typ = function pfile_typ(){
         if('share' in fileInfo){
             if(fRights.isUserAllowedTo(fileInfo.id, userID, 'perm')){
                 var list1 = pfile.getFileClients(fileInfo.id);
+                this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
                 this.dirObject[fileInfo.id].share = fileInfo.share;
                 log("SHARE => "+JSON.stringify(fileInfo));
                 var list2 = pfile.getFileClients(fileInfo.id);
@@ -637,6 +646,28 @@ var pfile_typ = function pfile_typ(){
             }
         }
         return clientList;
+    };
+    
+    this.checkLinkExists = function(o, n, id){
+        var l = [];
+        for(i in n){
+            if(!(i in o)){
+                l.push(i);
+            }
+        }
+        var found = false;
+        for(i in l){
+            found = false;
+            for(k in this.dirObject){
+                if(this.dirObject[k].owner == l[i] && 'content' in this.dirObject[k] && this.dirObject[k].content.indexOf(id) != -1){
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                this.addLink(l[i], id);
+            }
+        }
     };
 };
 

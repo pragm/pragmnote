@@ -311,7 +311,7 @@ var L3_typ = function L3_typ(){
         L2.send(sID.getServer, sID.fileList);
     };
     
-    this.moveFileList = function(files, toid){
+    this.moveFileList = function(files, toid, fromid){
         var abort = false;
         var start = toid.substr(0,1);
         if(files.indexOf(toid) != -1 && (start == '4' || start == '5')){
@@ -322,6 +322,7 @@ var L3_typ = function L3_typ(){
             var x = {};
             x.files = files;
             x.toid = toid;
+            x.fromid = fromid;
             L2.send(sID.moveFile, JSON.stringify(x));
         }
     };

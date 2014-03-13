@@ -176,6 +176,7 @@ pragmApp.controller('filesController', function($scope) {
         $scope.elmdisplay  = "none";
         $scope.moveto  = "none";
         $scope.movetofile  = "";
+        $scope.movefromdir = "";
         $scope.elmtop  = 300;
         $scope.elmleft  = 300;
         
@@ -195,7 +196,7 @@ pragmApp.controller('filesController', function($scope) {
         $scope.mouseup = function(){
             if($scope.draganddrop == true && $scope.movetofile != "" && $scope.movetofile != $scope.actualDir){
                 console.log("Move files "+JSON.stringify(data.selectionarray)+" to "+$scope.movetofile);
-                L3.moveFileList(data.selectionarray, $scope.movetofile);
+                L3.moveFileList(data.selectionarray, $scope.movetofile, $scope.actualDir);
             }
             $scope.draganddrop = false;
             $scope.elmdisplay = "none";
@@ -245,6 +246,7 @@ pragmApp.controller('filesController', function($scope) {
                 console.log("CRTL+X");
                 $scope.moveclipboard = data.selectionarray;
                 $scope.cilpboardaction = 'move';
+                $scope.movefromdir = $scope.actualDir;
                 //data.set('alertinfo', 'Saved to clipboard!');
             }
         });
@@ -263,7 +265,7 @@ pragmApp.controller('filesController', function($scope) {
                 console.log("CRTL+V");
                 if($scope.cilpboardaction == 'move'){
                     console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
-                    L3.moveFileList($scope.moveclipboard, $scope.actualDir);
+                    L3.moveFileList($scope.moveclipboard, $scope.actualDir, $scope.movefromdir);
                 }
                 if($scope.cilpboardaction == 'copy'){
                     console.log("Copy files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
@@ -490,10 +492,14 @@ pragmApp.controller('filesController', function($scope) {
         //$scope.loadfileshare();
     
         $scope.sharedinfo = function(key){
-            if($scope.dirObject[key].shared != { }){
+            if(!$scope.isEmpty($scope.dirObject[key].share)){
                 return "Shared";
             }
             return "";
+        };
+        
+        $scope.isEmpty = function(value){
+            return Boolean(value && typeof value == 'object') && !Object.keys(value).length;
         };
     
         
