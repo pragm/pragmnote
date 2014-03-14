@@ -20,7 +20,7 @@
                 <ul class="shareconfigul">
                     <li class="shareconfigulli" ng-repeat="data in sharedata">
                         <font class="shareUserId">{{data.id}}</font>
-                        <font class="shareUserName">cannot resolve id</font>
+                        <font class="shareUserName">{{resolveName(data.id);}}</font>
                         <font class="shareUserRights"><input ng-model="data.value" ng-change="shareUpdater();" class="rangeInput" type="range" min="0" max="2" ng-value="data.value" step="1"> {{rightinfo[data.value]}}</font>
                         <font class="shareUserDelete"><input class="deleteInput" type="button" value="DELETE" ng-click="deleteshare($index);"></font>
                     </li>
@@ -31,7 +31,7 @@
                                   <option value="5GUESTUSER">
                                 </datalist>
                         </font>
-                        <font class="shareUserName">cannot resolve id</font>
+                        <font class="shareUserName">{{resolveName(addname);}}</font>
                         <font class="shareUserRights"><input ng-model="addvalue" class="rangeInput" type="range" min="0" max="2" ng-value="addvalue" step="1"> {{rightinfo[addvalue]}}</font>
                         <font class="shareUserDelete"><input class="deleteInput" type="button" value="ADD" ng-click="pushsharedata();"></font>
                     </li>
@@ -122,7 +122,7 @@ elmleft             = {{elmleft}}
                 <font class="privateFile">{{sharedinfo(key)}}
                 </font>
             </font>
-            <div class="ownerFile">{{dirObject[key].owner}}</div>
+            <div class="ownerFile">{{resolveName(dirObject[key].owner);}}</div>
             <div class="lastChange">{{dirObject[key].lastmodform}}</div>
             <!--<img src="img/gear.png" class="gearIcon">
             <img src="img/share.png" class="shareIcon"></li>-->

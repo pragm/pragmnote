@@ -256,6 +256,7 @@ pragmApp.controller('filesController', function($scope) {
                 console.log("CRTL+C");
                 $scope.moveclipboard = data.selectionarray;
                 $scope.cilpboardaction = 'copy';
+                $scope.movefromdir = $scope.actualDir;
                 //data.set('alertinfo', 'Saved to clipboard!');
             }
         });
@@ -269,7 +270,7 @@ pragmApp.controller('filesController', function($scope) {
                 }
                 if($scope.cilpboardaction == 'copy'){
                     console.log("Copy files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
-                    L3.copyFileList($scope.moveclipboard, $scope.actualDir);
+                    L3.copyFileList($scope.moveclipboard, $scope.actualDir, $scope.movefromdir);
                 }
                 $scope.cilpboardaction = '';
             }
@@ -501,7 +502,16 @@ pragmApp.controller('filesController', function($scope) {
         $scope.isEmpty = function(value){
             return Boolean(value && typeof value == 'object') && !Object.keys(value).length;
         };
+        $scope.resolveName = function(id){
+            return data.getUserName(id);
+        };
     
+        data.databind('nameCache', function(x){
+          $scope.updateShare();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         
         data.databind('dirObject', function(x){
           //console.log("Data: "+JSON.stringify(x));

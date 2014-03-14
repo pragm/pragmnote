@@ -1,4 +1,4 @@
-var clientversion = "0.2.1527"/******************************************************************************************
+var clientversion = "0.2.1533"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -719,6 +719,7 @@ var sID_typ = function sID_typ(){
 	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
     this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
     this.fileInfo          = "2001000008";
+    this.getUserName       = "2001000009";
 
     
     //GET_FROM_SERVER
@@ -1492,6 +1493,7 @@ pragmApp.controller('filesController', function($scope) {
                 console.log("CRTL+C");
                 $scope.moveclipboard = data.selectionarray;
                 $scope.cilpboardaction = 'copy';
+                $scope.movefromdir = $scope.actualDir;
                 //data.set('alertinfo', 'Saved to clipboard!');
             }
         });
@@ -1505,7 +1507,7 @@ pragmApp.controller('filesController', function($scope) {
                 }
                 if($scope.cilpboardaction == 'copy'){
                     console.log("Copy files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
-                    L3.copyFileList($scope.moveclipboard, $scope.actualDir);
+                    L3.copyFileList($scope.moveclipboard, $scope.actualDir, $scope.movefromdir);
                 }
                 $scope.cilpboardaction = '';
             }
@@ -1737,7 +1739,16 @@ pragmApp.controller('filesController', function($scope) {
         $scope.isEmpty = function(value){
             return Boolean(value && typeof value == 'object') && !Object.keys(value).length;
         };
+        $scope.resolveName = function(id){
+            return data.getUserName(id);
+        };
     
+        data.databind('nameCache', function(x){
+          $scope.updateShare();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         
         data.databind('dirObject', function(x){
           //console.log("Data: "+JSON.stringify(x));
@@ -1863,6 +1874,7 @@ var data_typ = function data_typ(){
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
     this.shareshow = false;
+    this.nameCache = {"5GUESTUSER": "Guest"};
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -1921,7 +1933,6 @@ var data_typ = function data_typ(){
         textbox.removeElement("editarea"+id);
     }
     
-    
     this.showCache = function(){
         if(uiControl.file){
             if(!data.files[uiControl.file]) {
@@ -1933,6 +1944,23 @@ var data_typ = function data_typ(){
             }
         } else {
             console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
+    
+    this.getUserName = function(id){
+        if(id.length != 10 || id[0] != "5"){
+            return "-";
+        }
+        if(id in this.nameCache){
+            return this.nameCache[id];
+        } else {
+            if(id in this.dirObject){
+                this.nameCache[id] = this.dirObject[id].name;
+                return this.nameCache[id];            
+            } else {
+                L3.loadUserName(id);
+                return "resolving name...";
+            }
         }
     };
     
@@ -3868,6 +3896,13 @@ var L3_typ = function L3_typ(){
                 }*/
                 break;
                 
+                
+            case sID.getUserName:
+                var dataobject = JSON.parse(daten);
+                data.nameCache[dataobject.id] = dataobject.name;
+                data.update('nameCache');
+                break;
+                
             default:
                 error.report(2, id);
                 return false;
@@ -3981,7 +4016,7 @@ var L3_typ = function L3_typ(){
         }
     };
     
-    this.copyFileList = function(files, toid){
+    this.copyFileList = function(files, toid, fromid){
         var abort = false;
         var start = toid.substr(0,1);
         if(start != '4' && start != '5'){
@@ -3992,6 +4027,7 @@ var L3_typ = function L3_typ(){
             var x = {};
             x.files = files;
             x.toid = toid;
+            x.fromid = fromid;
             L2.send(sID.copyFile, JSON.stringify(x));
         }
     };
@@ -4019,6 +4055,10 @@ var L3_typ = function L3_typ(){
         sendinfo[job] = data;
         sendinfo.id = id;
         L2.send(sID.fileInfo, JSON.stringify(sendinfo));
+    };
+    
+    this.loadUserName = function(id){
+        L2.send(sID.getUserName, id);
     };
     
      this.reset = function(){

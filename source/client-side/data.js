@@ -38,6 +38,7 @@ var data_typ = function data_typ(){
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
     this.shareshow = false;
+    this.nameCache = {"5GUESTUSER": "Guest"};
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
@@ -96,7 +97,6 @@ var data_typ = function data_typ(){
         textbox.removeElement("editarea"+id);
     }
     
-    
     this.showCache = function(){
         if(uiControl.file){
             if(!data.files[uiControl.file]) {
@@ -108,6 +108,23 @@ var data_typ = function data_typ(){
             }
         } else {
             console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
+    
+    this.getUserName = function(id){
+        if(id.length != 10 || id[0] != "5"){
+            return "-";
+        }
+        if(id in this.nameCache){
+            return this.nameCache[id];
+        } else {
+            if(id in this.dirObject){
+                this.nameCache[id] = this.dirObject[id].name;
+                return this.nameCache[id];            
+            } else {
+                L3.loadUserName(id);
+                return "resolving name...";
+            }
         }
     };
     

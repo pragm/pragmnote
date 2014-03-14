@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1527
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1527 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1533
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1533 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -721,6 +721,7 @@ var sID_typ = function sID_typ(){
 	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
     this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
     this.fileInfo          = "2001000008";
+    this.getUserName       = "2001000009";
 
     
     //GET_FROM_SERVER
@@ -1409,7 +1410,13 @@ var pfile_typ = function pfile_typ(){
             for(i in moveObject.files){
                 this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid);
             }
-            this.generateUserFilelist(clientID, userID);
+            var infolist = this.joinArrays(this.getFileClients(moveObject.toid),this.getFileClients(moveObject.fromid));
+            infolist = this.joinArrays(infolist, [clientID]);
+            for(key in infolist){
+                if(infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]){
+                    this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
+                } 
+            }
             pfile.writeStr(12, 'dir', 12);
         } else {
             if(k>1){
@@ -1501,7 +1508,14 @@ var pfile_typ = function pfile_typ(){
         for(i in addlinklist){
             this.addLink(addlinklist[i].toid, addlinklist[i].newID);
         }
-        this.generateUserFilelist(clientID, userID);
+        //this.generateUserFilelist(clientID, userID);
+        var infolist = this.joinArrays(this.getFileClients(copyObject.toid),this.getFileClients(copyObject.fromid));
+        infolist = this.joinArrays(infolist, [clientID]);
+        for(key in infolist){
+            if(infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]){
+                this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
+            } 
+        }
         pfile.writeStr(12, 'dir', 12);
     };
     
@@ -1712,10 +1726,7 @@ var pfile_typ = function pfile_typ(){
                     if(list[key] != clientID){
                         if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
                             this.generateUserFilelist(list[key], L3.users[list[key]].userID);
-                            log("LIST FOR HIM => "+list[key]);
-                        } else {
-                            log("Cannot find Client "+list[key]);
-                        }
+                        } 
                     }
                 }
                 pfile.writeStr(12, 'dir', 12);
@@ -2107,6 +2118,16 @@ var L3_typ = function L3_typ(){
                 break;      
             case sID.fileInfo:
                 pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;      
+            case sID.getUserName:
+                var x = {};
+                x.id = data;
+                if(data in pfile.dirObject){
+                    x.name = pfile.dirObject[data].name;
+                } else {
+                    x.name = "cannot resolve name!";   
+                    }
+                L2x1.send(clientID, sID.getUserName, JSON.stringify(x));
                 break;          
             default: 
                 error.report(2,"static id $id not given or wrong");

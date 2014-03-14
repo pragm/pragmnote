@@ -281,7 +281,13 @@ var pfile_typ = function pfile_typ(){
             for(i in moveObject.files){
                 this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid);
             }
-            this.generateUserFilelist(clientID, userID);
+            var infolist = this.joinArrays(this.getFileClients(moveObject.toid),this.getFileClients(moveObject.fromid));
+            infolist = this.joinArrays(infolist, [clientID]);
+            for(key in infolist){
+                if(infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]){
+                    this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
+                } 
+            }
             pfile.writeStr(12, 'dir', 12);
         } else {
             if(k>1){
@@ -373,7 +379,14 @@ var pfile_typ = function pfile_typ(){
         for(i in addlinklist){
             this.addLink(addlinklist[i].toid, addlinklist[i].newID);
         }
-        this.generateUserFilelist(clientID, userID);
+        //this.generateUserFilelist(clientID, userID);
+        var infolist = this.joinArrays(this.getFileClients(copyObject.toid),this.getFileClients(copyObject.fromid));
+        infolist = this.joinArrays(infolist, [clientID]);
+        for(key in infolist){
+            if(infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]){
+                this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
+            } 
+        }
         pfile.writeStr(12, 'dir', 12);
     };
     
@@ -584,10 +597,7 @@ var pfile_typ = function pfile_typ(){
                     if(list[key] != clientID){
                         if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
                             this.generateUserFilelist(list[key], L3.users[list[key]].userID);
-                            log("LIST FOR HIM => "+list[key]);
-                        } else {
-                            log("Cannot find Client "+list[key]);
-                        }
+                        } 
                     }
                 }
                 pfile.writeStr(12, 'dir', 12);
