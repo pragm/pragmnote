@@ -192,10 +192,10 @@ var L3_typ = function L3_typ(){
                 filesystem.getTest();
                 break;   
             case sID.killServer:
-                if(secure.userRights[clientID] === 0){
+                log("USER TRYES TO KILL SERVER!");
+                if(secure.userRights[clientID] == 0){
                     log("USER SYSTEM KILLED SERVER!");
-                    wsServer.shutDown();
-                    server.close();
+                    stopServerNow();
                 }
                 break;
             default: 

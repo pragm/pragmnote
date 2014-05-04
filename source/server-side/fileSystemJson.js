@@ -139,7 +139,6 @@ var pfile_typ = function pfile_typ(){
     
     this.checkLogin = function (clientID, username, password){
         dlog("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
-        console.log('check');
         var userID = null;
         var temp = { }
         temp.userRight = global.mNoLogin;

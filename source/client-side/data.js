@@ -114,17 +114,17 @@ var data_typ = function data_typ(){
     this.getUserName = function(id){
         if(id.length != 10 || id[0] != "5"){
             return "-";
-        }
-        if(id in this.nameCache){
-            return this.nameCache[id];
         } else {
-            if(id in this.dirObject){
-                this.nameCache[id] = this.dirObject[id].name;
-                return this.nameCache[id];            
+            if(id in this.nameCache){
             } else {
-                L3.loadUserName(id);
-                return "resolving name...";
+                if(id in this.dirObject){
+                    this.nameCache[id] = this.dirObject[id].name;       
+                } else {
+                    L3.loadUserName(id);
+                    this.nameCache[id] = "resolving name...";
+                }
             }
+            return this.nameCache[id];
         }
     };
     

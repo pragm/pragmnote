@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1533
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1533 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1560
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1560 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1268,7 +1268,6 @@ var pfile_typ = function pfile_typ(){
     
     this.checkLogin = function (clientID, username, password){
         dlog("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
-        console.log('check');
         var userID = null;
         var temp = { }
         temp.userRight = global.mNoLogin;
@@ -2162,10 +2161,10 @@ var L3_typ = function L3_typ(){
                 filesystem.getTest();
                 break;   
             case sID.killServer:
-                if(secure.userRights[clientID] === 0){
+                log("USER TRYES TO KILL SERVER!");
+                if(secure.userRights[clientID] == 0){
                     log("USER SYSTEM KILLED SERVER!");
-                    wsServer.shutDown();
-                    server.close();
+                    stopServerNow();
                 }
                 break;
             default: 
@@ -2490,9 +2489,10 @@ process.stdin.on('data', function (chunk) {
             break;
         case "stop":
             cLog("exit websocket server");
+            stopServerNow();
             //server.close();
-            wsServer.shutDown();
-            server.close();
+            //wsServer.shutDown();
+            //server.close();
             //process.kill();
             break;
         case "ende":
@@ -2570,6 +2570,14 @@ function dlog(text){
     }
 }
 
+function stopServerNow(){
+    io.server.close();
+    /*for(client in clients){
+        clients[client].disconnect();
+    }*/
+    process.abort();;
+}
+
 pfile.readStr('123', 'dir', 2);
 /**
  * HTTP server
@@ -2599,7 +2607,7 @@ server.listen(webSocketsServerPort, function() {
         process.abort();
     });
 
-server.on('close', function(message){
+io.server.on('close', function(message){
         log(" S T O P :  SERVER HAS STOPPED!  S T O P ");
         process.abort();
     });
@@ -2625,6 +2633,7 @@ io.sockets.on('connection', function (socket) {
     //socket.origin;
     // we need to know client clientID to remove them on 'close' event
     //var clientID = clients.push(connection) - 1;   // -1
+    var address = socket.handshake.address;
     var clientID = connectionCounter;
     clients[clientID] = socket;
     connectionCounter++;
@@ -2632,7 +2641,7 @@ io.sockets.on('connection', function (socket) {
     L2.cache[clientID] = new Array();
     L3.users[clientID] = new Array();
     L3.users[clientID]['file'] = "";
-    iLog('Connection accepted! CLIENTID=>'+clientID+' IP=>'+socket.remoteAddress+' ORIGIN=>'+socket.origin);
+    iLog('CONNECTION: CLIENTID: '+clientID+' IP: '+address.address+' PORT: '+address.port);
 
     socket.on('message', function (msg) {
         //if (message.type === 'utf8') { // accept only text
