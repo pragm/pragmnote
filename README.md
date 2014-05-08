@@ -1,8 +1,8 @@
 Pragm Note
 ====
 ###Bored? Want fun?
-**Check out the** <a href="http://demo.pragm.de/">demo</a>. 
-
+**Check out the** <a href="http://demo.pragm.de/">demo</a>. <br>
+<a href="http://flattr.com/thing/2535209/Pragm" target="_blank"><img src="http://api.flattr.com/button/flattr-badge-large.png" alt="Flattr this" title="Flattr this" border="0" /></a>
 ## What is Pragm?!
 
 Pragm is an Open Source multiuser notetaking application. Check out the <a href="http://demo.pragm.de/">demo</a>. 
