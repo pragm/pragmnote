@@ -10,6 +10,8 @@ Pragm is an Open Source multiuser notetaking application. Check out the <a href=
 
 Pull Requests are appreciated and welcomed.
 
+<img src="http://charl.jvim.de/jvimedia.org/img/portfolio/pragm_pod.png" alt=""/>
+
 Pragm was once a small idea of creating a multiuser note taking application. 
 
 Now it's became quite big. So... we need your help. If you are comfortable using HTML, CSS and Javascript feel free to contact us.
