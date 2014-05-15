@@ -1,6 +1,7 @@
-pragmApp.controller('editorController', function($scope) {
+pragmApp.controller('editorController', function($scope, $location, dataService) {
 		$scope.lan = 'cool';
 		$scope.message = 'Contact us! JK. This is just a demo.';
+        $scope.fileID = dataService.data;
         
         // Load -----------------------------------------------
 		$scope.loadinginfo = "";
@@ -57,7 +58,9 @@ pragmApp.controller('editorController', function($scope) {
         
         // Something else -------------------------------------------
         uiControl.file = uiControl.takeFile;
+        
         //console.log("ANGU => L3: "+L3.file);
         //console.log("ANGU => UI: "+uiControl.file);
         data.showCache();
+        tab.position("slide10In");
 	});

@@ -4,6 +4,13 @@ pragmApp.controller('loginController', function($scope) {
 		$scope.lan = 'cool';
 		//$scope.loadslide = '';
         
+        $scope.getServerAddress = function(){
+            return global.config.serveraddress;
+        };
+        
+        global.onSchange(function(){
+            $scope.$apply();
+        });
         
 		
         // Wait handler  ------------------------------------------------------

@@ -11,7 +11,10 @@
     <div class="loginTop">
         <div class="loginLogo"></div>
     </div>
-    <div class="loginLine" id="madebyinfo">Version: {{clientversion}} | created 2014 by Dustin Hoffner | powered by Johannes Valouch</div>
+    <div class="loginLine" id="madebyinfo">
+        <div class="serverdata"><input type="button" value="Change Server" onclick="global.setServerAddress()"> Server: {{getServerAddress()}}</div>
+        <div class="versiondata">Version: {{clientversion}} | created 2014 by Dustin Hoffner | powered by Johannes Valouch</div>
+        </div>
     <div class="loginCenter">
     <div class="centerPic"></div>
     <form class="loginForm" action="" onsubmit="uiControl.login(); return false;">

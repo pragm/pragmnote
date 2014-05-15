@@ -168,6 +168,10 @@ pragmApp.controller('filesController', function($scope) {
             selectionarray = null;
             $scope.activenum = activecount;
         };
+    
+        $scope.getServerAddress = function(){
+            return global.config.serveraddress;
+        };
         
         // Drag and Drop -----------------------------------------------
         

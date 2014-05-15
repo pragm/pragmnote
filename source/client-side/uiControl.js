@@ -181,7 +181,7 @@ var uiControl_typ = function global_typ(){
                 document.title = "pragm note";
 				break;
 	        case "editor":
-                window.location.href = "#editor";
+                window.location.href = "#editor/"+uiControl.takeFile;
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/

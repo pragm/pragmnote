@@ -1,4 +1,4 @@
-var clientversion = "0.2.1560"/******************************************************************************************
+var clientversion = "0.2.1600"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -846,6 +846,7 @@ var pragmApp = angular.module('pragmApp', []);
 
 	// configure our routes
 	pragmApp.config(function($routeProvider) {
+        //console.info($route.current);
 		$routeProvider
 
 			// route for the home page
@@ -855,9 +856,14 @@ var pragmApp = angular.module('pragmApp', []);
 			})
 
 			// route for the about page
-			.when('/editor', {
+			.when('/editor/:id/', {
 				templateUrl : 'templates/noteEditor.html',
-				controller  : 'editorController'
+				controller  : 'editorController',
+                resolve: {
+                load: function ($route, dataService) {
+                    return dataService.load($route.current.params.id);
+                }
+                }
 			})
 
 			// route for the contact page
@@ -878,7 +884,20 @@ var pragmApp = angular.module('pragmApp', []);
 
 	// create the controller and inject Angular's $scope
 	
-
+pragmApp.factory('dataService', function ($q, $timeout) {
+    return { 
+        data : {},
+        load : function(id) {
+            var defer = $q.defer();
+            var data = this.data;
+            $timeout(function () {
+                data.id = id;
+                defer.resolve(data);
+            }, 0);
+            return defer.promise;
+        }
+    };
+});
 	
 
 	
@@ -1172,9 +1191,10 @@ pragmApp.controller('crashController', function($scope) {
             }
         });
 	});
-pragmApp.controller('editorController', function($scope) {
+pragmApp.controller('editorController', function($scope, $location, dataService) {
 		$scope.lan = 'cool';
 		$scope.message = 'Contact us! JK. This is just a demo.';
+        $scope.fileID = dataService.data;
         
         // Load -----------------------------------------------
 		$scope.loadinginfo = "";
@@ -1231,9 +1251,11 @@ pragmApp.controller('editorController', function($scope) {
         
         // Something else -------------------------------------------
         uiControl.file = uiControl.takeFile;
+        
         //console.log("ANGU => L3: "+L3.file);
         //console.log("ANGU => UI: "+uiControl.file);
         data.showCache();
+        tab.position("slide10In");
 	});
 pragmApp.controller('filesController', function($scope) {
 		$scope.lan = 'cool';
@@ -1404,6 +1426,10 @@ pragmApp.controller('filesController', function($scope) {
             data.selectionarray = selectionarray;
             selectionarray = null;
             $scope.activenum = activecount;
+        };
+    
+        $scope.getServerAddress = function(){
+            return global.config.serveraddress;
         };
         
         // Drag and Drop -----------------------------------------------
@@ -1771,6 +1797,13 @@ pragmApp.controller('loginController', function($scope) {
 		$scope.lan = 'cool';
 		//$scope.loadslide = '';
         
+        $scope.getServerAddress = function(){
+            return global.config.serveraddress;
+        };
+        
+        global.onSchange(function(){
+            $scope.$apply();
+        });
         
 		
         // Wait handler  ------------------------------------------------------
@@ -2719,6 +2752,18 @@ var global_typ = function global_typ(){
     this.ctrl = false;
     this.shift = false;
     this.mousedown = false;
+    this.Schange = false;
+    
+    this.setServerAddress = function(){
+        this.config.serveraddress = prompt("WebSocket Server:", this.config.serveraddress);
+        if(this.Schange){
+            this.Schange();
+        }
+    };
+    
+    this.onSchange = function(x){
+        this.Schange = x;
+    };
     
     this.get_websocket_server_address = function(){
         if(this.config.addressalert){
@@ -4449,7 +4494,7 @@ var uiControl_typ = function global_typ(){
                 document.title = "pragm note";
 				break;
 	        case "editor":
-                window.location.href = "#editor";
+                window.location.href = "#editor/"+uiControl.takeFile;
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/

@@ -2,6 +2,7 @@ var pragmApp = angular.module('pragmApp', []);
 
 	// configure our routes
 	pragmApp.config(function($routeProvider) {
+        //console.info($route.current);
 		$routeProvider
 
 			// route for the home page
@@ -11,9 +12,14 @@ var pragmApp = angular.module('pragmApp', []);
 			})
 
 			// route for the about page
-			.when('/editor', {
+			.when('/editor/:id/', {
 				templateUrl : 'templates/noteEditor.html',
-				controller  : 'editorController'
+				controller  : 'editorController',
+                resolve: {
+                load: function ($route, dataService) {
+                    return dataService.load($route.current.params.id);
+                }
+                }
 			})
 
 			// route for the contact page
@@ -34,7 +40,20 @@ var pragmApp = angular.module('pragmApp', []);
 
 	// create the controller and inject Angular's $scope
 	
-
+pragmApp.factory('dataService', function ($q, $timeout) {
+    return { 
+        data : {},
+        load : function(id) {
+            var defer = $q.defer();
+            var data = this.data;
+            $timeout(function () {
+                data.id = id;
+                defer.resolve(data);
+            }, 0);
+            return defer.promise;
+        }
+    };
+});
 	
 
 	

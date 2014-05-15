@@ -1,6 +1,6 @@
 
 {
-    "serveraddress": "http://localhost:8080/",
+    "serveraddress": "http://hex:8080/",
     "addressalert": false
 }
 

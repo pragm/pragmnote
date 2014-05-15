@@ -1602,3 +1602,15 @@ weis{
     /*border-top: 1px solid #a7a7a7;*/
     margin: 0;
 }
+
+.serverdata {
+    position: absolute;
+    top: 6px;
+    left: 5px;
+}
+
+.versiondata {
+    /*position: absolute;
+    top: 5px;
+    right: 5px;*/
+}

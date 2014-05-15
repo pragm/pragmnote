@@ -25,15 +25,25 @@
 
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
+
+process.argv.forEach(function (val, index, array) {
+  //console.log(index + ': ' + val);
+    if(val.substr(0,5) == "#conf"){
+        console.log("CONFIG ARGUMENTS: "+val.substr(5));
+        //val = val.replace(/'/g,'"');
+        //console.log(val.substr(5));
+        global.config = JSON.parse(val.substr(5));
+    }
+});
  
 process.stdin.on('data', function (chunk) {
     chunk = chunk.substr(0, 4);
     switch (chunk) {
-        case "save":
+        case "#save":
             cLog("save all files");
             L3.saveAll();
             break;
-        case "stop":
+        case "#stop":
             cLog("exit websocket server");
             stopServerNow();
             //server.close();
@@ -41,25 +51,25 @@ process.stdin.on('data', function (chunk) {
             //server.close();
             //process.kill();
             break;
-        case "ende":
+        case "#ende":
             cLog("end => stops websocket server when all clients are disconnected (allows no new connections)");
             server.close();
             //process.kill();
             break;
-        case "exit":
+        case "#exit":
             L3.exit = true;
             cLog("save all files");
             L3.saveAll();
             break;
-        case "kill":
+        case "#kill":
             for (key in clients) {
                 clients[key].close();
             }
             break;
-        case "rdir":
+        case "#rdir":
             datei.readDir();
             break;
-        case "dbug":
+        case "#dbug":
             debugLog = 5;
             break;
         default:
@@ -79,6 +89,8 @@ var text = "0206224400ffshjnkbgmmm";
 // Optional. You will see this name in eg. 'ps' or 'top' command
 process.title = 'pragm-websocket';
 
+
+
 // Port where we'll run the websocket server
 if(!global.config.port){
     var webSocketsServerPort = 8080;
@@ -94,6 +106,11 @@ var timeStat = new Array();
 //var http = require('http');
 var io = require('socket.io').listen(webSocketsServerPort);
 io.set('log level', 1);
+io.server.on('error', function (e) {
+  if (e.code == 'EADDRINUSE') {
+    commander.portBloc(webSocketsServerPort);
+  }
+});
 
 // list of currently connected clients (users)
 var clients = [ ];
@@ -202,6 +219,7 @@ io.sockets.on('connection', function (socket) {
             //}
         //}
     });
+    
 
     // user disconnected
     socket.on('disconnect', function () {
@@ -213,6 +231,9 @@ io.sockets.on('connection', function (socket) {
     });
 
 });
+
+
+    
 
 
 var L1_typ = function L1_typ(){

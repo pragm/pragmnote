@@ -41,6 +41,18 @@ var global_typ = function global_typ(){
     this.ctrl = false;
     this.shift = false;
     this.mousedown = false;
+    this.Schange = false;
+    
+    this.setServerAddress = function(){
+        this.config.serveraddress = prompt("WebSocket Server:", this.config.serveraddress);
+        if(this.Schange){
+            this.Schange();
+        }
+    };
+    
+    this.onSchange = function(x){
+        this.Schange = x;
+    };
     
     this.get_websocket_server_address = function(){
         if(this.config.addressalert){
