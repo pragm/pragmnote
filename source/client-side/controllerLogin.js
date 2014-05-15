@@ -1,4 +1,9 @@
-pragmApp.controller('loginController', function($scope) {
+pragmApp.controller('loginController', function($scope, $location) {
+        
+         if($location.search().login == "guest"){
+             console.info("autologin guest"); 
+             uiControl.autologinguest = true;
+         }
 		// create a message to display in our view
 		$scope.clientversion = clientversion;
 		$scope.lan = 'cool';
@@ -23,7 +28,11 @@ pragmApp.controller('loginController', function($scope) {
             } else {
 		      $scope.loadshow = 'block';
               //$scope.loadslide = 'width: 100%;';
-                document.getElementById('loadingslide').className = 'loadingslideIN';
+                if(document.getElementById('loadingslide')){
+                    document.getElementById('loadingslide').className = 'loadingslideIN';
+                } else {
+                    console.error("Cannot find document.getElementById('loadingslide')!");
+                }
               setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
@@ -72,5 +81,10 @@ pragmApp.controller('loginController', function($scope) {
                 $scope.$apply();
             }
         });*/
-   
+        
+        if(uiControl.autologinguest){
+            setTimeout(uiControl.autologinGuest, 2000);
+        } else {
+            uiControl.finishRoedel();
+        }
 	});

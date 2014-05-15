@@ -36,6 +36,16 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata = { };
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
+    this.loadview = false;
+    this.autologinguest = false;
+    
+    this.finishRoedel = function(){
+        document.getElementById('startshow').style.display = "none";
+    }
+    
+    this.showRoedel = function(){
+        document.getElementById('startshow').style.display = "block";
+    }
     
     this.deleteButton = function(){
         for(i in data.selectionarray){
@@ -57,19 +67,18 @@ var uiControl_typ = function global_typ(){
         this.loadHandler("loading file");
         this.takeFile = id;
 		this.view('editor');
-        tab.fileOpened(id);
-        L3.loadFileCallback(id, function(){
-            console.log("Callback => LOADED");
-            //data.set('loadinginfo', "");
-            uiControl.loadHandlerFin();
-        });
+        
     };
 
 	this.unloadFile = function(){
-		L3.unloadFileCallback(L3.file, function(){
-            console.log('Callback => UNLOADED')
-        });
-        uiControl.view('files');
+        if(data.login.userID != "5GUESTUSER"){
+            L3.unloadFileCallback(L3.file, function(){
+                console.log('Callback => UNLOADED')
+            });
+            uiControl.view('files');
+        } else {
+            uiControl.alert("Not allowed for guests! Get a free account!");
+        }
 	}
 
 	this.loadOtherFile = function(id){
@@ -90,8 +99,6 @@ var uiControl_typ = function global_typ(){
 	this.login = function (){
         var loginObject = new Object();
         
-        
-    
         L3.loginDat.userName     = document.getElementById('loginUsername').value;
         L3.loginDat.userPassword = document.getElementById('loginPassword').value;
         //uiControl.loadHandler();
@@ -108,8 +115,21 @@ var uiControl_typ = function global_typ(){
         return false;
 	};
 
+	this.autologinGuest = function (){
+        var loginObject = new Object();
+        L3.loginDat.userName     = "Guest";
+        L3.loginDat.userPassword = "Guest";
+		if(L3.firstload){
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
+	};
+
 	this.loginGood = function (){
-		this.view('load');
+        this.view('load');
 		L2.send(sID.getServer, sID.fileList);
         if(this.disconnectdata.bool){
             if(data.login.userRight){
@@ -181,13 +201,16 @@ var uiControl_typ = function global_typ(){
                 document.title = "pragm note";
 				break;
 	        case "editor":
-                window.location.href = "#editor/"+uiControl.takeFile;
+                var x = "";
+                if(data.login.userID == "5GUESTUSER"){
+                    x = "/?login=guest";
+                }
+                window.location.href = "#editor/"+uiControl.takeFile+x;
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
 				//document.getElementById('fileTabs').style.height = "";
-                tab.position("slide10In");
-                document.title = data.dirObject[uiControl.takeFile].name;
+                document.title = "loading...";
 	            break;
 	        case "load":
                 //window.location.href = "#loading";

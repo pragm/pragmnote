@@ -252,7 +252,7 @@ var textbox_typ = function textbox_typ(){
         
         var tempContent = textbox.content;
         
-        tempContent = tempContent.replace(/�/g, "&Auml;");
+        /*tempContent = tempContent.replace(/�/g, "&Auml;");
         tempContent = tempContent.replace(/�/g, "&auml;");
         tempContent = tempContent.replace(/�/g, "&Ouml;");
         tempContent = tempContent.replace(/�/g, "&ouml;");
@@ -261,7 +261,7 @@ var textbox_typ = function textbox_typ(){
         tempContent = tempContent.replace(/�/g, "&sect;");
         tempContent = tempContent.replace(/�/g, "&szlig;");
         tempContent = tempContent.replace(/�/g, "&deg;");
-        tempContent = tempContent.replace(/�/g, "&euro;");
+        tempContent = tempContent.replace(/�/g, "&euro;");*/
         
         
         textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;

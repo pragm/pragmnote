@@ -1,4 +1,22 @@
-pragmApp.controller('filesController', function($scope) {
+pragmApp.controller('filesController', function($scope, $location) {
+    var run = true;
+    if('login' in data){
+        if('userRight' in data.login){
+            if(data.login.userRight > 4){
+                run = false;
+            }
+        } else {
+        run = false;
+        }
+    } else {
+        run = false;
+    }
+
+    if(!run){
+        $location.path('/');
+    } else {
+    
+    
 		$scope.lan = 'cool';
         
         // Load Handler ----------------------------
@@ -527,4 +545,5 @@ pragmApp.controller('filesController', function($scope) {
                 $scope.$apply();
             }
         });
-	});
+    }
+});

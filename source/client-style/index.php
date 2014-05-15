@@ -53,6 +53,7 @@ $temp = str_replace ("\x0B","",$temp);
 
 <div class="background"></div>-->
 <div class="fileTabs" id="fileTabs" style="height: 0px;">
+    <div class="startshow" id="startshow"><div class="centerPicStart"></div></div>
     <div class="fileTabButton" onclick="uiControl.unloadFile(); tab.deactivateTab();">
         <div unselectable="on" class="fileTabsPragm" id="pragmico2"></div>
      </div>
@@ -73,7 +74,6 @@ $temp = str_replace ("\x0B","",$temp);
     </div>
     
     <div class="angularView" ng-view></div>
-    
 <!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('Print')"><img src="img/doc/print.png" unselectable="on"></li>

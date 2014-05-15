@@ -123,7 +123,17 @@ var L3_typ = function L3_typ(){
                                 //dirCreator.mainDir = data.login.userID;
                                 //dirCreator.showDir(dirCreator.mainDir);
                             }
-                            uiControl.view('files');
+                            if(uiControl.loadview){
+                                var x = "";
+                                if(data.login.userID == "5GUESTUSER"){
+                                    x = "/?login=guest";
+                                }
+                                window.location.href = "#"+uiControl.loadview+x;
+                                uiControl.loadview = false;
+                            } else {
+                                uiControl.view('files');
+                            }
+                            
                             //dirCreator.refreshShow();
                             //uiControl.loadHandlerFin();
                             this.beforeEvent = "";
@@ -154,7 +164,11 @@ var L3_typ = function L3_typ(){
                 break;
 
             case sID.message:
-                uiControl.alert(daten);
+                if(daten == "Access Denied!" && data.login.userID == "5GUESTUSER"){
+                    uiControl.crash(daten);
+                } else {
+                    uiControl.alert(daten);
+                }
                 break;
 
             case sID.Login:

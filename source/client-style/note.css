@@ -22,6 +22,10 @@
 #
 ******************************************************************************************/
 
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 .body{
     background: #ffffff;
 	-webkit-user-select: none;
@@ -1613,4 +1617,14 @@ weis{
     /*position: absolute;
     top: 5px;
     right: 5px;*/
+}
+
+.startshow {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    top: 0px;
+    background: #e9e9e9;
+    z-index: 1000;
 }

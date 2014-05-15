@@ -41,6 +41,20 @@
     height: 120px; 
     background: url("img/doc/solo.png");
 }
+
+.centerPicStart{
+    position: fixed;  
+    left: 50%; 
+    top: 50%;
+    margin-left: -60px;
+    margin-top: -60px;
+    width: 120px; 
+    height: 120px; 
+    background: url("img/doc/solo.png");
+    -webkit-animation:spin 15s linear infinite;
+    -moz-animation:spin 15s linear infinite;
+    animation:spin 15s linear infinite;
+}
 .loginLine{
     position: absolute; 
     bottom: 0px; 

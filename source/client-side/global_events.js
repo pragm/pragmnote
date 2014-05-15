@@ -127,7 +127,7 @@ var globalEvent_typ = function globalEvent_typ(){
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
         //L1.onload();
-        uiControl.view("start");
+        //uiControl.view("start");
     };
     
     this.onConnect = function (){

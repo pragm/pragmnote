@@ -60,7 +60,11 @@ var tab_typ = function tab_typ(){
                 var tempId = "'"+this.tabArray[numb]+"'";
                 //var fullDirArray = testDir.split(":");
                 //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
-                var tempName = data.dirObject[this.tabArray[numb]].name;
+                try{
+                    var tempName = data.dirObject[this.tabArray[numb]].name;
+                } catch(e){
+                    var tempName = "ERROR";
+                }
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -78,8 +82,10 @@ var tab_typ = function tab_typ(){
     }
     
     this.deactivateTab = function(){
-        if(document.getElementById('TabActive')){
-            document.getElementById('TabActive').id = "";
+        if(data.login.userID != "5GUESTUSER"){
+            if(document.getElementById('TabActive')){
+                document.getElementById('TabActive').id = "";
+            }
         }
     }
     

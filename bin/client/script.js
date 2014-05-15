@@ -1,4 +1,4 @@
-var clientversion = "0.2.1600"/******************************************************************************************
+var clientversion = "0.2.1648"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1192,72 +1192,129 @@ pragmApp.controller('crashController', function($scope) {
         });
 	});
 pragmApp.controller('editorController', function($scope, $location, dataService) {
-		$scope.lan = 'cool';
-		$scope.message = 'Contact us! JK. This is just a demo.';
-        $scope.fileID = dataService.data;
-        
-        // Load -----------------------------------------------
-		$scope.loadinginfo = "";
-		$scope.loadshow = 'none';
-        $scope.updateLoad = function(){
-            if($scope.loadinginfo==""){
-		      $scope.loadshow = 'none';
-                tab.position("slide10In");
+        $scope.fileID = dataService.data.id;
+        var run = true;
+        if('login' in data){
+            if('userRight' in data.login){
+                if(data.login.userRight > 4){
+                    run = false;
+                }
             } else {
-		      $scope.loadshow = 'block';
-                tab.position("fastIn");
-              document.getElementById('loadingslide').className = 'loadingslideIN';
+            run = false;
             }
+        } else {
+            run = false;
         }
-        data.databind('loadinginfo', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.loadinginfo = x;
-          $scope.updateLoad();
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
         
-        // Alert handler   ---------------------------------------------------------
-		$scope.alertinfo = "";
-		$scope.alertshow = 'none';
-        $scope.updateAlert = function(){
-            //console.log("Update Angular "+$scope.alertinfo);
-            if($scope.alertinfo==""){
-		      $scope.alertshow = 'none';
-                tab.position("slideOut");
-            } else {
-		      $scope.alertshow = 'block';
-                tab.position("slideIn");
+        if(!run){
+             if($location.search().login == "guest"){
+                 console.info("autologin guest"); 
+                 uiControl.autologinguest = true;
+             }
+            uiControl.loadview = "editor/"+$scope.fileID;
+            $location.path('/');
+        } else {
+            if(uiControl.autologinguest){
+                uiControl.finishRoedel();
             }
-        }
-        data.databind('alertinfo', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.alertinfo = x;
-          $scope.updateAlert();
-            if(!$scope.$$phase) {
-                $scope.$apply();
+
+            
+            tab.fileOpened($scope.fileID);
+            L3.loadFileCallback($scope.fileID, function(){
+                console.log("Callback => LOADED");
+                //data.set('loadinginfo', "");
+                uiControl.loadHandlerFin();
+            });
+            $scope.lan = 'cool';
+            $scope.message = 'Contact us! JK. This is just a demo.';
+
+            // Load -----------------------------------------------
+            $scope.loadinginfo = "";
+            $scope.loadshow = 'none';
+            $scope.updateLoad = function(){
+                if($scope.loadinginfo==""){
+                  $scope.loadshow = 'none';
+                    tab.position("slide10In");
+                } else {
+                  $scope.loadshow = 'block';
+                    tab.position("fastIn");
+                  document.getElementById('loadingslide').className = 'loadingslideIN';
+                }
             }
-        });
-        
-        $scope.unalert = function(){
-            data.alertinfo = "";
+            data.databind('loadinginfo', function(x){
+              //console.log("Data: "+JSON.stringify(x));
+              $scope.loadinginfo = x;
+              $scope.updateLoad();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+
+            // Alert handler   ---------------------------------------------------------
             $scope.alertinfo = "";
-            $scope.updateAlert();
-            if(!$scope.$$phase) {
-                $scope.$apply();
+            $scope.alertshow = 'none';
+            $scope.updateAlert = function(){
+                //console.log("Update Angular "+$scope.alertinfo);
+                if($scope.alertinfo==""){
+                  $scope.alertshow = 'none';
+                    tab.position("slide10In");
+                } else {
+                  $scope.alertshow = 'block';
+                    tab.position("slideIn");
+                }
             }
+            data.databind('alertinfo', function(x){
+              //console.log("Data: "+JSON.stringify(x));
+              $scope.alertinfo = x;
+              $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+
+            $scope.unalert = function(){
+                data.alertinfo = "";
+                $scope.alertinfo = "";
+                $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            }
+
+            // Something else -------------------------------------------
+            uiControl.file = $scope.fileID;
+            tab.position("slide10In");
+            
+            try{
+                document.title = data.dirObject[$scope.fileID].name;
+            } catch(e){
+                //uiControl.crash("ERROR: Maybe you have no rights for this file?");
+            }
+            //console.log("ANGU => L3: "+L3.file);
+            //console.log("ANGU => UI: "+uiControl.file);
+            data.showCache();
+            tab.position("slide10In");
         }
-        
-        // Something else -------------------------------------------
-        uiControl.file = uiControl.takeFile;
-        
-        //console.log("ANGU => L3: "+L3.file);
-        //console.log("ANGU => UI: "+uiControl.file);
-        data.showCache();
-        tab.position("slide10In");
 	});
-pragmApp.controller('filesController', function($scope) {
+pragmApp.controller('filesController', function($scope, $location) {
+    var run = true;
+    if('login' in data){
+        if('userRight' in data.login){
+            if(data.login.userRight > 4){
+                run = false;
+            }
+        } else {
+        run = false;
+        }
+    } else {
+        run = false;
+    }
+
+    if(!run){
+        $location.path('/');
+    } else {
+    
+    
 		$scope.lan = 'cool';
         
         // Load Handler ----------------------------
@@ -1786,12 +1843,18 @@ pragmApp.controller('filesController', function($scope) {
                 $scope.$apply();
             }
         });
-	});
+    }
+});
 pragmApp.controller('loadingController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.message = 'Please wait us! JK. This is just a demo.';
 	});
-pragmApp.controller('loginController', function($scope) {
+pragmApp.controller('loginController', function($scope, $location) {
+        
+         if($location.search().login == "guest"){
+             console.info("autologin guest"); 
+             uiControl.autologinguest = true;
+         }
 		// create a message to display in our view
 		$scope.clientversion = clientversion;
 		$scope.lan = 'cool';
@@ -1816,7 +1879,11 @@ pragmApp.controller('loginController', function($scope) {
             } else {
 		      $scope.loadshow = 'block';
               //$scope.loadslide = 'width: 100%;';
-                document.getElementById('loadingslide').className = 'loadingslideIN';
+                if(document.getElementById('loadingslide')){
+                    document.getElementById('loadingslide').className = 'loadingslideIN';
+                } else {
+                    console.error("Cannot find document.getElementById('loadingslide')!");
+                }
               setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
@@ -1865,7 +1932,12 @@ pragmApp.controller('loginController', function($scope) {
                 $scope.$apply();
             }
         });*/
-   
+        
+        if(uiControl.autologinguest){
+            setTimeout(uiControl.autologinGuest, 2000);
+        } else {
+            uiControl.finishRoedel();
+        }
 	});
 /******************************************************************************************
 #
@@ -2649,7 +2721,7 @@ var globalEvent_typ = function globalEvent_typ(){
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
         //L1.onload();
-        uiControl.view("start");
+        //uiControl.view("start");
     };
     
     this.onConnect = function (){
@@ -3065,7 +3137,7 @@ var textbox_typ = function textbox_typ(){
         
         var tempContent = textbox.content;
         
-        tempContent = tempContent.replace(/�/g, "&Auml;");
+        /*tempContent = tempContent.replace(/�/g, "&Auml;");
         tempContent = tempContent.replace(/�/g, "&auml;");
         tempContent = tempContent.replace(/�/g, "&Ouml;");
         tempContent = tempContent.replace(/�/g, "&ouml;");
@@ -3074,7 +3146,7 @@ var textbox_typ = function textbox_typ(){
         tempContent = tempContent.replace(/�/g, "&sect;");
         tempContent = tempContent.replace(/�/g, "&szlig;");
         tempContent = tempContent.replace(/�/g, "&deg;");
-        tempContent = tempContent.replace(/�/g, "&euro;");
+        tempContent = tempContent.replace(/�/g, "&euro;");*/
         
         
         textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
@@ -3850,7 +3922,17 @@ var L3_typ = function L3_typ(){
                                 //dirCreator.mainDir = data.login.userID;
                                 //dirCreator.showDir(dirCreator.mainDir);
                             }
-                            uiControl.view('files');
+                            if(uiControl.loadview){
+                                var x = "";
+                                if(data.login.userID == "5GUESTUSER"){
+                                    x = "/?login=guest";
+                                }
+                                window.location.href = "#"+uiControl.loadview+x;
+                                uiControl.loadview = false;
+                            } else {
+                                uiControl.view('files');
+                            }
+                            
                             //dirCreator.refreshShow();
                             //uiControl.loadHandlerFin();
                             this.beforeEvent = "";
@@ -3881,7 +3963,11 @@ var L3_typ = function L3_typ(){
                 break;
 
             case sID.message:
-                uiControl.alert(daten);
+                if(daten == "Access Denied!" && data.login.userID == "5GUESTUSER"){
+                    uiControl.crash(daten);
+                } else {
+                    uiControl.alert(daten);
+                }
                 break;
 
             case sID.Login:
@@ -4194,7 +4280,11 @@ var tab_typ = function tab_typ(){
                 var tempId = "'"+this.tabArray[numb]+"'";
                 //var fullDirArray = testDir.split(":");
                 //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
-                var tempName = data.dirObject[this.tabArray[numb]].name;
+                try{
+                    var tempName = data.dirObject[this.tabArray[numb]].name;
+                } catch(e){
+                    var tempName = "ERROR";
+                }
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -4212,8 +4302,10 @@ var tab_typ = function tab_typ(){
     }
     
     this.deactivateTab = function(){
-        if(document.getElementById('TabActive')){
-            document.getElementById('TabActive').id = "";
+        if(data.login.userID != "5GUESTUSER"){
+            if(document.getElementById('TabActive')){
+                document.getElementById('TabActive').id = "";
+            }
         }
     }
     
@@ -4349,6 +4441,16 @@ var uiControl_typ = function global_typ(){
     this.disconnectdata = { };
     this.disconnectdata.bool = false;
     this.disconnectdata.lastDir = "";
+    this.loadview = false;
+    this.autologinguest = false;
+    
+    this.finishRoedel = function(){
+        document.getElementById('startshow').style.display = "none";
+    }
+    
+    this.showRoedel = function(){
+        document.getElementById('startshow').style.display = "block";
+    }
     
     this.deleteButton = function(){
         for(i in data.selectionarray){
@@ -4370,19 +4472,18 @@ var uiControl_typ = function global_typ(){
         this.loadHandler("loading file");
         this.takeFile = id;
 		this.view('editor');
-        tab.fileOpened(id);
-        L3.loadFileCallback(id, function(){
-            console.log("Callback => LOADED");
-            //data.set('loadinginfo', "");
-            uiControl.loadHandlerFin();
-        });
+        
     };
 
 	this.unloadFile = function(){
-		L3.unloadFileCallback(L3.file, function(){
-            console.log('Callback => UNLOADED')
-        });
-        uiControl.view('files');
+        if(data.login.userID != "5GUESTUSER"){
+            L3.unloadFileCallback(L3.file, function(){
+                console.log('Callback => UNLOADED')
+            });
+            uiControl.view('files');
+        } else {
+            uiControl.alert("Not allowed for guests! Get a free account!");
+        }
 	}
 
 	this.loadOtherFile = function(id){
@@ -4403,8 +4504,6 @@ var uiControl_typ = function global_typ(){
 	this.login = function (){
         var loginObject = new Object();
         
-        
-    
         L3.loginDat.userName     = document.getElementById('loginUsername').value;
         L3.loginDat.userPassword = document.getElementById('loginPassword').value;
         //uiControl.loadHandler();
@@ -4421,8 +4520,21 @@ var uiControl_typ = function global_typ(){
         return false;
 	};
 
+	this.autologinGuest = function (){
+        var loginObject = new Object();
+        L3.loginDat.userName     = "Guest";
+        L3.loginDat.userPassword = "Guest";
+		if(L3.firstload){
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
+	};
+
 	this.loginGood = function (){
-		this.view('load');
+        this.view('load');
 		L2.send(sID.getServer, sID.fileList);
         if(this.disconnectdata.bool){
             if(data.login.userRight){
@@ -4494,13 +4606,16 @@ var uiControl_typ = function global_typ(){
                 document.title = "pragm note";
 				break;
 	        case "editor":
-                window.location.href = "#editor/"+uiControl.takeFile;
+                var x = "";
+                if(data.login.userID == "5GUESTUSER"){
+                    x = "/?login=guest";
+                }
+                window.location.href = "#editor/"+uiControl.takeFile+x;
 				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('pleasewait').style.display = "none";*/
 				//document.getElementById('fileTabs').style.height = "";
-                tab.position("slide10In");
-                document.title = data.dirObject[uiControl.takeFile].name;
+                document.title = "loading...";
 	            break;
 	        case "load":
                 //window.location.href = "#loading";
