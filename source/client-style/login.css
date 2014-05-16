@@ -41,6 +41,20 @@
     height: 120px; 
     background: url("img/doc/solo.png");
 }
+
+.centerPicStart{
+    position: fixed;  
+    left: 50%; 
+    top: 50%;
+    margin-left: -60px;
+    margin-top: -60px;
+    width: 120px; 
+    height: 120px; 
+    background: url("img/doc/solo.png");
+    -webkit-animation:spin 15s linear infinite;
+    -moz-animation:spin 15s linear infinite;
+    animation:spin 15s linear infinite;
+}
 .loginLine{
     position: absolute; 
     bottom: 0px; 
@@ -74,7 +88,7 @@
 	.alertinput{
 		outline:none;
 		border-radius:3px;
-    	-webkit-border-radius:3px;
+    	border-radius:3px;
     	-moz-border-radius:3px;
 		padding: 6px;
 		background-color: #f3f3f3;
@@ -84,16 +98,16 @@
 		cursor: text;
 		font-size: 14px;
 		font-weight: bold;
-		-webkit-transition: all 0.03s ease-in-out;
+		transition: all 0.03s ease-in-out;
 		}
 	.alertinput:hover{
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 		}
 	.alertinput:focus{
 		background-color: #FFFFFF;
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 	}
 	.loginSubmit{
 		outline:none;
@@ -106,11 +120,11 @@
 		cursor: pointer;
 		font-size: 14px;
 		font-weight: bold;
-		-webkit-transition: all 0.03s ease-in-out;
+		transition: all 0.03s ease-in-out;
 		}
 	.loginSubmit:hover{
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 		}
 	.loginSubmit:focus{
 		background-color: #FFFFFF;
@@ -130,6 +144,9 @@
 		bottom: 0px;
 		left: 0px;
 		right: 0px;
-		background: #e5e5e5;
+		background: url('img/wal.jpg');
+		/* background-repeat:no-repeat;
+  background-position:100px 50%;*/
+        background-size:100% auto;
 		z-index: 99;
 	}

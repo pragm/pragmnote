@@ -58,8 +58,13 @@ var tab_typ = function tab_typ(){
                 if(this.active == this.tabArray[numb]){add = 'id="TabActive" ';}
                 var temp = "'TabActive'";
                 var tempId = "'"+this.tabArray[numb]+"'";
-                var fullDirArray = testDir.split(":");
-                var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                //var fullDirArray = testDir.split(":");
+                //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                try{
+                    var tempName = data.dirObject[this.tabArray[numb]].name;
+                } catch(e){
+                    var tempName = "ERROR";
+                }
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -77,10 +82,32 @@ var tab_typ = function tab_typ(){
     }
     
     this.deactivateTab = function(){
-        if(document.getElementById('TabActive')){
-            document.getElementById('TabActive').id = "";
+        if(data.login.userID != "5GUESTUSER"){
+            if(document.getElementById('TabActive')){
+                document.getElementById('TabActive').id = "";
+            }
         }
     }
+    
+    this.position = function(key){
+        switch(key){
+            case "slideOut":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "50px";
+                break;
+            case "slideIn":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "0px";
+                break;
+            case "slide10In":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "";
+                break;
+            case "fastIn":
+                document.getElementById('fileTabs').style.display = "none";
+                break;
+        }
+    };
 }
     
 var tab = new tab_typ();

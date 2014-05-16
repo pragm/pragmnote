@@ -91,6 +91,7 @@ var color_typ = function color_typ(){
 			    default:
 				    break;
 		}
+        return false;
 	};
 
 	this.setcolor = function(mycolor){

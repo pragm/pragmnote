@@ -47,6 +47,7 @@ var secure_typ = function secure_typ(){
 		this.userRights[clientID] = loginObject.userRight;
 		if(this.userRights[clientID] == global.mNoLogin){
 			this.legitimationSet(clientID);
+			log("LOGIN FAILED => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
 		} else {
 			this.legitimationSetX(clientID);
 			log("LOGIN => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");

@@ -45,6 +45,9 @@ var error_typ = function error_typ(){
 		case 5:
 			this.text = "Fileserver Problem!";
 			break;
+		case 6:
+			this.text = "ID Zugriff fehlgeschlagen!";
+			break;
 		default:
 			this.text = "Fatalerror";
 			break;

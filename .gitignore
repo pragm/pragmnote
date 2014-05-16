@@ -1,0 +1,5 @@
+bin/client/config.json
+bin/server/config.json
+bin/server/data/*.json
+bin/server/data/DirIndexFile.json
+*.key

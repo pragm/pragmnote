@@ -43,6 +43,11 @@ var sID_typ = function sID_typ(){
 	this.addFile		   = "2001000002"; //Fügt eine Datei ins Verzeichnis hinzu
 	this.deleteFile		   = "2001000003"; //Löscht eine Datei von ID
 	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
+	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
+	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
+    this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
+    this.fileInfo          = "2001000008";
+    this.getUserName       = "2001000009";
 
     
     //GET_FROM_SERVER
@@ -52,6 +57,7 @@ var sID_typ = function sID_typ(){
 	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
     
 	/*
 	LEGITIMATION ID: Idee: 

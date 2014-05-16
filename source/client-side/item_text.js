@@ -24,6 +24,8 @@
 
 
 var textbox_typ = function textbox_typ(){
+    
+    this.focusactive = false;
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
@@ -109,6 +111,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.aktivatefocus = function (id){
+        this.focusactive = true;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
 	   textbox.aktiveid = textbox.id;
@@ -123,6 +126,7 @@ var textbox_typ = function textbox_typ(){
 	   if(document.getElementById("editarea"+textbox.id)){
            document.getElementById("editarea"+textbox.id).className = "editareax";
        }
+        this.focusactive = false;
 	}
         
     this.setid =function (id, value){
@@ -170,20 +174,22 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-	   this.id = textbox.makeid('100');
-	   this.Ereignis = window.event;
-	   this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
-	   this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
-	   textbox.newdiv = document.createElement("div");
-	   textbox.newdiv.className		 = "editareax";
-	   textbox.newdiv.id				 = 'editarea'+this.id;
-	   textbox.newdiv.style.left		 = this.x+'px';
-	   textbox.newdiv.style.top		 = this.y+'px';
-	   textbox.newdiv.style.width		 = '400px';
-	   textbox.newdiv.contenteditable	 = 'false';
-       textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
-	   document.getElementById('notecon').appendChild(textbox.newdiv);
-	   document.getElementById("editing"+this.id).focus();
+        if(!this.focusactive && !staticItems.focusactive){
+           this.id = textbox.makeid('100');
+           this.Ereignis = window.event;
+           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
+           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
+           textbox.newdiv = document.createElement("div");
+           textbox.newdiv.className		 = "editareax";
+           textbox.newdiv.id				 = 'editarea'+this.id;
+           textbox.newdiv.style.left		 = this.x+'px';
+           textbox.newdiv.style.top		 = this.y+'px';
+           textbox.newdiv.style.width		 = '400px';
+           textbox.newdiv.contenteditable	 = 'false';
+           textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
+           document.getElementById('notecon').appendChild(textbox.newdiv);
+           document.getElementById("editing"+this.id).focus();
+        }
 	};
     
     this.getTextboxHTML = function (id, content){
@@ -246,7 +252,7 @@ var textbox_typ = function textbox_typ(){
         
         var tempContent = textbox.content;
         
-        tempContent = tempContent.replace(/�/g, "&Auml;");
+        /*tempContent = tempContent.replace(/�/g, "&Auml;");
         tempContent = tempContent.replace(/�/g, "&auml;");
         tempContent = tempContent.replace(/�/g, "&Ouml;");
         tempContent = tempContent.replace(/�/g, "&ouml;");
@@ -255,7 +261,7 @@ var textbox_typ = function textbox_typ(){
         tempContent = tempContent.replace(/�/g, "&sect;");
         tempContent = tempContent.replace(/�/g, "&szlig;");
         tempContent = tempContent.replace(/�/g, "&deg;");
-        tempContent = tempContent.replace(/�/g, "&euro;");
+        tempContent = tempContent.replace(/�/g, "&euro;");*/
         
         
         textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
