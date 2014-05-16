@@ -22,7 +22,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             $location.path('/');
         } else {
             if(uiControl.autologinguest){
-                uiControl.finishRoedel();
+                setTimeout(uiControl.finishRoedel, 100);
             }
 
             

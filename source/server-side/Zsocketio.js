@@ -104,6 +104,8 @@ var timeStat = new Array();
 // websocket and http servers
 //var webSocketServer = require('websocket').server;
 //var http = require('http');
+//blavar options = {key: fs.readFileSync('./cert/client.key'),cert: fs.readFileSync('./cert/client.crt'),requestCert: true}
+//var server = require('https').createServer(options);
 var io = require('socket.io').listen(webSocketsServerPort);
 io.set('log level', 1);
 io.server.on('error', function (e) {
@@ -142,50 +144,7 @@ function stopServerNow(){
 }
 
 pfile.readStr('123', 'dir', 2);
-/**
- * HTTP server
- */
-/*var server = http.createServer(function(request, response) {
-    // Not important for us. We're writing WebSocket server, not HTTP server
-    request.on('error', function(message){
-        log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [REQUEST] MSG: "+message);
-    });
-    response.on('error', function(message){
-        log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [RESPONSE] MSG: "+message);
-    });
-});
-server.listen(webSocketsServerPort, function() {
-    log(" Server is listening on port " + webSocketsServerPort);
-    
-});*/
 
-/*process.on('uncaughtException', function(err) {
-  log(' C A U G H T    E X C E P T I O N : ' + err);
-   //server.close();
-    process.abort();
-});//*/
-
-/*server.on('error', function(message){
-        log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [LISTEN]");
-        process.abort();
-    });
-
-io.server.on('close', function(message){
-        log(" S T O P :  SERVER HAS STOPPED!  S T O P ");
-        process.abort();
-    });
-/**
- * WebSocket server
- *
-var wsServer = new webSocketServer({
-    httpServer: server
-});*/
-
-
-/*wsServer.on('error', function(message){
-        log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [wsServer]");
-        wsServer.close();
-    });*/
 
 var connectionCounter = 0;
 

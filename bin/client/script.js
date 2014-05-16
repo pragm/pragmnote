@@ -1,4 +1,4 @@
-var clientversion = "0.2.1648"/******************************************************************************************
+var clientversion = "0.2.1650"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1215,7 +1215,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             $location.path('/');
         } else {
             if(uiControl.autologinguest){
-                uiControl.finishRoedel();
+                setTimeout(uiControl.finishRoedel, 100);
             }
 
             
@@ -1936,7 +1936,7 @@ pragmApp.controller('loginController', function($scope, $location) {
         if(uiControl.autologinguest){
             setTimeout(uiControl.autologinGuest, 2000);
         } else {
-            uiControl.finishRoedel();
+            setTimeout(uiControl.finishRoedel, 100);
         }
 	});
 /******************************************************************************************

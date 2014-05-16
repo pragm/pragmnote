@@ -85,6 +85,6 @@ pragmApp.controller('loginController', function($scope, $location) {
         if(uiControl.autologinguest){
             setTimeout(uiControl.autologinGuest, 2000);
         } else {
-            uiControl.finishRoedel();
+            setTimeout(uiControl.finishRoedel, 100);
         }
 	});
