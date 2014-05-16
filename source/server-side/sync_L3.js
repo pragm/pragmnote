@@ -202,9 +202,16 @@ var L3_typ = function L3_typ(){
             delete this.users[clientID].files[this.users[clientID]['file']][change[1][key]];
             L2x1.send(clientID, "2000000005", change[1][key]);
         }
-        L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+        //L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+        //setTimeout(function(){
+            L3.clientUpdated(clientID);
+        //}, 1000);
         //this.users[clientID]['files'][this.users[clientID]['file']] = this.files[this.users[clientID]['file']];
     };
+    
+    this.clientUpdated = function(clientID){
+        L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+    }
 
     this.checkID = function (typ, id){
         var lID = strlen(id);

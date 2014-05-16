@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.635
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.635 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1058
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1058 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -999,6 +999,9 @@ var error_typ = function error_typ(){
 		case 5:
 			this.text = "Fileserver Problem!";
 			break;
+		case 6:
+			this.text = "ID Zugriff fehlgeschlagen!";
+			break;
 		default:
 			this.text = "Fatalerror";
 			break;
@@ -1031,6 +1034,8 @@ var error = new error_typ();
 #       Version/Release...............: 0.5xx
 #
 ******************************************************************************************/
+
+
 var fs = require('fs');
 
 var pfile_typ = function pfile_typ(){
@@ -1112,6 +1117,8 @@ var pfile_typ = function pfile_typ(){
 	};
     
     this.checkLogin = function (clientID, username, password){
+        log("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
+        console.log('check');
         var userID = null;
         var temp = { }
         temp.userRight = global.mNoLogin;
@@ -1196,45 +1203,54 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.addLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        if(content === ""){
-    	   content = linkID;
-        } else {
-            var contentArr = content.split(";");
-            var vorhanden = false;
-            for(key in contentArr){
-                if(contentArr[key] == linkID){
-                    vorhanden = true;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            if(content === ""){
+               content = linkID;
+            } else {
+                var contentArr = content.split(";");
+                var vorhanden = false;
+                for(key in contentArr){
+                    if(contentArr[key] == linkID){
+                        vorhanden = true;
+                    }
                 }
+                if(!vorhanden){
+                    contentArr.push(linkID);
+                }
+                content = contentArr.join(";");
             }
-            if(!vorhanden){
-                contentArr.push(linkID);
-            }
-	        content = contentArr.join(";");
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:addLink]");
         }
-        this.dirObject[id].content = content;
     };
     
     this.removeLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        var contentArr = content.split(";");
-       
-        var lastkey;
-        for(key in contentArr){
-            if(contentArr[key] == linkID){
-                lastkey = key;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArr = content.split(";");
+           
+            var lastkey;
+            for(key in contentArr){
+                if(contentArr[key] == linkID){
+                    lastkey = key;
+                }
             }
+            
+            contentArr.splice(key, 1);
+            
+            content = contentArr.join(";");
+            
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:removeLink]");
         }
-        
-        contentArr.splice(key, 1);
-        
-	    content = contentArr.join(";");
-        
-        this.dirObject[id].content = content;
     };
     
     this.generateUserFilelist = function(clientID, userID){
-        output = [];
+        this.generateUserFilelistJSON(clientID, userID);
+        /*output = [];
         counter = 0;
         output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
         counter++;
@@ -1253,7 +1269,24 @@ var pfile_typ = function pfile_typ(){
             }
         }
         L2x1.send(clientID, sID.fileList, output.join(":"));
+        //this.generateUserFilelistJSON(clientID, userID);*/
         //console.log(output.join(":"));
+    }
+    
+    this.generateUserFilelistJSON = function(clientID, userID){
+        output = {};
+        counter = 0;
+        //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
+        //output[userID] = JSON.parse( JSON.stringify( a ) );
+        counter++;
+        for(key in this.dirObject){
+            share = this.dirObject[key].share.split(";");
+            if(userID === "5000000000" || this.dirObject[key].owner == userID || searchArray(share, userID)){
+                output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
+            }
+        }
+        L2x1.send(clientID, sID.fileList, JSON.stringify(output));
+        //console.log(JSON.stringify(output));
     }
     
     this.makeid = function (type){
@@ -1381,6 +1414,7 @@ var secure_typ = function secure_typ(){
 		this.userRights[clientID] = loginObject.userRight;
 		if(this.userRights[clientID] == global.mNoLogin){
 			this.legitimationSet(clientID);
+			log("LOGIN FAILED => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
 		} else {
 			this.legitimationSetX(clientID);
 			log("LOGIN => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
@@ -1623,9 +1657,16 @@ var L3_typ = function L3_typ(){
             delete this.users[clientID].files[this.users[clientID]['file']][change[1][key]];
             L2x1.send(clientID, "2000000005", change[1][key]);
         }
-        L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+        //L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+        //setTimeout(function(){
+            L3.clientUpdated(clientID);
+        //}, 1000);
         //this.users[clientID]['files'][this.users[clientID]['file']] = this.files[this.users[clientID]['file']];
     };
+    
+    this.clientUpdated = function(clientID){
+        L2x1.send(clientID, sID.updated, this.users[clientID]['file']);
+    }
 
     this.checkID = function (typ, id){
         var lID = strlen(id);
@@ -1932,7 +1973,7 @@ process.title = 'pragm-websocket';
 
 // Port where we'll run the websocket server
 if(!global.config.port){
-    var webSocketsServerPort = 9343;
+    var webSocketsServerPort = 8080;
 } else {
     var webSocketsServerPort = global.config.port;
 }
@@ -1941,8 +1982,10 @@ var timeStatCounter = 0;
 var timeStat = new Array();
 
 // websocket and http servers
-var webSocketServer = require('websocket').server;
-var http = require('http');
+//var webSocketServer = require('websocket').server;
+//var http = require('http');
+var io = require('socket.io').listen(webSocketsServerPort);
+io.set('log level', 1);
 
 // list of currently connected clients (users)
 var clients = [ ];
@@ -1969,7 +2012,7 @@ pfile.readStr('123', 'dir', 2);
 /**
  * HTTP server
  */
-var server = http.createServer(function(request, response) {
+/*var server = http.createServer(function(request, response) {
     // Not important for us. We're writing WebSocket server, not HTTP server
     request.on('error', function(message){
         log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [REQUEST] MSG: "+message);
@@ -1981,15 +2024,15 @@ var server = http.createServer(function(request, response) {
 server.listen(webSocketsServerPort, function() {
     log(" Server is listening on port " + webSocketsServerPort);
     
-});
+});*/
 
-process.on('uncaughtException', function(err) {
+/*process.on('uncaughtException', function(err) {
   log(' C A U G H T    E X C E P T I O N : ' + err);
    //server.close();
     process.abort();
 });//*/
 
-server.on('error', function(message){
+/*server.on('error', function(message){
         log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [LISTEN]");
         process.abort();
     });
@@ -2000,49 +2043,51 @@ server.on('close', function(message){
     });
 /**
  * WebSocket server
- */
+ *
 var wsServer = new webSocketServer({
     httpServer: server
-});
+});*/
 
 
-wsServer.on('error', function(message){
+/*wsServer.on('error', function(message){
         log(" E R R O R :  SERVERERROR (PROBABLE SOCKET ON PORT "+webSocketsServerPort+" BUSY) [wsServer]");
         wsServer.close();
-    });
+    });*/
 
 var connectionCounter = 0;
 
 // This callback function is called every time someone
 // tries to connect to the WebSocket server
-wsServer.on('request', function(request) {
-    var connection = request.accept(null, request.origin); 
+io.sockets.on('connection', function (socket) {
+    //var connection = request.accept(null, request.origin); 
+    //socket.origin;
     // we need to know client clientID to remove them on 'close' event
     //var clientID = clients.push(connection) - 1;   // -1
     var clientID = connectionCounter;
-    clients[clientID] = connection;
+    clients[clientID] = socket;
     connectionCounter++;
     secure.init(clientID);
     L2.cache[clientID] = new Array();
     L3.users[clientID] = new Array();
     L3.users[clientID]['file'] = "";
-    iLog('Connection accepted! CLIENTID=>'+clientID+' IP=>'+connection.remoteAddress+' ORIGIN=>'+request.origin);
+    iLog('Connection accepted! CLIENTID=>'+clientID+' IP=>'+socket.remoteAddress+' ORIGIN=>'+socket.origin);
 
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') { // accept only text
+    socket.on('message', function (msg) {
+        //if (message.type === 'utf8') { // accept only text
                 //log(' Received Message from '+ clientID + ': ' + message.utf8Data+"<= AND =>"+connection.remoteAddress);
 
                 //timeStatCounter = timeStat.push(new Date()) - 1;
-                L2.recieve(clientID, message.utf8Data);
+                //L2.recieve(clientID, message.utf8Data);
+                L2.recieve(clientID, msg);
                 //for (var i=0; i < clients.length; i++) {
-                //    clients[i].sendUTF(message.utf8Data+"<= AND =>");
+                //    clients[i].sendUTF(message.utf8Data+"<= AND =>"); 
                 //}
             //}
-        }
+        //}
     });
 
     // user disconnected
-    connection.on('close', function(connection) {
+    socket.on('disconnect', function () {
         //clients.splice(clientID, 1);
         if(clients[clientID]){delete clients[clientID]};
         iLog("CLIENTID=>"+clientID+" disconnected!");
@@ -2055,7 +2100,7 @@ wsServer.on('request', function(request) {
 
 var L1_typ = function L1_typ(){
     this.send = function (client, text){
-        clients[client].sendUTF(text);
+        clients[client].send(text);
         //log(" SCRIPTTIME => "+(new Date()-timeStat[timeStatCounter])+"ms");
     }
     };

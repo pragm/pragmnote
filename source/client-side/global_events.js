@@ -53,15 +53,16 @@ var globalEvent_typ = function globalEvent_typ(){
     };
         
     this.onload = function (){
-        this.updateMainFieldPosition();
+        //this.updateMainFieldPosition();
         //this.setDefaultNotecon();
         //setTimeout("globalEvent.lateload();", 1000);
-        document.getElementById('displayBlocker').style.display = "none";
+        //document.getElementById('displayBlocker').style.display = "none";
         
-        document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
+        //document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
-        L1.onload();
+        //L1.onload();
+        uiControl.view("start");
     };
     
     this.onConnect = function (){

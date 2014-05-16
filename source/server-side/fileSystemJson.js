@@ -21,6 +21,8 @@
 #       Version/Release...............: 0.5xx
 #
 ******************************************************************************************/
+
+
 var fs = require('fs');
 
 var pfile_typ = function pfile_typ(){
@@ -102,6 +104,8 @@ var pfile_typ = function pfile_typ(){
 	};
     
     this.checkLogin = function (clientID, username, password){
+        log("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
+        console.log('check');
         var userID = null;
         var temp = { }
         temp.userRight = global.mNoLogin;
@@ -186,45 +190,54 @@ var pfile_typ = function pfile_typ(){
     };
     
     this.addLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        if(content === ""){
-    	   content = linkID;
-        } else {
-            var contentArr = content.split(";");
-            var vorhanden = false;
-            for(key in contentArr){
-                if(contentArr[key] == linkID){
-                    vorhanden = true;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            if(content === ""){
+               content = linkID;
+            } else {
+                var contentArr = content.split(";");
+                var vorhanden = false;
+                for(key in contentArr){
+                    if(contentArr[key] == linkID){
+                        vorhanden = true;
+                    }
                 }
+                if(!vorhanden){
+                    contentArr.push(linkID);
+                }
+                content = contentArr.join(";");
             }
-            if(!vorhanden){
-                contentArr.push(linkID);
-            }
-	        content = contentArr.join(";");
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:addLink]");
         }
-        this.dirObject[id].content = content;
     };
     
     this.removeLink = function (id, linkID){
-        var content = this.dirObject[id].content;
-        var contentArr = content.split(";");
-       
-        var lastkey;
-        for(key in contentArr){
-            if(contentArr[key] == linkID){
-                lastkey = key;
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArr = content.split(";");
+           
+            var lastkey;
+            for(key in contentArr){
+                if(contentArr[key] == linkID){
+                    lastkey = key;
+                }
             }
+            
+            contentArr.splice(key, 1);
+            
+            content = contentArr.join(";");
+            
+            this.dirObject[id].content = content;
+        } else {
+            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:removeLink]");
         }
-        
-        contentArr.splice(key, 1);
-        
-	    content = contentArr.join(";");
-        
-        this.dirObject[id].content = content;
     };
     
     this.generateUserFilelist = function(clientID, userID){
-        output = [];
+        this.generateUserFilelistJSON(clientID, userID);
+        /*output = [];
         counter = 0;
         output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
         counter++;
@@ -243,7 +256,24 @@ var pfile_typ = function pfile_typ(){
             }
         }
         L2x1.send(clientID, sID.fileList, output.join(":"));
+        //this.generateUserFilelistJSON(clientID, userID);*/
         //console.log(output.join(":"));
+    }
+    
+    this.generateUserFilelistJSON = function(clientID, userID){
+        output = {};
+        counter = 0;
+        //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
+        //output[userID] = JSON.parse( JSON.stringify( a ) );
+        counter++;
+        for(key in this.dirObject){
+            share = this.dirObject[key].share.split(";");
+            if(userID === "5000000000" || this.dirObject[key].owner == userID || searchArray(share, userID)){
+                output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
+            }
+        }
+        L2x1.send(clientID, sID.fileList, JSON.stringify(output));
+        //console.log(JSON.stringify(output));
     }
     
     this.makeid = function (type){

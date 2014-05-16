@@ -1,4 +1,4 @@
-var clientversion = "0.635"/******************************************************************************************
+var clientversion = "0.2.1058"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -821,6 +821,377 @@ var addFile_typ = function addFile_typ(){
 }
 
 var addFile = new addFile_typ();
+var pragmApp = angular.module('pragmApp', []);
+
+	// configure our routes
+	pragmApp.config(function($routeProvider) {
+		$routeProvider
+
+			// route for the home page
+			.when('/', {
+				templateUrl : 'templates/login.html',
+				controller  : 'loginController'
+			})
+
+			// route for the about page
+			.when('/editor', {
+				templateUrl : 'templates/noteEditor.html',
+				controller  : 'editorController'
+			})
+
+			// route for the contact page
+			.when('/files', {
+				templateUrl : 'templates/fileExplorer.html',
+				controller  : 'filesController'
+			})
+			.when('/crash', {
+				templateUrl : 'templates/crash.html',
+				controller  : 'crashController'
+			})
+			.when('/loading', {
+				templateUrl : 'templates/loading.html',
+				controller  : 'loadingController'
+			});
+	});
+
+
+	// create the controller and inject Angular's $scope
+	pragmApp.controller('loginController', function($scope) {
+		// create a message to display in our view
+		$scope.clientversion = clientversion;
+		$scope.lan = 'cool';
+		//$scope.loadslide = '';
+        
+        
+		
+        // Wait handler  ------------------------------------------------------
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            console.log("Update Angular "+$scope.loadinginfo);
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+            } else {
+		      $scope.loadshow = 'block';
+              //$scope.loadslide = 'width: 100%;';
+                document.getElementById('loadingslide').className = 'loadingslideIN';
+              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        // Alert handler   ---------------------------------------------------------
+		$scope.alertinfo = "";
+		$scope.alertshow = 'none';
+        $scope.updateAlert = function(){
+            console.log("Update Angular "+$scope.alertinfo);
+            if($scope.alertinfo==""){
+		      $scope.alertshow = 'none';
+            } else {
+		      $scope.alertshow = 'block';
+            }
+        }
+        data.databind('alertinfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.alertinfo = x;
+          $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        $scope.unalert = function(){
+            data.alertinfo = "";                    
+            $scope.alertinfo = "";
+            $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
+        /*$scope.lol = 'bla';
+        data.databind('messages', function(x){
+          console.log("Data: "+JSON.stringify(x));
+		  $scope.messages = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });*/
+   
+	});
+
+	pragmApp.controller('filesController', function($scope) {
+		$scope.lan = 'cool';
+        
+        // Load Handler ----------------------------
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+              document.getElementById('fileTabs').style.height = "50px";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.loadshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+              document.getElementById('loadingslide').className = 'loadingslideIN';
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        // Alert handler   ---------------------------------------------------------
+		$scope.alertinfo = "";
+		$scope.alertshow = 'none';
+        $scope.updateAlert = function(){
+            console.log("Update Angular "+$scope.alertinfo);
+            if($scope.alertinfo==""){
+		      $scope.alertshow = 'none';
+              document.getElementById('fileTabs').style.height = "50px";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.alertshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+            }
+        }
+        data.databind('alertinfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.alertinfo = x;
+          $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        $scope.unalert = function(){
+            data.alertinfo = "";
+            $scope.alertinfo = "";
+            $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
+        
+        // Something else -------------------------------------------
+		$scope.dirObject = { };
+        if(data.acutalDir != ""){
+            $scope.actualDir = data.acutalDir;
+        } else {
+            $scope.actualDir = data.login.userID;
+            data.acutalDir = data.login.userID;
+        }
+        $scope.mainDir = data.login.userID;
+        $scope.dirShow = [ ];
+        $scope.superFolder = [ ];
+        
+        $scope.update = function () {
+            var id = $scope.actualDir;
+            var counter = 0;
+            $scope.dirShow = $scope.dirObject[id].content.split(";");
+            var temparray = [ ];
+            temparray[counter] = id;
+            while(id != $scope.mainDir){
+                id = $scope.dirObject[id].parent;
+                counter++;
+                temparray[counter] = id;
+            }
+            temparray.reverse();
+            $scope.superFolder = null;
+            $scope.superFolder = temparray;
+            temparray = null;
+        };
+        
+        $scope.openFileAngu = function (id) {
+            console.log("Openfile: "+id);
+            switch(id.substr(0,1)){
+                case "3":
+                    //Datei Oeffnen
+                    uiControl.loadFile(id);
+                    break;
+                case "4":
+                    $scope.actualDir = id;
+                    data.acutalDir = id;
+                    $scope.update();
+                      $scope.update();
+                        if(!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    
+                    //this.showDir(id);
+                    //this.generateFileSuperPath(id);
+                    //this.lastDir = id;
+                    break;
+                case "5":
+                    $scope.actualDir = id;
+                    data.acutalDir = id;
+                    $scope.update();
+                      $scope.update();
+                        if(!$scope.$$phase) {
+                            $scope.$apply();
+                        }
+                    //this.showDir(id);
+                    //this.generateFileSuperPath(id);
+                    //this.lastDir = id;
+                    break;
+            }
+        };
+    
+        
+        
+        data.databind('dirObject', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.dirObject = x;
+          $scope.update();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+	});
+
+	pragmApp.controller('editorController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.message = 'Contact us! JK. This is just a demo.';
+        
+        // Load -----------------------------------------------
+		$scope.loadinginfo = "";
+		$scope.loadshow = 'none';
+        $scope.updateLoad = function(){
+            if($scope.loadinginfo==""){
+		      $scope.loadshow = 'none';
+              document.getElementById('fileTabs').style.height = "";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.loadshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+              document.getElementById('loadingslide').className = 'loadingslideIN';
+            }
+        }
+        data.databind('loadinginfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.loadinginfo = x;
+          $scope.updateLoad();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        // Alert handler   ---------------------------------------------------------
+		$scope.alertinfo = "";
+		$scope.alertshow = 'none';
+        $scope.updateAlert = function(){
+            console.log("Update Angular "+$scope.alertinfo);
+            if($scope.alertinfo==""){
+		      $scope.alertshow = 'none';
+              document.getElementById('fileTabs').style.height = "";
+              document.getElementById('fileTabs').style.top = "";
+            } else {
+		      $scope.alertshow = 'block';
+              document.getElementById('fileTabs').style.height = "0px";
+              document.getElementById('fileTabs').style.top = "-50px";
+            }
+        }
+        data.databind('alertinfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.alertinfo = x;
+          $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        $scope.unalert = function(){
+            data.alertinfo = "";
+            $scope.alertinfo = "";
+            $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
+        
+        // Something else -------------------------------------------
+        uiControl.file = uiControl.takeFile;
+        console.log("ANGU => L3: "+L3.file);
+        console.log("ANGU => UI: "+uiControl.file);
+        data.showCache();
+	});
+
+	pragmApp.controller('loadingController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.message = 'Please wait us! JK. This is just a demo.';
+	});
+
+	pragmApp.controller('crashController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.crashinfo = 'unknown crash';
+        
+        data.databind('crashinfo', function(x){
+		  $scope.crashinfo = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+	});
+
+    pragmApp.factory('cont', function($rootScope){
+        
+    });
+
+    pragmApp.directive('contenteditable', function() {
+    return {
+      restrict: 'A', // only activate on element attribute
+      require: '?ngModel', // get a hold of NgModelController
+      link: function(scope, element, attrs, ngModel) {
+        if(!ngModel) return; // do nothing if no ng-model
+ 
+        // Specify how UI should be updated
+        ngModel.$render = function() {
+          element.html(ngModel.$viewValue || '');
+        };
+ 
+        // Listen for change events to enable binding
+        element.on('blur keyup change', function() {
+          scope.$apply(read);
+            //console.log("change"+read);
+            //data.messages[element] = scope.message;
+        });
+        read(); // initialize
+ 
+        // Write data to the model
+        function read() {
+          var html = element.html();
+          // When we clear the content editable the browser leaves a <br> behind
+          // If strip-br attribute is provided then we strip this out
+          if( attrs.stripBr && html == '<br>' ) {
+            html = '';
+          }
+          ngModel.$setViewValue(html);
+        }
+      }
+    }
+    });
+
+    var makeid = function (type){
+	   var id = (Math.random()*100000000000000000);
+	   id = id.toString();
+	   id = id.substring(0,7);
+	   return type+""+id;
+	   };
+
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -954,6 +1325,7 @@ var color_typ = function color_typ(){
 			    default:
 				    break;
 		}
+        return false;
 	};
 
 	this.setcolor = function(mycolor){
@@ -1079,27 +1451,59 @@ var data_typ = function data_typ(){
 	this.fileList;
 	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
+    this.legitimationID = "";
+    this.dirObject;
+    this.userDir = "";
+    this.acutalDir = "";
+    this.callbacks = { };
+    this.loadinginfo = "";
+    this.alertinfo = "";
+    this.crashinfo = "unknown crash";
+    
+    this.databind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.set = function(object, value){
+        this[object] = value;
+        if(this.callbacks[object]){
+            this.callbacks[object](value);
+        }
+    };
+    
+    this.update = function(object){
+        if(this.callbacks[object]){
+            this.callbacks[object](data[object]);
+        }
+    };
     
     this.edited_sync = function(fileID, contentID){
-        var type = contentID.substr(0,3);
-        switch(type){
-            case '100':
-                textbox.setid(contentID, data.files[fileID][contentID]);
-                break;
-            case '103':
-                staticItems.setid(contentID, data.files[fileID][contentID]);
-                break;
+        if(fileID == uiControl.file){
+            var type = contentID.substr(0,3);
+            switch(type){
+                case '100':
+                    textbox.setid(contentID, data.files[fileID][contentID]);
+                    break;
+                case '103':
+                    staticItems.setid(contentID, data.files[fileID][contentID]);
+                    break;
+            }
+        } else {
+            console.log("Error: UI is not in sync with L3");
         }
     };
     
     this.edited_UI = function(contentID){
-        L3.send(contentID);
+        //L3.send(contentID);
+        L3.uiEdit(uiControl.file, contentID);
     };
     
     this.reset = function(){
         this.fileList = "";
 	    this.files = { };
 	    this.users = "";
+        this.legitimationID = "";
     }
         
     this.delete_UI = function(id){
@@ -1111,6 +1515,21 @@ var data_typ = function data_typ(){
         delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
+    
+    
+    this.showCache = function(){
+        if(uiControl.file){
+            if(!data.files[uiControl.file]) {
+                data.files[uiControl.file] =  { };
+            } else {
+                for(key in data.files[uiControl.file]){
+                    data.edited_sync(uiControl.file, key);
+                }
+            }
+        } else {
+            console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
     
 };
 var data = new data_typ();
@@ -1282,7 +1701,7 @@ var L2 = new L2_typ();
 #
 ******************************************************************************************/
 
-
+/*
 var testDir = "33e1d210cfDatei1:39f6168622Datei2:3aaaaaaaaaDatei3:4000000000root;4000000001;3aaaaaaaaa:4000000001Ordner1;45909c4fcf;39f6168622:45909c4fcfOrdner2;33e1d210cf";
 var lastDir = '5000000001';
 var mainDir = '5000000001';
@@ -1452,6 +1871,125 @@ function refreshShow(){
 
 function createFile(folder, name, type){
     
+}*/
+
+//var testtext = '{"5vdfud2o7a":{"owner":"5vdfud2o7a","parent":"4000000000","name":"Bob","username":"Bob","password":"123","userRight":3,"content":"3ngcnefa8u;3z203p3kmo;40twtrl7qw;3aqcmdb59o;3v096j7i0d;3wr7bw9diw;38f7mn71rp","share":""},"40twtrl7qw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs Folder","content":"3emqfb6uw2","share":""},"3emqfb6uw2":{"owner":"5vdfud2o7a","parent":"40twtrl7qw","name":"Lorem ipsum dolor","share":""},"3z203p3kmo":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs file","share":""},"3ngcnefa8u":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Click Me","share":""},"3phyg3emyk":{"owner":"5vdfud2o7a","parent":"4DELETED00","name":"My sad deleted file","share":""},"3aqcmdb59o":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"debug","share":""},"3v096j7i0d":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"test","share":""},"3wr7bw9diw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"NewTest","share":""},"38f7mn71rp":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"LALA","share":""}}';
+
+var dirCreator_typ = function dirCreator_typ(){
+    
+    this.dirObject = {};
+    this.lastDir = "";
+    this.mainDir = "";
+    
+    this.setDir = function(jsontext){
+        this.dirObject = JSON.parse(jsontext);
+    };
+    
+    this.getName = function(id){
+        if(this.dirObject[id]){
+            return this.dirObject[id].name;
+        } else {
+            return "unnamed file";
+        }
+    };
+    
+    this.showDir = function(id){
+        uiControl.view('files');
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArray = content.split(';');
+            var html = "";
+            for(i in contentArray){
+                if(this.dirObject[contentArray[i]]){
+                    name = this.getName(contentArray[i]);
+                    html = html+this.createElement(contentArray[i], name);
+                }
+            }
+            if(document.getElementById('fileListUl')){
+                //document.getElementById('fileListUl').innerHTML = html;
+            } else {
+                console.log('Error: Can not load filelist to DOM');
+            }
+        } else {
+            console.log("Error: Unknown Concept Bug [1] Issue #56");
+        }
+    };
+    
+    this.generateFileSuperPath = function(id){
+        if(this.dirObject[id]){
+            var name = this.dirObject[id].name;
+            var html = this.createFolderElement(id, name);
+            while(id != this.mainDir){
+                id = this.dirObject[id].parent;
+                name = this.dirObject[id].name;
+                html = this.createFolderElement(id, name)+html;
+            }
+            if(document.getElementById('fileListUl')){
+                //document.getElementById('dirShow').innerHTML = html;
+            }
+        } else {
+            console.log("Error: Unknown Concept Bug [2] Issue #56");
+        }
+    };
+    
+    this.refreshShow = function(){
+        this.showDir(this.lastDir);
+        this.generateFileSuperPath(this.lastDir);
+    };
+    
+    this.openFile = function(id){
+        switch(id.substr(0,1)){
+            case "3":
+                //Datei Oeffnen
+                uiControl.loadFile(id);
+                break;
+            case "4":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+            case "5":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+        }
+    };
+    
+    this.createElement = function(id, name){
+        var t = new Array("fileIcon", "file");
+        switch(id.substr(0,1)){
+                case "3":
+                t[0] = "fileIcon";
+                t[1] = "file";
+                break;
+                case "4":
+                t[0] = "folderIcon";
+                t[1] = "folder";
+                break;
+                case "5":
+                t[0] = "fileIcon";
+                t[1] = "user";
+                break;
+        }
+        id = "'"+id+"'";
+        var e = '<li><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font class="filenameDir" style="position: relative; left: 30px;" onclick="dirCreator.openFile('+id+');">'+name+'</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>';
+        return e;
+    };
+    
+    this.createFolderElement = function(id, name){
+        id = "'"+id+"'";
+        var e = '<li onclick="dirCreator.openFile('+id+');">'+name+'</li>';
+        return e;
+    };
+}
+
+var dirCreator = new dirCreator_typ();
+//dirCreator.setDir(testtext);
+
+function OpenInNewTab(){
+  var win=window.open("https://github.com/pragm/pragmnote", '_blank');
+  win.focus();
 }
 /******************************************************************************************
 #
@@ -1559,15 +2097,16 @@ var globalEvent_typ = function globalEvent_typ(){
     };
         
     this.onload = function (){
-        this.updateMainFieldPosition();
+        //this.updateMainFieldPosition();
         //this.setDefaultNotecon();
         //setTimeout("globalEvent.lateload();", 1000);
-        document.getElementById('displayBlocker').style.display = "none";
+        //document.getElementById('displayBlocker').style.display = "none";
         
-        document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
+        //document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
-        L1.onload();
+        //L1.onload();
+        uiControl.view("start");
     };
     
     this.onConnect = function (){
@@ -1698,7 +2237,7 @@ var global_typ = function global_typ(){
     this.websocket_slow_time = 500; // nach 20 Sekunden Reconnect
     this.draganddroprealtime = false;
     this.difcut = 457;
-    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
+    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);"  onfocus="staticItems.focus();" onblur="staticItems.blur();"id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
     
     this.setTime = function(time){
         this.time = time;
@@ -1736,6 +2275,8 @@ var global = new global_typ();
 
 
 var textbox_typ = function textbox_typ(){
+    
+    this.focusactive = false;
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
@@ -1821,6 +2362,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.aktivatefocus = function (id){
+        this.focusactive = true;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
 	   textbox.aktiveid = textbox.id;
@@ -1835,6 +2377,7 @@ var textbox_typ = function textbox_typ(){
 	   if(document.getElementById("editarea"+textbox.id)){
            document.getElementById("editarea"+textbox.id).className = "editareax";
        }
+        this.focusactive = false;
 	}
         
     this.setid =function (id, value){
@@ -1882,20 +2425,22 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-	   this.id = textbox.makeid('100');
-	   this.Ereignis = window.event;
-	   this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
-	   this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
-	   textbox.newdiv = document.createElement("div");
-	   textbox.newdiv.className		 = "editareax";
-	   textbox.newdiv.id				 = 'editarea'+this.id;
-	   textbox.newdiv.style.left		 = this.x+'px';
-	   textbox.newdiv.style.top		 = this.y+'px';
-	   textbox.newdiv.style.width		 = '400px';
-	   textbox.newdiv.contenteditable	 = 'false';
-       textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
-	   document.getElementById('notecon').appendChild(textbox.newdiv);
-	   document.getElementById("editing"+this.id).focus();
+        if(!this.focusactive && !staticItems.focusactive){
+           this.id = textbox.makeid('100');
+           this.Ereignis = window.event;
+           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
+           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
+           textbox.newdiv = document.createElement("div");
+           textbox.newdiv.className		 = "editareax";
+           textbox.newdiv.id				 = 'editarea'+this.id;
+           textbox.newdiv.style.left		 = this.x+'px';
+           textbox.newdiv.style.top		 = this.y+'px';
+           textbox.newdiv.style.width		 = '400px';
+           textbox.newdiv.contenteditable	 = 'false';
+           textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(this.id, "");
+           document.getElementById('notecon').appendChild(textbox.newdiv);
+           document.getElementById("editing"+this.id).focus();
+        }
 	};
     
     this.getTextboxHTML = function (id, content){
@@ -2387,6 +2932,162 @@ var SimplebSocket = function(url)
 #       Projectname...................: pragm
 #
 #       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: websocketcontrol_L1.js
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+
+var oTime = 1;
+
+var L1_typ = function L1_typ(){
+	
+	this.Server;
+	this.state;// test
+    this.socket;
+    this.beforedisconnect = 0;
+    this.beforeFile;
+    this.reconnectcounter = 0;
+    this.firstConnection = true;
+    this.firstTimeout;
+	
+	this.send = function(text) {
+		this.socket.send(text);
+        
+        aTime = new Date().getTime();
+        nTime = parseInt(aTime) - parseInt(global.time);
+        //console.log("TIME: "+nTime);
+		};
+    
+    this.noServer = function(){
+        uiControl.crash('cannot reach server - reload in 2 seconds');
+        setTimeout('location.reload();', 2000);
+    };
+ 
+	this.onload = function() {
+        data.set('loadinginfo', "connecting to server");
+		L1.state = 1;
+        this.countErrors = 0;
+		//update_websocketstate();  //Test UI
+		globalEvent.state(2);
+        var address = global.get_websocket_server_address();
+		this.Server = new SimplebSocket(address);
+        this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});
+        if(L1.firstConnection){
+            L1.firstTimeout = setTimeout("L1.noServer();", 8000);
+            L1.firstConnection = false;
+        }
+		this.socket.on('connect', function () {
+            clearTimeout(L1.firstTimeout);
+            this.reconnectcounter = 0;
+            data.set('loadinginfo', "");
+            console.log("open");
+			L1.state = 2;
+            var L2 = new L2_typ();
+            L2.init();
+            globalEvent.state(1);
+            if(global.firstConnect){
+                //uiControl.view('start');
+                global.firstConnect = false;
+                uiControl.connect();
+            } else {
+                uiControl.reconnect();
+            }
+			//update_websocketstate();  //Test UI
+			});
+	 
+		this.socket.on('disconnect', function (msg) {
+            console.log('dissi');
+            data.set('loadinginfo', "disconnected [trying to reconnect]");
+            setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT20';", 100);
+			L1.state = 0;
+			globalEvent.state(2);
+            uiControl.disconnect();
+			L2.reset();
+			//update_websocketstate();  //Test UI
+			//this.socket = false;
+            /*if(L3.file != "0000000000" && L3.file){
+                this.beforedisconnect = 1;
+            } else {
+                if(data.login<5){
+                    this.beforedisconnect = 2;
+                } else {
+                    this.beforedisconnect = 0;
+                }
+            }*/
+            /*this.countErrors++;
+			if(global.retry_when_disconnected){
+                if(this.countErrors<global.websocket_slow_down){
+				    //L1.onload();
+                } else {
+                    //setTimeout("L1.onload();", global.websocket_slow_time);
+                }
+				}*/
+			});
+	 
+		this.socket.on('message', function (msg) {
+            //console.log(msg);
+			L2.recieve(msg);
+			//newmsg(msg); //Test UI
+			});
+        
+        this.socket.on('reconnect_failed', function () {
+            console.log('reconnect_failed');
+            uiControl.crash('connection lost - please reload');
+        });
+        
+        this.socket.on('connecting', function () {
+            console.log('connecting');
+        });
+        
+        this.socket.on('connect_failed', function () {
+            console.log('connect_failed');
+        });
+        
+        this.socket.on('error', function () {
+            console.log('error');
+            //uiControl.crash('connection crashed - please reload');
+        });
+        
+        this.socket.on('reconnect', function () {
+            console.log('reconnect');
+        });
+        
+        this.socket.on('reconnecting', function () {
+            console.log('reconnecting');
+            this.reconnectcounter++;
+            if(this.reconnectcounter>9){
+                uiControl.crash('connection lost - please reload');
+            }
+        });
+	     
+		//this.Server.connect();
+		};
+	
+};
+
+var L1 = new L1_typ();
+
+		
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
 #       Filename......................: static_items.js
 #       Version/Release...............: 0.5xx
 #
@@ -2394,6 +3095,16 @@ var SimplebSocket = function(url)
 
 
 var staticItems_typ = function staticItems_typ(){
+    
+    this.focusactive = false;
+    
+    this.focus = function(){
+        this.focusactive = true;
+    }
+    
+    this.blur = function(){
+        this.focusactive = false;
+    }
     
     this.setid = function(id, content){
         if(document.getElementById(id)){
@@ -2483,6 +3194,9 @@ var L3_typ = function L3_typ(){
     this.file = false;
     this.beforeEvent = "loadFirst";
     this.loadedFile = false;
+    this.loginDat = { };
+    this.firstload = true;
+    this.callbacks = { };
 	
     this.init = function(){
         //Random generierter Username 
@@ -2494,6 +3208,7 @@ var L3_typ = function L3_typ(){
         //return this.clientName;
         
         L2.send(sID.clientName, this.clientName);
+        //L3.login();
         
         //L2.send(sID.getServer, String(sID.fileList));
         
@@ -2530,7 +3245,10 @@ var L3_typ = function L3_typ(){
         //}
         //console.log(id);
         //console.log(daten);
-        //console.log(L3.file);
+        console.log(L3.file);
+        if(!data.files[L3.file]){
+            data.files[L3.file] = { }
+        }
         data.files[L3.file][id] = daten;
         
         data.edited_sync(this.file, id);
@@ -2547,30 +3265,40 @@ var L3_typ = function L3_typ(){
         switch(id){
             case sID.fileList:
                 data.fileList = daten;
-                testDir = daten;
+                data.set('dirObject', JSON.parse(daten));
+                //dirCreator.setDir(daten);
+                console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){
                         case "loadFirst":
-                            lastDir = data.login.userID;
-                            mainDir = data.login.userID;
-                            showDir(mainDir);
-                            refreshShow();
-                            uiControl.loadHandlerFin();
+                            if(uiControl.disconnectdata.lastDir && uiControl.disconnectdata.lastDir != ""){
+                                //console.log("CON1 "+uiControl.disconnectdata.lastDir);
+                                //dirCreator.lastDir = uiControl.disconnectdata.lastDir;
+                                //dirCreator.mainDir = data.login.userID;
+                                //dirCreator.showDir(uiControl.disconnectdata.lastDir);
+                            } else {
+                                //console.log("CON2 "+data.login.userID);
+                                //dirCreator.lastDir = data.login.userID;
+                                //dirCreator.mainDir = data.login.userID;
+                                //dirCreator.showDir(dirCreator.mainDir);
+                            }
                             uiControl.view('files');
+                            //dirCreator.refreshShow();
+                            //uiControl.loadHandlerFin();
                             this.beforeEvent = "";
                         break;
                         case "addFile":
-                            refreshShow();
+                            //dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                             this.beforeEvent = "";
                         break;
                         case "refresh":
-                            refreshShow();
+                            //dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
                         break;
                         case "":
-                            refreshShow();
+                            //dirCreator.refreshShow();
                         break;
                 }
                 break;
@@ -2584,7 +3312,7 @@ var L3_typ = function L3_typ(){
                 break;
 
             case sID.message:
-                alert(daten);
+                uiControl.alert(daten);
                 break;
 
             case sID.Login:
@@ -2598,20 +3326,38 @@ var L3_typ = function L3_typ(){
 
             case sID.legitimationID:
                 data.legitimationID = daten;
+                if(this.firstload){
+                    L3.login();
+                    L3.firstload = false;
+                } else {
+                    
+                }
                 break;
                 
             case sID.updated:
+                console.log("UPDATE");
+                if(this.callbacks.load){
+                    this.callbacks.load();
+                    this.callbacks.load = null;
+                }
                 if(this.loadedFile){
                     uiControl.loadHandlerFin();
-                    uiControl.view('editor');
+                    //uiControl.view('editor');
                     this.loadedFile = false;
                 }
                 break;
                 
             case sID.fileunloadtrue:
-                if(uiControl.switchfilebool){
+                console.log("UNLOAD Done");
+                L3.file = false;
+                if(this.callbacks.unload){
+                    this.callbacks.unload();
+                    this.callbacks.unload = null;
+                }
+                /*if(uiControl.switchfilebool){
                     uiControl.switchfilebool = false;
 		            uiControl.resetUI();
+                    L3.file = uiControl.switchfile;
                     uiControl.view('editor');
                     L3.loadFile(uiControl.switchfile);
                 } else {
@@ -2623,7 +3369,7 @@ var L3_typ = function L3_typ(){
                     } else {
                         L3.file = "0000000000";
                     }
-                }
+                }*/
                 break;
                 
             default:
@@ -2637,18 +3383,57 @@ var L3_typ = function L3_typ(){
         
         };
     
+    this.showCache = function(){ // does not belong over here
+        if(uiControl.file && uiControl.file!="0000000000"){
+            if(!data.files[uiControl.file]) {
+                data.files[uiControl.file] =  { };
+            } else {
+                for(key in data.files[uiControl.file]){
+                    data.edited_sync(uiControl.file, key);
+                }
+            }
+        } else {
+            console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
+    
     this.loadFile = function(id){
         L3.file = id;
-        if(!data.files[id]) {
+        /*if(!data.files[id]) {
             data.files[id] =  { };
         } else {
             for(key in data.files[id]){
                 data.edited_sync(id, key);
             }
-        }
+        }*/
         uiControl.loadHandler();
         this.loadedFile = true;
         L2.send(sID.file, id);  
+    };
+    
+    this.loadFileCallback = function(id, callback){
+        if(!L3.file){
+            L3.callbacks.load = callback;
+            L3.file = id;
+            L2.send(sID.file, id);  
+        } else {
+            this.unloadFileCallback(id, function(){
+                L3.callbacks.load = callback;
+                L3.file = id;
+                L2.send(sID.file, id);
+            });
+        }
+    };
+
+    this.unloadFileCallback = function(id, callback){
+        this.callbacks.unload = callback;
+        L2.send(sID.unloadFile, '');  
+    };
+    
+    this.uiEdit = function (file, id){
+        if(L3.file == file){ // Todo: catch wrong ID's
+            L2.send(id, data.files[file][id]);
+        }
     };
 
     this.unloadFile = function(id){
@@ -2659,8 +3444,9 @@ var L3_typ = function L3_typ(){
         L2.send(id, data.files[this.file][id]);
     };
 
-    this.login = function(obj){
-        L2.send(sID.Login, JSON.stringify(obj));
+    this.login = function(){
+        L3.loginDat.legitimationID = data.legitimationID;
+        L2.send(sID.Login, JSON.stringify(L3.loginDat));
     }
     
     this.delete = function (id){
@@ -2673,24 +3459,31 @@ var L3_typ = function L3_typ(){
         temp.dir = dir;
         temp.type = type;
         this.beforeEvent = "addFile";
-        uiControl.loadHandler();
+        uiControl.loadHandler('creating file');
         L2.send(sID.addFile, JSON.stringify(temp));
     }
     
     this.refreshDir = function(){
         this.beforeEvent = "refresh";
-        uiControl.loadHandler();
+        uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
     };
     
      this.reset = function(){
          data.reset();
+         this.beforeEvent = "loadFirst";
+         if(this.file && this.file != ""){
+             this.beforeEvent = "";
+         }
          this.file = false;
+         this.loadedFile = false;
+         this.firstload = true;
          if(data.login){
              if(data.login.userRight){
                 if(data.login.userRight < 5){
-                    uiControl.view('load');
-                    setTimeout("location.reload();", 5000);
+                    //uiControl.view('load');
+                    //setTimeout("location.reload();", 5000);
+                    console.log('reset L3');
                 }
              }
          }
@@ -2762,8 +3555,9 @@ var tab_typ = function tab_typ(){
                 if(this.active == this.tabArray[numb]){add = 'id="TabActive" ';}
                 var temp = "'TabActive'";
                 var tempId = "'"+this.tabArray[numb]+"'";
-                var fullDirArray = testDir.split(":");
-                var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                //var fullDirArray = testDir.split(":");
+                //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                var tempName = data.dirObject[this.tabArray[numb]].name;
                 out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
@@ -2887,201 +3681,201 @@ function onmousemove(){
 
 var uiControl_typ = function global_typ(){
     
+    this.file = false;
+    this.takeFile = false;
     this.loadwait;
-    this.loadtimeout = 100;
+    this.loadtimeout = 200;
     this.switchfilebool = false;
     this.switchfile = "";
     this.unloadfile = false;
+    this.lastview;
+    this.disconnectdata = { };
+    this.disconnectdata.bool = false;
+    this.disconnectdata.lastDir = "";
     
-	this.loadFile = function(id){
+	this.loadFileOld = function(id){
+        this.file = id;
+		this.view('editor');
+        console.log(1);
         tab.fileOpened(id);
 		L3.loadFile(id);
-		this.view('editor');
 	}
+    
+    this.loadFile = function(id){
+        //data.set('loadinginfo', "loading file");
+        this.loadHandler("loading file");
+        this.takeFile = id;
+		this.view('editor');
+        tab.fileOpened(id);
+        L3.loadFileCallback(id, function(){
+            console.log("Callback => LOADED");
+            //data.set('loadinginfo', "");
+            uiControl.loadHandlerFin();
+        });
+    };
 
 	this.unloadFile = function(){
-		L3.unloadFile(L3.file);
-        this.unloadfile = true;
+		L3.unloadFileCallback(L3.file, function(){
+            console.log('Callback => UNLOADED')
+        });
+        uiControl.view('files');
 	}
 
 	this.loadOtherFile = function(id){
-        this.switchfilebool = true;
+        this.loadFile(id);
+        /*this.switchfilebool = true;
         tab.fileOpened(id);
         this.switchfile = id;
-		L3.unloadFile(L3.file);
+        console.log("UNLOADING");
+		L3.unloadFile(L3.file);*/
 	}
 
 	this.resetUI = function(){
 		//document.getElementById("notecon").innerHMTL = global.notecon;
-		document.getElementById("notecon").innerHTML = "";
-		document.getElementById("notecon").innerHTML = global.notecon;
+		//document.getElementById("notecon").innerHTML = "";
+		//document.getElementById("notecon").innerHTML = global.notecon;
 	}
 
 	this.login = function (){
-		var loginObject = new Object();
-
-		loginObject.userName     = document.getElementById('loginUsername').value;
-		loginObject.userPassword = document.getElementById('loginPassword').value;
-		loginObject.legitimationID = data.legitimationID;
-
-		data.loginObject = loginObject;
-        uiControl.loadHandler();
-		L3.login(loginObject);
-		return false;
+        var loginObject = new Object();
+        
+        
+    
+        L3.loginDat.userName     = document.getElementById('loginUsername').value;
+        L3.loginDat.userPassword = document.getElementById('loginPassword').value;
+        //uiControl.loadHandler();
+        //L3.loginDat = loginObject;
+		if(L3.firstload){
+            //loginObject.legitimationID = data.legitimationID;
+    
+            //L3.login(loginObject);
+            L1.onload();
+        } else {
+            L3.login();
+        }
+        
+        return false;
 	};
 
 	this.loginGood = function (){
 		this.view('load');
 		L2.send(sID.getServer, sID.fileList);
+        if(this.disconnectdata.bool){
+            if(data.login.userRight){
+                if(data.login.userRight < 5){
+                    if(this.disconnectdata.file && this.disconnectdata.file != ""){
+                        //dirCreator.openFile(this.disconnectdata.file);
+                        this.loadFile(this.disconnectdata.file);
+                    }
+                    if(this.lastview && this.lastview != ""){
+                        this.view(this.lastview);
+                    }
+                    this.disconnectdata.bool = false;
+                }
+            }
+        }
 	};
 
 	this.loginBad = function (){
-		alert("Bad Login");
+		uiControl.alert("Bad Login");
+        this.loadHandlerFin();
 		this.view('start');
 	};
     
     this.addFile = function(name, type){
         //this.view("load");
-        L3.addFile(name, lastDir, type);
+        L3.addFile(name, data.acutalDir, type);
     };
     
-    this.loadHandler = function(){
-        this.loadwait = setTimeout("uiControl.view('load');", this.loadtimeout);
+    this.loadHandler = function(text){
+        this.loadwait = setTimeout("data.set('loadinginfo', '"+text+"');", this.loadtimeout);
     };
     
     this.loadHandlerFin = function(){
         clearTimeout(this.loadwait);
+        data.set('loadinginfo', "");
+    };
+    
+    this.alert = function(text){
+        data.set('alertinfo', text);
+    };
+    
+    this.crash = function(text){
+        data.crashinfo = text;
+        this.view("crash");
     };
 
 	this.view = function (code){
+        this.lastview = code;
+            console.log("Viewchange => "+code);
 		switch (code) {
 	        case "start":
-				document.getElementById('noteconBackground').style.display = "none";
+                this.file = false;
+                window.location.href = "#";
+				/*document.getElementById('noteconBackground').style.display = "none";
 				document.getElementById('loginHTML').style.display = "";
-				document.getElementById('pleasewait').style.display = "none";
-				document.getElementById('fileTabs').style.height = "50px";
+				document.getElementById('pleasewait').style.display = "none";*/
+				document.getElementById('fileTabs').style.height = "0px";
                 document.title = "pragm note";
 				break;
 	        case "files":
-				document.getElementById('noteconBackground').style.display = "";
+                this.file = false;
+                window.location.href = "#files";
+				/*document.getElementById('noteconBackground').style.display = "";
 				document.getElementById('loginHTML').style.display = "none";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note";
 				break;
 	        case "editor":
-				document.getElementById('loginHTML').style.display = "none";
+                window.location.href = "#editor";
+				/*document.getElementById('loginHTML').style.display = "none";
 				document.getElementById('noteconBackground').style.display = "none";
-				document.getElementById('pleasewait').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
 				document.getElementById('fileTabs').style.height = "";
-                document.title = getFileName(testDir.split(":"), L3.file);
+                document.title = data.dirObject[uiControl.takeFile].name;
 	            break;
 	        case "load":
+                //window.location.href = "#loading";
 				//document.getElementById('loginHTML').style.display = "none";
 				//document.getElementById('noteconBackground').style.display = "none";
-				document.getElementById('pleasewait').style.display = "";
+				//document.getElementById('pleasewait').style.display = "";
 				//document.getElementById('fileTabs').style.height = "50px";
                 document.title = "pragm note - please wait";
 	            break;
-	        default:
+	        case "crash":
+                window.location.href = "#crash";
+				/*document.getElementById('loginHTML').style.display = "none";
+				document.getElementById('noteconBackground').style.display = "none";
+				document.getElementById('pleasewait').style.display = "none";*/
+				document.getElementById('fileTabs').style.height = "0px";
+                document.title = "CRASH - pragm";
+	            break;
+            default:
 	            console.log("command '"+code+"' does not exist");
 	            break;
 	    }
 	};
+    
+    this.connect = function(){
+        //L3.login();
+    };
+    
+    this.reconnect = function(){
+        this.disconnectdata.bool = true;
+    };
+    
+    this.disconnect = function(){
+        this.disconnectdata.view = this.lastview;
+        this.disconnectdata.file = uiControl.file;
+        this.disconnectdata.lastDir = data.userDir;
+        //this.resetUI();
+        //this.view('load');
+    };
 };
 
 var uiControl = new uiControl_typ();
 
-/******************************************************************************************
-#
-#       Copyright 2014 Dustin Robert Hoffner
-#
-#       Licensed under the Apache License, Version 2.0 (the "License");
-#       you may not use this file except in compliance with the License.
-#       You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#       Unless required by applicable law or agreed to in writing, software
-#       distributed under the License is distributed on an "AS IS" BASIS,
-#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#       See the License for the specific language governing permissions and
-#       limitations under the License.
-#       
-#       Projectname...................: pragm
-#
-#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
-#       Filename......................: websocketcontrol_L1.js
-#       Version/Release...............: 0.5xx
-#
-******************************************************************************************/
-
-
-var oTime = 1;
-
-var L1_typ = function L1_typ(){
-	
-	this.Server;
-	this.state;// test
-	
-	this.send = function(text) {
-		this.Server.send('message',text);
-        
-        aTime = new Date().getTime();
-        nTime = parseInt(aTime) - parseInt(global.time);
-        //console.log("TIME: "+nTime);
-		};
- 
-	this.onload = function() {
-		L1.state = 1;
-        this.countErrors = 0;
-		//update_websocketstate();  //Test UI
-		globalEvent.state(2);
-        var address = global.get_websocket_server_address();
-		this.Server = new SimplebSocket(address);
-		this.Server.bind('open', function() {
-            console.log("open");
-			L1.state = 2;
-            var L2 = new L2_typ();
-            L2.init();
-            globalEvent.state(1);
-            if(global.firstConnect){
-                uiControl.view('start');
-                global.firstConnect = false;
-            }
-			//update_websocketstate();  //Test UI
-			});
-	 
-		this.Server.bind('close', function( data ) {
-			L1.state = 0;
-			//update_websocketstate();  //Test UI
-			globalEvent.state(2);
-			this.Server = false;
-			L2.reset();
-            this.countErrors++;
-			if(global.retry_when_disconnected){
-                if(this.countErrors<global.websocket_slow_down){
-				    L1.onload();
-                } else {
-                    setTimeout("L1.onload();", global.websocket_slow_time);
-                }
-				}
-			});
-	 
-		this.Server.bind('message', function( msg ) {
-            //console.log(msg);
-			L2.recieve(msg);
-			//newmsg(msg); //Test UI
-			});
-	     
-		this.Server.connect();
-		};
-	
-};
-
-var L1 = new L1_typ();
-
-		
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
