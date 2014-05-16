@@ -35,6 +35,7 @@ var L1_typ = function L1_typ(){
     this.reconnectcounter = 0;
     this.firstConnection = true;
     this.firstTimeout;
+    this.lasterror;
 	
 	this.send = function(text) {
 		this.socket.send(text);
@@ -45,8 +46,8 @@ var L1_typ = function L1_typ(){
 		};
     
     this.noServer = function(){
-        uiControl.crash('cannot reach server - reload in 2 seconds');
-        setTimeout('location.reload();', 2000);
+        //uiControl.crash('cannot reach server - reload in 2 seconds');
+        //setTimeout('location.reload();', 2000);
     };
  
 	this.onload = function() {
@@ -56,7 +57,8 @@ var L1_typ = function L1_typ(){
 		//update_websocketstate();  //Test UI
 		globalEvent.state(2);
         var address = global.get_websocket_server_address();
-		this.Server = new SimplebSocket(address);
+		//this.Server = new SimplebSocket(address);
+        // this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000, secure: true});  SSL SSL SSL
         this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});
         if(L1.firstConnection){
             L1.firstTimeout = setTimeout("L1.noServer();", 8000);
@@ -128,9 +130,11 @@ var L1_typ = function L1_typ(){
         this.socket.on('connect_failed', function () {
             console.log('connect_failed');
         });
-        
-        this.socket.on('error', function () {
+        var that = this;
+        this.socket.on('error', function (data) {
             console.log('error');
+            console.log(data);
+            that.lasterror = data;
             //uiControl.crash('connection crashed - please reload');
         });
         

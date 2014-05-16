@@ -104,9 +104,16 @@ var timeStat = new Array();
 // websocket and http servers
 //var webSocketServer = require('websocket').server;
 //var http = require('http');
-//blavar options = {key: fs.readFileSync('./cert/client.key'),cert: fs.readFileSync('./cert/client.crt'),requestCert: true}
-//var server = require('https').createServer(options);
+
+/* SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL 
+var options = {key: fs.readFileSync('./client.key'),cert: fs.readFileSync('./client.cert'),requestCert: true}
+var server = require('https').createServer(options);
+var io = require('socket.io').listen(server);
+server.listen(webSocketsServerPort);
+ SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL  SSL */
+
 var io = require('socket.io').listen(webSocketsServerPort);
+
 io.set('log level', 1);
 io.server.on('error', function (e) {
   if (e.code == 'EADDRINUSE') {
