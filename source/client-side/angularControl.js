@@ -34,7 +34,8 @@ var pragmApp = angular.module('pragmApp', []);
 			.when('/loading', {
 				templateUrl : 'templates/loading.html',
 				controller  : 'loadingController'
-			});
+			})
+            .otherwise({ redirectTo: '/crash' });
 	});
 
 

@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1661
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1661 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1686
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1686 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2506,7 +2506,7 @@ process.argv.forEach(function (val, index, array) {
 });
  
 process.stdin.on('data', function (chunk) {
-    chunk = chunk.substr(0, 4);
+    chunk = chunk.substr(0, 5);
     switch (chunk) {
         case "#save":
             cLog("save all files");

@@ -23,50 +23,54 @@
 ******************************************************************************************/
 
 
-function stateupdate(){
-	var text;
-	switch(L1.state){
-	case 0:
-		text = "Offline";
-		document.getElementById('state').style.color = "#ff0000";
-		break;
-	case 1:
-		text = "Verbindung wird hergestellt";
-		document.getElementById('state').style.color = "#FFBF00";
-		break;
-	case 2:
-		text = "Online";
-		document.getElementById('state').style.color = "#04B404";
-		break;
-	default:
-		text = "Fehler!";
-		document.getElementById('state').style.color = "#ff0000";
-		break;
-	}
-	document.getElementById('state').innerHTML = text;
+function stateupdate() {
+    var text;
+    switch (L1.state) {
+    case 0:
+        text = "Offline";
+        document.getElementById('state').style.color = "#ff0000";
+        break;
+    case 1:
+        text = "Verbindung wird hergestellt";
+        document.getElementById('state').style.color = "#FFBF00";
+        break;
+    case 2:
+        text = "Online";
+        document.getElementById('state').style.color = "#04B404";
+        break;
+    default:
+        text = "Fehler!";
+        document.getElementById('state').style.color = "#ff0000";
+        break;
+    }
+    document.getElementById('state').innerHTML = text;
 }
 
-function newmsg(msg){
-	document.getElementById('msg').innerHTML = msg;
+function liiidifi(){
+    var x = "lol";
 }
 
-var intervall; 
-var count3=0;
-    
-function startTest(){
+function newmsg(msg) {
+    document.getElementById('msg').innerHTML = msg;
+}
+
+var intervall;
+var count3 = 0;
+
+function startTest() {
     intervall = window.setInterval("sendTest();", 0);
 }
 
-function sendTest(){
+function sendTest() {
     tee = count3;
-    L2.send(1001234911, 'Hallo ich bin nicht '+tee+' wirklich Toll');
+    L2.send(1001234911, 'Hallo ich bin nicht ' + tee + ' wirklich Toll');
     count3++;
 }
 
-function stopTest(){
+function stopTest() {
     window.clearInterval(intervall);
 }
 
-function onmousemove(){
+function onmousemove() {
     alert(1);
 }

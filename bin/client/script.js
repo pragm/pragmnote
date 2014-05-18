@@ -1,4 +1,4 @@
-var clientversion = "0.2.1661"/******************************************************************************************
+var clientversion = "0.2.1686"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -878,7 +878,8 @@ var pragmApp = angular.module('pragmApp', []);
 			.when('/loading', {
 				templateUrl : 'templates/loading.html',
 				controller  : 'loadingController'
-			});
+			})
+            .otherwise({ redirectTo: '/crash' });
 	});
 
 
@@ -1183,6 +1184,7 @@ var color = new color_typ();
 pragmApp.controller('crashController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
+        uiControl.finishRoedel();
         
         data.databind('crashinfo', function(x){
 		  $scope.crashinfo = x;
@@ -1810,6 +1812,10 @@ pragmApp.controller('filesController', function($scope, $location) {
             data.set('shareshow', true);
         }
         
+        $scope.getLink = function(){
+            return "http://localhost/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
+        }
+        
         //$scope.loadfileshare();
     
         $scope.sharedinfo = function(key){
@@ -1881,10 +1887,10 @@ pragmApp.controller('loginController', function($scope, $location) {
               //$scope.loadslide = 'width: 100%;';
                 if(document.getElementById('loadingslide')){
                     document.getElementById('loadingslide').className = 'loadingslideIN';
+                    setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
                 } else {
                     console.error("Cannot find document.getElementById('loadingslide')!");
                 }
-              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
         data.databind('loadinginfo', function(x){
@@ -3483,6 +3489,63 @@ var rich_typ = function rich_typ (){
 };
 
 var rich = new rich_typ();
+function getHTTPObject(){
+   if (window.ActiveXObject) return new ActiveXObject("Microsoft.XMLHTTP");
+   else if (window.XMLHttpRequest) return new XMLHttpRequest();
+   else {
+      alert("Dein Browser ist scheisse und unterstuetzt kein AJAX!");
+      return null;
+   }
+} 
+
+
+function searchServer(){
+    
+    this.list = global.config.list;
+    this.protocols = {"http":80,"ftp":21,"https":443};
+    this.request = [];
+    this.requestcount = -1;
+    this.url = document.URL;
+    var pro = url.split('://');
+    this.protocol = pro[0];
+    var dom = pro[1].split('/')[0].split(':');
+    this.domain = dom[0];
+    this.port = parseInt(dom[1]) || this.protocols[protocol] || 80;
+    this.defaulturl = "http://localhost:8080/socket.io/1/";
+    
+    var that = this;
+    
+    this.generateList = function(){
+        var url = document.URL;
+        var pro = url.split('://');
+        var protocol = pro[0];
+        var dom = pro[1].split('/')[0].split(':');
+        var domain = dom[0];
+        var port = parseInt(dom[1]) || this.protocols[protocol] || 80;
+    };
+    
+    this.checkThisCB = function (id){
+        if(that.request[id].readyState == 4){
+            var httpresponsText = that.request[id].responseText;
+            
+        }
+    };
+  
+    this.checkThis = function(srv){
+        this.requestcount++;
+        var id = this.requestcount;
+        this.request[id] = getHTTPObject();
+        if (this.request[id] != null) {
+            this.request[id].open("POST",  srv, true);
+            this.request[id].setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
+            this.request[id].send();
+            this.request[id].onreadystatechange = function temp(){
+                that.checkThisCB(id);
+            };
+        }
+    };
+    
+}
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -4360,51 +4423,55 @@ var tab = new tab_typ();
 ******************************************************************************************/
 
 
-function stateupdate(){
-	var text;
-	switch(L1.state){
-	case 0:
-		text = "Offline";
-		document.getElementById('state').style.color = "#ff0000";
-		break;
-	case 1:
-		text = "Verbindung wird hergestellt";
-		document.getElementById('state').style.color = "#FFBF00";
-		break;
-	case 2:
-		text = "Online";
-		document.getElementById('state').style.color = "#04B404";
-		break;
-	default:
-		text = "Fehler!";
-		document.getElementById('state').style.color = "#ff0000";
-		break;
-	}
-	document.getElementById('state').innerHTML = text;
+function stateupdate() {
+    var text;
+    switch (L1.state) {
+    case 0:
+        text = "Offline";
+        document.getElementById('state').style.color = "#ff0000";
+        break;
+    case 1:
+        text = "Verbindung wird hergestellt";
+        document.getElementById('state').style.color = "#FFBF00";
+        break;
+    case 2:
+        text = "Online";
+        document.getElementById('state').style.color = "#04B404";
+        break;
+    default:
+        text = "Fehler!";
+        document.getElementById('state').style.color = "#ff0000";
+        break;
+    }
+    document.getElementById('state').innerHTML = text;
 }
 
-function newmsg(msg){
-	document.getElementById('msg').innerHTML = msg;
+function liiidifi(){
+    var x = "lol";
 }
 
-var intervall; 
-var count3=0;
-    
-function startTest(){
+function newmsg(msg) {
+    document.getElementById('msg').innerHTML = msg;
+}
+
+var intervall;
+var count3 = 0;
+
+function startTest() {
     intervall = window.setInterval("sendTest();", 0);
 }
 
-function sendTest(){
+function sendTest() {
     tee = count3;
-    L2.send(1001234911, 'Hallo ich bin nicht '+tee+' wirklich Toll');
+    L2.send(1001234911, 'Hallo ich bin nicht ' + tee + ' wirklich Toll');
     count3++;
 }
 
-function stopTest(){
+function stopTest() {
     window.clearInterval(intervall);
 }
 
-function onmousemove(){
+function onmousemove() {
     alert(1);
 }
 /******************************************************************************************

@@ -5,6 +5,7 @@
             <div class="sharefieldline">
                 <div class="icon3"></div>
                 <input ng-model="filedata.name" type="text" class="renameFile" title="rename" onclick="this.select();" ng-value="filedata.name" ng-change="changeName();">
+                <input type="text" class="linkFile" title="guestlink" onclick="this.select();" ng-value="getLink()" disabled>
                 <input class="alertbutton" id="closeStyle" type="button" value="CLOSE" ng-click="shareclose();">
                 <!--<input class="alertbutton" id="saveStyle" type="button" value="Save" onclick="data.set('shareshow', 'none');">-->
                 </div>

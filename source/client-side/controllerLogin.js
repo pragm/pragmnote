@@ -30,10 +30,10 @@ pragmApp.controller('loginController', function($scope, $location) {
               //$scope.loadslide = 'width: 100%;';
                 if(document.getElementById('loadingslide')){
                     document.getElementById('loadingslide').className = 'loadingslideIN';
+                    setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
                 } else {
                     console.error("Cannot find document.getElementById('loadingslide')!");
                 }
-              setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             }
         }
         data.databind('loadinginfo', function(x){

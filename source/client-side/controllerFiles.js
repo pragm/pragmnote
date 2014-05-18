@@ -512,6 +512,10 @@ pragmApp.controller('filesController', function($scope, $location) {
             data.set('shareshow', true);
         }
         
+        $scope.getLink = function(){
+            return "http://localhost/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
+        }
+        
         //$scope.loadfileshare();
     
         $scope.sharedinfo = function(key){

@@ -37,7 +37,7 @@ process.argv.forEach(function (val, index, array) {
 });
  
 process.stdin.on('data', function (chunk) {
-    chunk = chunk.substr(0, 4);
+    chunk = chunk.substr(0, 5);
     switch (chunk) {
         case "#save":
             cLog("save all files");

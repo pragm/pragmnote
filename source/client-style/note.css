@@ -1479,14 +1479,14 @@ weis{
 }
 
 .renameFile {
-    position: relative;
-    left: 50px;
+    position: absolute;
+    left: 70px;
     outline: none;
-    padding: 8px;
+    padding: 0px;
     border: 1px solid transparent;
     font-size: 18px;
     font-family: Arial;
-    top: -2px;
+    top: 17px;
     background: transparent;
 }
 
@@ -1627,4 +1627,18 @@ weis{
     top: 0px;
     background: #e9e9e9;
     z-index: 1000;
+}
+
+.linkFile {
+    position: absolute;
+    left: 72px;
+    outline: none;
+    padding: 0px;
+    border: 1px solid transparent;
+    font-size: 12px;
+    font-family: Arial;
+    color: #b3b3b3;
+    top: 41px;
+    background: transparent;
+    width: 295px;
 }
