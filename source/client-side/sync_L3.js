@@ -148,8 +148,10 @@ var L3_typ = function L3_typ(){
                             //dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
+                            this.beforeEvent = "";
                         break;
                         case "":
+                            //uiControl.loadHandlerFin();
                             //dirCreator.refreshShow();
                         break;
                 }
@@ -206,6 +208,7 @@ var L3_typ = function L3_typ(){
             case sID.fileunloadtrue:
                 console.log("UNLOAD Done");
                 L3.file = false;
+                L3.refreshDirBackground();
                 if(this.callbacks.unload){
                     this.callbacks.unload();
                     this.callbacks.unload = null;
@@ -329,6 +332,12 @@ var L3_typ = function L3_typ(){
     this.refreshDir = function(){
         this.beforeEvent = "refresh";
         uiControl.loadHandler('refreshing dir');
+        L2.send(sID.getServer, sID.fileList);
+    };
+    
+    this.refreshDirBackground = function(){
+        this.beforeEvent = "";
+        //uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
     };
     

@@ -464,3 +464,14 @@
     border-top: 1px solid transparent;
     /*-webkit-transition: ease-in-out 0.1s;*/
 }
+
+.accountMain {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    right: 0px;
+    bottom: 36px;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}

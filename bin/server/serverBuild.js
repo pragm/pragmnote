@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1686
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1686 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1758
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1758 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1132,7 +1132,7 @@ var fileSystemControl_typ = function fileSystemControl(){
                 dlog("REMOVED DEAD LINK: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
                 pfile.removeLink(checkObject.folderID, checkObject.linkID);
             }
-            this.generateUserFilelist(clientID, userID);
+            pfile.generateUserFilelist(clientID, userID);
             dlog("ALL OK => JUST UPDATE: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
         } else {
             dlog("ALL OK: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
@@ -1178,6 +1178,7 @@ var pfile_typ = function pfile_typ(){
     this.systemUsr = "5000000000";
     this.userDir   = "4000000000";
     this.dirFile   = "DirIndexFile";
+    this.size = {"3": 1000, "4": 300};
     
     var searchArray = function(array, word){
         if(array.indexOf(word) != -1) {	
@@ -1194,6 +1195,10 @@ var pfile_typ = function pfile_typ(){
                 fobj[i].share = { };
                 console.log('    SET SHARE TO OBJECT');
                 change = true;
+            }
+            if(i[0]=="5"){
+                fobj[i].maxStorageScore = 200000;
+                console.log('    SET maxStorageScore TO 1000');
             }
         }
         console.log('    CHECKING DONE !');
@@ -1241,6 +1246,9 @@ var pfile_typ = function pfile_typ(){
         }
         if(operation=='file'){
             var text = JSON.stringify(L3.files[id]); // L3.files[id]
+            if(text){
+                this.dirObject[id].size = text.length;
+            }
             //L3.killData(id);
         }
         if(operation=='newfile'){
@@ -1272,12 +1280,20 @@ var pfile_typ = function pfile_typ(){
 	};
     
     this.copyFileOnDisc = function (fromID, toID) {
-        fs.createReadStream(global.config.dir+fromID+'.json').pipe(fs.createWriteStream(global.config.dir+toID+'.json'));
+        fs.exists(global.config.dir+id+'.json', function(exists) {
+            if (exists) {
+                fs.createReadStream(global.config.dir+fromID+'.json').pipe(fs.createWriteStream(global.config.dir+toID+'.json'));
+            }
+        });
     };
     
     this.deleteFileOnDisc = function(id){
-        fs.unlink(global.config.dir+id+'.json', function(){
-            log("File "+id+".json deleted");
+        fs.exists(global.config.dir+id+'.json', function(exists) {
+            if (exists) {
+                fs.unlink(global.config.dir+id+'.json', function(){
+                    log("File "+id+".json deleted");
+                });
+            }
         });
     }
     
@@ -1306,34 +1322,42 @@ var pfile_typ = function pfile_typ(){
     
     this.addFile = function (clientID, userID, name, dir, type){
         if(type=="f"){
-            var typ = "4";
-            var id = this.makeID(typ);
-            this.dirObject[id] = { };
-            this.dirObject[id].owner = userID;
-            this.dirObject[id].parent = dir;
-            this.dirObject[id].name = name;
-            this.dirObject[id].content = [];
-            this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-            if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
-                this.dirObject[id].share[this.dirObject[dir].owner] = 2;
+            if(this.dirObject[userID].storageScore+this.size["4"]<=this.dirObject[userID].maxStorageScore){
+                var typ = "4";
+                var id = this.makeID(typ);
+                this.dirObject[id] = { };
+                this.dirObject[id].owner = userID;
+                this.dirObject[id].parent = dir;
+                this.dirObject[id].name = name;
+                this.dirObject[id].content = [];
+                this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
+                if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
+                    this.dirObject[id].share[this.dirObject[dir].owner] = 2;
+                }
+                this.dirObject[id].lastmod = new Date().getTime();
+                this.addLink(dir, id);
+            } else {
+                L2x1.send(clientID, sID.message, "Adding folder abort! Your storage is full!");
             }
-            this.dirObject[id].lastmod = new Date().getTime();
-            this.addLink(dir, id);
         }
         if(type=="p"){
-            var typ = "3";
-            var id = this.makeID(typ);
-            this.dirObject[id] = { };
-            this.dirObject[id].owner = userID;
-            this.dirObject[id].parent = dir;
-            this.dirObject[id].name = name;
-            this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-            if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
-                this.dirObject[id].share[this.dirObject[dir].owner] = 2;
+            if(this.dirObject[userID].storageScore+this.size["3"]<=this.dirObject[userID].maxStorageScore){
+                var typ = "3";
+                var id = this.makeID(typ);
+                this.dirObject[id] = { };
+                this.dirObject[id].owner = userID;
+                this.dirObject[id].parent = dir;
+                this.dirObject[id].name = name;
+                this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
+                if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
+                    this.dirObject[id].share[this.dirObject[dir].owner] = 2;
+                }
+                this.dirObject[id].lastmod = new Date().getTime();
+                this.addLink(dir, id);
+                pfile.writeStr(id, 'newfile', name);
+            } else {
+                L2x1.send(clientID, sID.message, "Adding file abort! Your storage is full!");
             }
-            this.dirObject[id].lastmod = new Date().getTime();
-            this.addLink(dir, id);
-            pfile.writeStr(id, 'newfile', name);
         }
         if(type=="u"){
             dir = this.userDir;
@@ -1535,34 +1559,38 @@ var pfile_typ = function pfile_typ(){
     
     this.copyFile = function (copylist, clientID, userID, id, toid){
         if(fRights.isUserAllowedTo(id, userID, 'read')){
-            var typ = "3";
-            var newID = this.makeID(typ);
+            if(this.dirObject[userID].storageScore+this.size["3"]<=this.dirObject[userID].maxStorageScore){
+                var typ = "3";
+                var newID = this.makeID(typ);
 
-            var x = { };
-            x.job = 'addfile';
-            //this.dirObject[newID] = { };
-            x.oldid = id;
-            x.id = newID;
-            x.owner = userID;
-            x.parent = toid;
-            if(this.dirObject[id].parent == toid){
-                x.name = this.dirObject[id].name+' (copy)';
+                var x = { };
+                x.job = 'addfile';
+                //this.dirObject[newID] = { };
+                x.oldid = id;
+                x.id = newID;
+                x.owner = userID;
+                x.parent = toid;
+                if(this.dirObject[id].parent == toid){
+                    x.name = this.dirObject[id].name+' (copy)';
+                } else {
+                    x.name = this.dirObject[id].name;
+                }
+                x.share = JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
+                x.lastmod = new Date().getTime();
+
+                 var y = { };
+                y.job = 'addLink';
+                y.toid = toid;
+                y.newID = newID;
+
+                copylist.push(x);
+                copylist.push(y);
+                //this.addLink(toid, newID);
+                //pfile.writeStr(newID, 'newfile', this.dirObject[newID].name);
+                //this.copyFileOnDisc(id, newID);
             } else {
-                x.name = this.dirObject[id].name;
+                L2x1.send(clientID, sID.message, "Copying file abort! Your storage is full!");
             }
-            x.share = JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
-            x.lastmod = new Date().getTime();
-
-             var y = { };
-            y.job = 'addLink';
-            y.toid = toid;
-            y.newID = newID;
-
-            copylist.push(x);
-            copylist.push(y);
-            //this.addLink(toid, newID);
-            //pfile.writeStr(newID, 'newfile', this.dirObject[newID].name);
-            //this.copyFileOnDisc(id, newID);
         } else {
             L2x1.send(clientID, sID.message, "Copying file abort! Permission Denied!");
         }
@@ -1670,11 +1698,28 @@ var pfile_typ = function pfile_typ(){
         //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
         //output[userID] = JSON.parse( JSON.stringify( a ) );
         counter++;
+        var score = 0;
+        var temp = "";
         for(key in this.dirObject){
             if(fRights.isUserAllowedTo(key, userID, 'read')){
-                output[key] = JSON.parse(JSON.stringify(this.dirObject[key])); // Makes a Copy of the Object
+                temp = JSON.stringify(this.dirObject[key]);
+                output[key] = JSON.parse(temp); // Makes a Copy of the Object
+                if(this.dirObject[key].parent != this.deleteDir){
+                    switch(key[0]){
+                        case "4":
+                            score += temp.length;
+                            break;
+                        case "3":
+                            var size = this.dirObject[key].size || this.size["3"];
+                            score += temp.length+size;
+                            break;
+                    }
+                }
             }
         }
+        output.storageScore = score;
+        output.maxStorageScore = this.dirObject[userID].maxStorageScore || 500;
+        this.dirObject[userID].storageScore = score;
         L2x1.send(clientID, sID.fileList, JSON.stringify(output));
         //console.log(JSON.stringify(output));
     };
@@ -1821,6 +1866,10 @@ var pfile_typ = function pfile_typ(){
                 this.addLink(l[i], id);
             }
         }
+    };
+    
+    this.getUserStorageScore = function(clientID, userID){
+        
     };
 };
 

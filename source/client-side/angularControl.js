@@ -35,6 +35,10 @@ var pragmApp = angular.module('pragmApp', []);
 				templateUrl : 'templates/loading.html',
 				controller  : 'loadingController'
 			})
+			.when('/account', {
+				templateUrl : 'templates/createAccount.html',
+				controller  : 'accountController'
+			})
             .otherwise({ redirectTo: '/crash' });
 	});
 

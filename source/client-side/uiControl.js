@@ -64,7 +64,7 @@ var uiControl_typ = function global_typ(){
     
     this.loadFile = function(id){
         //data.set('loadinginfo', "loading file");
-        this.loadHandler("loading file");
+        //this.loadHandler("loading file");
         this.takeFile = id;
 		this.view('editor');
         

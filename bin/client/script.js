@@ -1,4 +1,4 @@
-var clientversion = "0.2.1686"/******************************************************************************************
+var clientversion = "0.2.1758"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -879,6 +879,10 @@ var pragmApp = angular.module('pragmApp', []);
 				templateUrl : 'templates/loading.html',
 				controller  : 'loadingController'
 			})
+			.when('/account', {
+				templateUrl : 'templates/createAccount.html',
+				controller  : 'accountController'
+			})
             .otherwise({ redirectTo: '/crash' });
 	});
 
@@ -1181,6 +1185,18 @@ function setcolor(mycolor){
 //*/	
 var color = new color_typ();
 
+pragmApp.controller('accountController', function($scope) {
+		$scope.lan = 'cool';
+		$scope.crashinfo = 'unknown crash';
+        uiControl.finishRoedel();
+        
+        data.databind('crashinfo', function(x){
+		  $scope.crashinfo = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+	});
 pragmApp.controller('crashController', function($scope) {
 		$scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
@@ -1316,7 +1332,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         $location.path('/');
     } else {
     
-    
+        
 		$scope.lan = 'cool';
         
         // Load Handler ----------------------------
@@ -1723,6 +1739,8 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.rightinfo = ['readonly', 'write', 'admin'];
         $scope.addvalue = 0;
         $scope.addname = "no name";
+        $scope.storageScore = 0;
+        $scope.maxStorageScore = 0;
     
         $scope.loadfileshare = function(){
             $scope.sharedata = null;
@@ -1842,6 +1860,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         data.databind('dirObject', function(x){
           //console.log("Data: "+JSON.stringify(x));
 		  $scope.dirObject = x;
+          $scope.storagePercent = Math.round($scope.dirObject.storageScore/$scope.dirObject.maxStorageScore*100);
           $scope.update();
           $scope.filedata = data.dirObject[$scope.fileinfoid];
           $scope.updateShare();
@@ -1849,6 +1868,7 @@ pragmApp.controller('filesController', function($scope, $location) {
                 $scope.$apply();
             }
         });
+        tab.position("slideOut");
     }
 });
 pragmApp.controller('loadingController', function($scope) {
@@ -3506,32 +3526,44 @@ function searchServer(){
     this.request = [];
     this.requestcount = -1;
     this.url = document.URL;
-    var pro = url.split('://');
+    var pro = this.url.split('://');
     this.protocol = pro[0];
     var dom = pro[1].split('/')[0].split(':');
     this.domain = dom[0];
-    this.port = parseInt(dom[1]) || this.protocols[protocol] || 80;
+    this.port = parseInt(dom[1]) || this.protocols[this.protocol] || 80;
     this.defaulturl = "http://localhost:8080/socket.io/1/";
+    this.currentAddress = {"domain": "localhost", "protocol": "http", "port": 8080, "prio": 0};
     
     var that = this;
     
     this.generateList = function(){
-        var url = document.URL;
-        var pro = url.split('://');
-        var protocol = pro[0];
-        var dom = pro[1].split('/')[0].split(':');
-        var domain = dom[0];
-        var port = parseInt(dom[1]) || this.protocols[protocol] || 80;
+        this.list.push({"domain": this.domain, "protocol": this.protocol, "port": this.port, "prio": 9});
+        this.list.push({"domain": this.domain, "protocol": this.protocol, "port": global.config.defaultport, "prio": 8});
+        for(i in global.config.otherPorts){
+            this.list.push({"domain": this.domain, "protocol": this.protocol, "port": global.config.otherPorts[i], "prio": 6});
+        }
     };
     
-    this.checkThisCB = function (id){
+    this.checkAll = function(){
+        for(i in this.list){
+            var x = this.list[i];
+            this.checkThis(x.protocol+"://"+x.domain+":"+x.port+"/socket.io/1/", x);
+        }
+    };
+    
+    this.checkThisCB = function (id, addr){
         if(that.request[id].readyState == 4){
             var httpresponsText = that.request[id].responseText;
-            
+            if(httpresponsText.length > 20 && httpresponsText.length<80){
+                if(that.currentAddress.prio<addr.prio){
+                    that.currentAddress = JSON.parse(JSON.stringify(addr));
+                    global.config.serveraddress = that.currentAddress.protocol+"://"+that.currentAddress.domain+":"+that.currentAddress.port+"/";
+                }
+            }
         }
     };
   
-    this.checkThis = function(srv){
+    this.checkThis = function(srv, addr){
         this.requestcount++;
         var id = this.requestcount;
         this.request[id] = getHTTPObject();
@@ -3540,7 +3572,7 @@ function searchServer(){
             this.request[id].setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
             this.request[id].send();
             this.request[id].onreadystatechange = function temp(){
-                that.checkThisCB(id);
+                that.checkThisCB(id, addr);
             };
         }
     };
@@ -4014,8 +4046,10 @@ var L3_typ = function L3_typ(){
                             //dirCreator.refreshShow();
                             uiControl.loadHandlerFin();
                             uiControl.view('files');
+                            this.beforeEvent = "";
                         break;
                         case "":
+                            //uiControl.loadHandlerFin();
                             //dirCreator.refreshShow();
                         break;
                 }
@@ -4072,6 +4106,7 @@ var L3_typ = function L3_typ(){
             case sID.fileunloadtrue:
                 console.log("UNLOAD Done");
                 L3.file = false;
+                L3.refreshDirBackground();
                 if(this.callbacks.unload){
                     this.callbacks.unload();
                     this.callbacks.unload = null;
@@ -4195,6 +4230,12 @@ var L3_typ = function L3_typ(){
     this.refreshDir = function(){
         this.beforeEvent = "refresh";
         uiControl.loadHandler('refreshing dir');
+        L2.send(sID.getServer, sID.fileList);
+    };
+    
+    this.refreshDirBackground = function(){
+        this.beforeEvent = "";
+        //uiControl.loadHandler('refreshing dir');
         L2.send(sID.getServer, sID.fileList);
     };
     
@@ -4540,7 +4581,7 @@ var uiControl_typ = function global_typ(){
     
     this.loadFile = function(id){
         //data.set('loadinginfo', "loading file");
-        this.loadHandler("loading file");
+        //this.loadHandler("loading file");
         this.takeFile = id;
 		this.view('editor');
         

@@ -1642,3 +1642,62 @@ weis{
     background: transparent;
     width: 295px;
 }
+
+.accountbody {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    /*background: url('img/wal.jpg');*/
+    background: #FFC200;
+    /* background-repeat:no-repeat;
+background-position:100px 50%;*/
+    background-size:100% auto;
+    z-index: 99;
+}
+
+.accountCenter {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    margin-left: 20px;
+    right: 20px;
+    text-align:left;
+}
+
+.itsfree {
+    font-family: 'Open Sans'; 
+    font-size: 23px; 
+    color: #000; 
+    font-weight: lighter; 
+    margin-left: 0px;
+}
+
+.signup {
+    font-family: 'Open Sans'; 
+    font-size: 36px; 
+    color: #000; 
+    font-weight: lighter; 
+    margin-left: 0px;
+}
+
+.accountInfo {
+    position:absolute;
+    top: 20px;
+    right: 50%;
+    margin-right: 20px;
+    left: 20px;
+    text-align:right;
+    font-family: 'Open Sans'; 
+    font-size: 14px; 
+    color: #000; 
+    
+}
+
+.accountMainBigger {
+    position: relative;
+    top: 27px;
+    width: 1px;
+    height: 1px;
+}

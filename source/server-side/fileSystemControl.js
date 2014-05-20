@@ -8,7 +8,7 @@ var fileSystemControl_typ = function fileSystemControl(){
                 dlog("REMOVED DEAD LINK: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
                 pfile.removeLink(checkObject.folderID, checkObject.linkID);
             }
-            this.generateUserFilelist(clientID, userID);
+            pfile.generateUserFilelist(clientID, userID);
             dlog("ALL OK => JUST UPDATE: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
         } else {
             dlog("ALL OK: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);

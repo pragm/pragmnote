@@ -22,7 +22,14 @@
 #
 ******************************************************************************************/
 
-.loginTop{position: absolute; top: 0px; left: 0px; right: 0px; height: 50px; background: #222;}
+.loginTop{
+    position: absolute;
+    top: 0px; 
+    left: 0px; 
+    right: 0px; 
+    height: 50px; 
+    background: #222;
+}
 .loginLogo{
     position: absolute; 
     top: 13px; 
@@ -71,6 +78,7 @@
     padding-right: 10px; 
     padding-top: 8px; 
     text-align: right;
+    z-index: 1;
 }
 	.loginContent{position: absolute; background: url("img/doc/bg.png"); top: 0px; left: 0px; right: 0px; bottom: 50px; z-index: 10;}
 	.loginText{position: absolute; top: 60px; left: 250px; width: 500px; font-family: 'Open Sans'; font-size: 14px; color: #707070; font-weight: lighter;}
@@ -137,6 +145,7 @@
 		box-shadow: inset 0 0 3px #808080;
 	}
 	h1{ font-family: 'Open Sans'; font-size: 38px; color: #000; font-weight: lighter; margin-left: -5px;}
+    
 	h2{ font-family: 'Open Sans'; font-size: 24px; color: #333; font-weight: bold; margin-left: -5px;}
 	.loginbody{
 		position: absolute;

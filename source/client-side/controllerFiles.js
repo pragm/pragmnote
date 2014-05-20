@@ -16,7 +16,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         $location.path('/');
     } else {
     
-    
+        
 		$scope.lan = 'cool';
         
         // Load Handler ----------------------------
@@ -423,6 +423,8 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.rightinfo = ['readonly', 'write', 'admin'];
         $scope.addvalue = 0;
         $scope.addname = "no name";
+        $scope.storageScore = 0;
+        $scope.maxStorageScore = 0;
     
         $scope.loadfileshare = function(){
             $scope.sharedata = null;
@@ -542,6 +544,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         data.databind('dirObject', function(x){
           //console.log("Data: "+JSON.stringify(x));
 		  $scope.dirObject = x;
+          $scope.storagePercent = Math.round($scope.dirObject.storageScore/$scope.dirObject.maxStorageScore*100);
           $scope.update();
           $scope.filedata = data.dirObject[$scope.fileinfoid];
           $scope.updateShare();
@@ -549,5 +552,6 @@ pragmApp.controller('filesController', function($scope, $location) {
                 $scope.$apply();
             }
         });
+        tab.position("slideOut");
     }
 });
