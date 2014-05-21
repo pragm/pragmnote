@@ -1,4 +1,5 @@
 pragmApp.controller('filesController', function($scope, $location) {
+    data.unbindCallbacks();
     var run = true;
     if('login' in data){
         if('userRight' in data.login){

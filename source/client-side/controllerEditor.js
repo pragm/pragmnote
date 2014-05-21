@@ -1,4 +1,5 @@
 pragmApp.controller('editorController', function($scope, $location, dataService) {
+        data.unbindCallbacks();
         $scope.fileID = dataService.data.id;
         var run = true;
         if('login' in data){
@@ -87,6 +88,63 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                     $scope.$apply();
                 }
             }
+            
+            // userlist
+            
+            data.databind('fileUserList', function(x){
+              $scope.fileUserList = x;
+              $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            $scope.resolveName = function(id){
+                return data.getUserName(id);
+            };
+            
+            $scope.getEnd = function(id, cid){
+                for(i in $scope.fileUserList){
+                    if($scope.fileUserList[i][1] == id && $scope.fileUserList[i][0] != cid){
+                        return ":"+cid;
+                    }
+                }
+                return "";
+            };
+            
+            data.updatebind('nameCache', function(){
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            // readonly control -----------------------------------------
+            
+            $scope.fileRights = "fileRights";
+            $scope.setbackfileRights = function(){
+                $scope.fileRights = "fileRights";
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            };
+            
+            data.readonlyinfo(function(){
+              $scope.fileRights = "fileRightsYellow";
+                var scope = $scope;
+                setTimeout(function(){$scope.setbackfileRights();},500);
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            $scope.readonly = true;
+            data.databind('fileRights', function(x){
+              $scope.readonly = !x.write;
+              $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
 
             // Something else -------------------------------------------
             uiControl.file = $scope.fileID;

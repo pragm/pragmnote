@@ -32,6 +32,9 @@ var L3_typ = function L3_typ(){
     this.loginDat = { };
     this.firstload = true;
     this.callbacks = { };
+    this.creatingUser = false;
+    this.createUserDat = {};
+    this.firstCreateTry = true;
 	
     this.init = function(){
         //Random generierter Username 
@@ -108,6 +111,9 @@ var L3_typ = function L3_typ(){
                 }
                 data.fileList = daten;
                 data.set('dirObject', tempdir);
+                if(this.file!=""){
+                    data.set('readonly', !fRights.isUserAllowedTo(this.file, 'write'));
+                }
                 //dirCreator.setDir(daten);
                 console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){
@@ -157,6 +163,14 @@ var L3_typ = function L3_typ(){
                 }
                 break;
             
+            case sID.fileUserList:
+                data.set('fileUserList', JSON.parse(daten));
+                break;
+                
+            case sID.fileRigths:
+                data.set('fileRights', JSON.parse(daten));
+                break;
+                
             case sID.userList:
                 data.users = daten;
                 break;
@@ -182,13 +196,31 @@ var L3_typ = function L3_typ(){
                 }
                 break;
 
+            case sID.createAccount:
+                var x = JSON.parse(daten);
+                if(x.value){
+                    uiControl.alert("User created with id "+x.userID);
+                    setTimeout('location.href = location.origin+"/pragm/";',2000);
+                } else {
+                    uiControl.alert(x.text);
+                }
+                break;
+
             case sID.legitimationID:
                 data.legitimationID = daten;
-                if(this.firstload){
-                    L3.login();
+                if(this.creatingUser){
+                    this.creatingUser = false;
+                    this.firstCreateTry = false;
                     L3.firstload = false;
+                    this.createUserDat.legitimationID = data.legitimationID;
+                    L2.send(sID.createAccount, JSON.stringify(this.createUserDat));
                 } else {
-                    
+                    if(this.firstload){
+                        L3.login();
+                        L3.firstload = false;
+                    } else {
+
+                    }
                 }
                 break;
                 
@@ -232,7 +264,7 @@ var L3_typ = function L3_typ(){
                 break;
                 
                 
-            case sID.getUserName:
+            case sID.returnUserName:
                 var dataobject = JSON.parse(daten);
                 data.nameCache[dataobject.id] = dataobject.name;
                 data.update('nameCache');
@@ -299,6 +331,17 @@ var L3_typ = function L3_typ(){
     this.uiEdit = function (file, id){
         if(L3.file == file){ // Todo: catch wrong ID's
             L2.send(id, data.files[file][id]);
+        }
+    };
+    
+    this.createUser = function (obj) {
+        this.createUserDat = obj;
+        if(this.firstCreateTry){
+            this.creatingUser = true;
+            L1.onload();
+        } else {
+            this.createUserDat.legitimationID = data.legitimationID;
+            L2.send(sID.createAccount, JSON.stringify(this.createUserDat));
         }
     };
 

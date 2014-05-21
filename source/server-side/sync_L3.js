@@ -31,6 +31,7 @@ var L3_typ = function L3_typ(){
     this.lastkey = false;
     this.exit = false;
     this.staticSave = { };
+    this.usersAtFile = {};
 
 
     this.recieve = function (clientID, id, data){
@@ -70,6 +71,7 @@ var L3_typ = function L3_typ(){
                 }
             }
         } else {
+            this.updateFileRights(clientID);
             if(id in this.files[this.users[clientID].file]){
                 L2x1.send(clientID, id, this.files[this.users[clientID].file][id]);
             } else {
@@ -128,8 +130,10 @@ var L3_typ = function L3_typ(){
                 break;
             case sID.Login:
                 secure.login(clientID, JSON.parse(data));
-                //Server loescht ID und schickt das weiter
                 break;   
+            case sID.createAccount:
+                secure.createAccount(clientID, JSON.parse(data));
+                break;  
             case sID.addFile:
                 var temp = JSON.parse(data);
                 pfile.addFile(clientID, L3.users[clientID]['userID'], temp.name, temp.dir, temp.type);
@@ -157,7 +161,7 @@ var L3_typ = function L3_typ(){
                 } else {
                     x.name = "cannot resolve name!";   
                     }
-                L2x1.send(clientID, sID.getUserName, JSON.stringify(x));
+                L2x1.send(clientID, sID.returnUserName, JSON.stringify(x));
                 break;          
             default: 
                 error.report(2,"static id $id not given or wrong");
@@ -208,7 +212,6 @@ var L3_typ = function L3_typ(){
         //var rights = fRights.getUserFilePermissions(data, this.users[clientID].userID);
         if(fRights.isUserAllowedTo(data, this.users[clientID].userID, 'read')){
             //this.users[clientID].fileRights[this.users[clientID].file] = rights;
-
             this.users[clientID].file = data; 
             if(!(data in this.files)) {
             this.files[data] = { };
@@ -217,17 +220,61 @@ var L3_typ = function L3_typ(){
             } else {
                 L3.updateUser(clientID);
             }
+            if(data in this.usersAtFile){
+                this.usersAtFile[data].push([clientID, this.users[clientID].userID]);
+                this.updateUserList(data);
+            } else {
+                this.usersAtFile[data] = [];
+                this.usersAtFile[data].push([clientID, this.users[clientID].userID]);
+                this.updateUserList(data);
+            }
         } else {
             L2x1.send(clientID, sID.message, 'Access Denied!');
         }
+        this.updateFileRights(clientID);
     };
 
     this.unloadFile = function (clientID){
         this.saveFileOP(this.users[clientID].file);
         var tempid = this.users[clientID].file;
+        this.deleteFromUserList(clientID, tempid);
         //delete this.users[clientID].files[this.users[clientID]['file']];
         this.users[clientID].file = "";
         L2x1.send(clientID, sID.fileunloadtrue, tempid);
+    };
+    
+    this.deleteFromUserList = function(clientID, fileID){
+        if(fileID in this.usersAtFile){
+            for(i in this.usersAtFile[fileID]){
+                if(this.usersAtFile[fileID][i][0] == clientID){
+                    this.usersAtFile[fileID].splice(i,1);
+                    this.updateUserList(fileID);
+                    break;
+                }
+            }
+        }
+    };
+    
+    this.updateFileRights = function(clientID){
+        var temp = JSON.stringify(fRights.getUserFilePermissions(this.users[clientID]['file'], this.users[clientID].userID));
+        if('lastFileRights' in this.users[clientID]){
+            if(this.users[clientID].lastFileRights != temp){
+                this.users[clientID].lastFileRights = temp;
+                L2x1.send(clientID, sID.fileRigths, temp);
+            }    
+        }
+    };
+    
+    this.updateFileRightsOfFile = function(fileID){
+        for(i in this.usersAtFile[fileID]){
+            this.updateFileRights(this.usersAtFile[fileID][i][0]); //Possible Security Bug
+        }
+    };
+    
+    this.updateUserList = function(fileID){
+        for(i in this.usersAtFile[fileID]){
+            L2x1.send(this.usersAtFile[fileID][i][0], sID.fileUserList, JSON.stringify(this.usersAtFile[fileID]));
+        }
     };
 
     this.updateUser = function (clientID){
@@ -346,6 +393,10 @@ var L3_typ = function L3_typ(){
             if(this.users[key]['file'] == this.users[clientID]['file'] && key != clientID){
                 found = true;
             }
+        }
+        
+        if(clientID in this.users && this.users[clientID]['file'] != ""){
+            this.deleteFromUserList(clientID, this.users[clientID]['file']);
         }
     
         if(!found && this.users[clientID]['file'] != ""){

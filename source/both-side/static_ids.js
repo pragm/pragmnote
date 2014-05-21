@@ -48,6 +48,7 @@ var sID_typ = function sID_typ(){
     this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
     this.fileInfo          = "2001000008";
     this.getUserName       = "2001000009";
+    this.createAccount     = "2001000010"; //Sends and Returns Account Information
 
     
     //GET_FROM_SERVER
@@ -58,6 +59,9 @@ var sID_typ = function sID_typ(){
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
     this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
+    this.fileUserList      = "2000000013"; //Server sends userlist of a file to client
+    this.returnUserName    = "2000000014";
+    this.fileRigths        = "2000000015"; //Server sends userlist of a file to client
     
 	/*
 	LEGITIMATION ID: Idee: 

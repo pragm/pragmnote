@@ -235,6 +235,42 @@ var pfile_typ = function pfile_typ(){
         pfile.writeStr('x', 'dir', 12);
     };
     
+    this.addUser = function(clientID, y){
+        var userNameUsed = false;
+        for(i in this.dirObject){
+            if(i[0] == "5"){
+                if(this.dirObject[i].username == y.username){
+                    userNameUsed = true;
+                }
+            }
+        }
+        if(!userNameUsed){
+            dir = this.userDir;
+            var typ = "5";
+            var id = this.makeID(typ);
+            this.dirObject[id] = { };
+            this.dirObject[id].owner = id;
+            this.dirObject[id].parent = dir;
+            this.dirObject[id].firstname = y.firstname;
+            this.dirObject[id].lastname = y.lastname;
+            this.dirObject[id].name = y.username;
+            this.dirObject[id].username = y.username;
+            this.dirObject[id].email = y.email;
+            this.dirObject[id].password = y.password;
+            this.dirObject[id].userRight = 3;
+            this.dirObject[id].content = [];
+            this.dirObject[id].share = {};
+            this.dirObject[id].storageScore = 0;
+            this.dirObject[id].maxStorageScore = 200000;
+            this.addLink(dir, id);
+            inviteKey.setKeyUsed(y.invitekey, id);
+            pfile.writeStr('x', 'dir', 12);
+            L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": true, "userID": id}));
+        } else {
+            L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": false, "text": "Username already exists!"}));
+        }
+    };
+    
     this.deleteFile = function (clientID, userID, id){
         if(userID == this.systemUsr){
             var first = id.substr(0,1);
@@ -631,12 +667,12 @@ var pfile_typ = function pfile_typ(){
                 var list1 = pfile.getFileClients(fileInfo.id);
                 this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
                 this.dirObject[fileInfo.id].share = fileInfo.share;
-                log("SHARE => "+JSON.stringify(fileInfo));
+                //log("SHARE => "+JSON.stringify(fileInfo));
                 var list2 = pfile.getFileClients(fileInfo.id);
                 
-                log("Client "+clientID);
+                //log("Client "+clientID);
                 var list = this.joinArrays(list1, list2);
-                log("LIST After "+JSON.stringify(list));
+                //log("LIST After "+JSON.stringify(list));
                 for(key in list){
                     if(list[key] != clientID){
                         if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
@@ -644,6 +680,7 @@ var pfile_typ = function pfile_typ(){
                         } 
                     }
                 }
+                L3.updateFileRightsOfFile(fileInfo.id);
                 pfile.writeStr(12, 'dir', 12);
             } else {
                 this.generateUserFilelist(clientID, userID);

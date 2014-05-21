@@ -1,4 +1,4 @@
-var clientversion = "0.2.1758"/******************************************************************************************
+var clientversion = "0.2.1869"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -720,6 +720,7 @@ var sID_typ = function sID_typ(){
     this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
     this.fileInfo          = "2001000008";
     this.getUserName       = "2001000009";
+    this.createAccount     = "2001000010"; //Sends and Returns Account Information
 
     
     //GET_FROM_SERVER
@@ -730,6 +731,9 @@ var sID_typ = function sID_typ(){
 	this.testid			   = "2000000010";
     this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
     this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
+    this.fileUserList      = "2000000013"; //Server sends userlist of a file to client
+    this.returnUserName    = "2000000014";
+    this.fileRigths        = "2000000015"; //Server sends userlist of a file to client
     
 	/*
 	LEGITIMATION ID: Idee: 
@@ -1185,10 +1189,64 @@ function setcolor(mycolor){
 //*/	
 var color = new color_typ();
 
-pragmApp.controller('accountController', function($scope) {
+pragmApp.controller('accountController', function($scope, $location) {
 		$scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
         uiControl.finishRoedel();
+        $scope.form = {};
+        tab.position("slideIn");
+        if($location.search().invitekey.length >1){
+            document.getElementById('forminvitekey').value = $location.search().invitekey;
+        }
+        
+        $scope.sendform = function(){
+            var y = {};
+            y.username = document.getElementById('formusername').value;
+            y.firstname = document.getElementById('formfirstname').value;
+            y.lastname = document.getElementById('formlastname').value;
+            y.emailA = document.getElementById('formemailA').value;
+            y.emailB = document.getElementById('formemailB').value;
+            y.passwordA = document.getElementById('formpasswordA').value;
+            y.passwordB = document.getElementById('formpasswordB').value;
+            y.invitekey = document.getElementById('forminvitekey').value;
+            if(y.emailA != y.emailB){
+                alert("E-Mails are not equal!");
+                return;
+            }
+            if(y.passwordA != y.passwordB){
+                uiControl.alert("Passwords are not equal!");
+                return;
+            }
+            if(!('username' in y && y.username.length >= 3 && y.username.length <= 20)){
+                uiControl.alert("Username needs to have 3-20 chars!");
+                return;
+            }
+            if(!('firstname' in y && y.firstname.length >= 2 && y.firstname.length <= 32)){
+                uiControl.alert("Firstname needs to have 2-32 chars! ");
+                return;
+            }
+            if(!('lastname' in y && y.lastname.length >= 2 && y.lastname.length <= 32)){
+                uiControl.alert("Lastname needs to have 2-32 chars!");
+                return;
+            }
+            if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 20)){
+                uiControl.alert("Passwords needs to have 8-20 chars!");
+                return;
+            }
+            if(!(y.invitekey.length == 32)){
+                uiControl.alert("The Invite-Key needs to have exact 32 chars!");
+                return;
+            }
+            var x = {};
+            x.email = y.emailA; 
+            x.password = y.passwordA;
+            x.username = y.username;
+            x.firstname = y.firstname;
+            x.lastname = y.lastname;
+            x.invitekey = y.invitekey;
+            console.log("Good: "+JSON.stringify(x));
+            L3.createUser(x);
+        }
         
         data.databind('crashinfo', function(x){
 		  $scope.crashinfo = x;
@@ -1196,6 +1254,39 @@ pragmApp.controller('accountController', function($scope) {
                 $scope.$apply();
             }
         });
+        
+        // ALERTCONTROL ====================================================
+        $scope.alertinfo = "";
+		$scope.alertshow = 'none';
+        $scope.updateAlert = function(){
+            //console.log("Update Angular "+$scope.alertinfo);
+            if($scope.alertinfo==""){
+		      $scope.alertshow = 'none';
+                if(!$scope.shareshowbool){
+                    tab.position("slideIn");
+                }
+            } else {
+		      $scope.alertshow = 'block';
+                tab.position("slideIn");
+            }
+        }
+        data.databind('alertinfo', function(x){
+          //console.log("Data: "+JSON.stringify(x));
+		  $scope.alertinfo = x;
+          $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+        
+        $scope.unalert = function(){
+            data.alertinfo = "";
+            $scope.alertinfo = "";
+            $scope.updateAlert();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        }
 	});
 pragmApp.controller('crashController', function($scope) {
 		$scope.lan = 'cool';
@@ -1210,6 +1301,7 @@ pragmApp.controller('crashController', function($scope) {
         });
 	});
 pragmApp.controller('editorController', function($scope, $location, dataService) {
+        data.unbindCallbacks();
         $scope.fileID = dataService.data.id;
         var run = true;
         if('login' in data){
@@ -1298,6 +1390,63 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                     $scope.$apply();
                 }
             }
+            
+            // userlist
+            
+            data.databind('fileUserList', function(x){
+              $scope.fileUserList = x;
+              $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            $scope.resolveName = function(id){
+                return data.getUserName(id);
+            };
+            
+            $scope.getEnd = function(id, cid){
+                for(i in $scope.fileUserList){
+                    if($scope.fileUserList[i][1] == id && $scope.fileUserList[i][0] != cid){
+                        return ":"+cid;
+                    }
+                }
+                return "";
+            };
+            
+            data.updatebind('nameCache', function(){
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            // readonly control -----------------------------------------
+            
+            $scope.fileRights = "fileRights";
+            $scope.setbackfileRights = function(){
+                $scope.fileRights = "fileRights";
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            };
+            
+            data.readonlyinfo(function(){
+              $scope.fileRights = "fileRightsYellow";
+                var scope = $scope;
+                setTimeout(function(){$scope.setbackfileRights();},500);
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            $scope.readonly = true;
+            data.databind('fileRights', function(x){
+              $scope.readonly = !x.write;
+              $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
 
             // Something else -------------------------------------------
             uiControl.file = $scope.fileID;
@@ -1315,6 +1464,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
         }
 	});
 pragmApp.controller('filesController', function($scope, $location) {
+    data.unbindCallbacks();
     var run = true;
     if('login' in data){
         if('userRight' in data.login){
@@ -2005,11 +2155,30 @@ var data_typ = function data_typ(){
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
     this.shareshow = false;
+    this.deleteDir = "4DELETED00";
+    this.guestUser = "5GUESTUSER";
+    this.systemUsr = "5000000000";
+    this.userDir   = "4000000000";
+    this.dirFile   = "DirIndexFile";
     this.nameCache = {"5GUESTUSER": "Guest"};
+    this.readonlycb = false;
+    this.fileUserList = [];
+    this.readonly = true;
+    this.fileRights = {"read": false,"write": false,"perm": false};
+    
+    this.unbindCallbacks = function(){
+        this.callbacks = null;
+        this.callbacks = { };
+    }
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
         callback(this[object]);
+    };
+    
+    this.updatebind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback();
     };
     
     this.set = function(object, value){
@@ -2023,6 +2192,10 @@ var data_typ = function data_typ(){
         if(this.callbacks[object]){
             this.callbacks[object](data[object]);
         }
+    };
+    
+    this.readonlyinfo = function(cb){
+        this.readonlycb = cb;
     };
     
     this.edited_sync = function(fileID, contentID){
@@ -2041,9 +2214,18 @@ var data_typ = function data_typ(){
         }
     };
     
-    this.edited_UI = function(contentID){
+    this.edited_UI = function(contentID, data){
         //L3.send(contentID);
-        L3.uiEdit(uiControl.file, contentID);
+        var tempfile = L3.file;
+        if(this.fileRights.write){
+            this.files[tempfile][contentID] = data;
+            L3.uiEdit(uiControl.file, contentID);
+        } else {
+            this.edited_sync(tempfile, contentID);
+            if(this.readonlycb){
+                this.readonlycb();
+            }
+        }
     };
     
     this.reset = function(){
@@ -2138,12 +2320,14 @@ var L2_typ = function L2_typ(){
 		if(!this.cache[id]){
 			this.cache[id] = "";
 		}
-
-		this.newdif = dif.generateOpt(text, this.cache[id]);
+        var oldText = this.cache[id];
+        this.cache[id] = text;
+        
+		this.newdif = dif.generateOpt(text, oldText);
 
 		this.newmd5 = net.hashCode(text);
 		
-		this.cache[id] = text;
+		//this.cache[id] = text;
 		
 		this.pos1 = convert.int_to_string(this.newdif.pos1);
 		this.pos2 = convert.int_to_string(this.newdif.pos2);
@@ -2162,7 +2346,6 @@ var L2_typ = function L2_typ(){
 		};
 	
 	this.recieve = function(text) {
-		
         if(text[0] == '='){
             this.id = text.substr(1,10);
             console.log("Clearing Cache of ID "+this.id+"");
@@ -2176,7 +2359,6 @@ var L2_typ = function L2_typ(){
         
 		this.id = text.substr(0, 10);
 		text =  text.substr(10);
-        
         
         this.lastReceiveID = this.id;
 		
@@ -2210,9 +2392,9 @@ var L2_typ = function L2_typ(){
 		this.newmd5 = net.hashCode(this.newcon);
 		
 		if(this.newmd5 != this.md5){
+			error.report(0, "HASHES are not equal! ID:"+this.id);
             this.cache[this.id] = "";
             L1.send("="+this.id);
-			error.report(0, "HASHES are not equal! ID:"+this.id);
 		} else {
 			this.cache[this.id] = this.newcon;
             L3.recieve(this.id, this.newcon); 
@@ -2611,13 +2793,83 @@ var error_typ = function error_typ(){
 			this.text = "Fatalerror";
 			break;
 		}
-		console.log("Error: ["+number+"] => "+this.text+"; "+info+";");
+		console.error("Error: ["+number+"] => "+this.text+"; "+info+";");
 	};
 };
 
 var error = new error_typ();
 
 
+
+var fRights_typ = function fRights_typ(){
+    
+    this.getRights = function(num){
+        var out = { };
+        out.read = false, out.write = false, out.rename = false, out.move = false, out.copy = false, out.perm = false;
+        var bin = num.toString(2);
+        while(bin.length < 6){bin = "0"+bin;}
+        var count = 0;
+        for(i in out){
+            if(bin.substr(count,1) == "1"){
+                out[i] = true;
+            }
+            count++;
+        }
+        return out;
+    };
+    
+    this.setRights = function(out){
+        var num = 0;
+        var count = 5;
+        for(i in out){
+            if(out[i]){
+                num+=Math.pow(2, count)
+            }
+            count--;
+        }
+        return num;
+    };
+    
+    this.getUserFilePermissions = function(fileID){
+        if(fileID in data.dirObject){
+            if(data.dirObject[fileID].owner == data.login.userID || data.login.userID == data.systemUsr){
+                var out = { };
+                out.read = true, out.write = true, out.perm = true;
+                return out;
+            }
+            if(data.login.userID in data.dirObject[fileID].share){
+                var out = { };
+                out.read = true, out.write = data.dirObject[fileID].share[data.login.userID] > 0, out.perm = data.dirObject[fileID].share[data.login.userID] > 1;
+                if(data.guestUser in data.dirObject[fileID].share){
+                    out.write = data.dirObject[fileID].share[data.guestUser] > 0 || out.write;
+                }
+                return out;
+            }
+            if(data.guestUser in data.dirObject[fileID].share){
+                var out = { };
+                out.read = true, out.write = data.dirObject[fileID].share[data.guestUser] > 0, out.perm = data.dirObject[fileID].share[data.guestUser] > 1;
+                return out;
+            }
+            var out = { };
+            out.read = false, out.write = false, out.perm = false;
+            return out;
+        } else {
+            error.report(6, "ID "+fileID+" does not exist in data.dirObject! [fileRights:getUserFilePermissions]");
+            var out = { };
+            out.read = false, out.write = false, out.perm = false;
+            return out;
+        }
+    }
+    
+    this.isUserAllowedTo = function(fileID, doSome){
+        var rights = this.getUserFilePermissions(fileID);
+        return rights[doSome];
+    };
+    
+    
+};
+
+var fRights = new fRights_typ();
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -3180,8 +3432,8 @@ var textbox_typ = function textbox_typ(){
         //var value = textbox.content+":"+textbox.posX+":"+textbox.posY+":"+textbox.width;
         
         //console.log(textbox.value);
-        data.files[L3.file][id] = textbox.value;
-        data.edited_UI(id);
+        //data.files[L3.file][id] = textbox.value;
+        data.edited_UI(id, textbox.value);
         //console.log(value);
         //SYNC_CONNECT
     };
@@ -3680,6 +3932,7 @@ var L1_typ = function L1_typ(){
     this.firstConnection = true;
     this.firstTimeout;
     this.lasterror;
+    this.onlyoneload = true;
 	
 	this.send = function(text) {
 		this.socket.send(text);
@@ -3695,105 +3948,109 @@ var L1_typ = function L1_typ(){
     };
  
 	this.onload = function() {
-        data.set('loadinginfo', "connecting to server");
-		L1.state = 1;
-        this.countErrors = 0;
-		//update_websocketstate();  //Test UI
-		globalEvent.state(2);
-        var address = global.get_websocket_server_address();
-		//this.Server = new SimplebSocket(address);
-        // this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000, secure: true});  SSL SSL SSL
-        this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});
-        if(L1.firstConnection){
-            L1.firstTimeout = setTimeout("L1.noServer();", 8000);
-            L1.firstConnection = false;
-        }
-		this.socket.on('connect', function () {
-            clearTimeout(L1.firstTimeout);
-            this.reconnectcounter = 0;
-            data.set('loadinginfo', "");
-            console.log("open");
-			L1.state = 2;
-            var L2 = new L2_typ();
-            L2.init();
-            globalEvent.state(1);
-            if(global.firstConnect){
-                //uiControl.view('start');
-                global.firstConnect = false;
-                uiControl.connect();
-            } else {
-                uiControl.reconnect();
+        if(this.onlyoneload){
+            this.onlyoneload = false;
+            data.set('loadinginfo', "connecting to server");
+            L1.state = 1;
+            this.countErrors = 0;
+            //update_websocketstate();  //Test UI
+            globalEvent.state(2);
+            var address = global.get_websocket_server_address();
+            //this.Server = new SimplebSocket(address);
+            // this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000, secure: true});  SSL SSL SSL
+            this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});
+            if(L1.firstConnection){
+                L1.firstTimeout = setTimeout("L1.noServer();", 8000);
+                L1.firstConnection = false;
             }
-			//update_websocketstate();  //Test UI
-			});
-	 
-		this.socket.on('disconnect', function (msg) {
-            console.log('dissi');
-            data.set('loadinginfo', "disconnected [trying to reconnect]");
-            setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT20';", 100);
-			L1.state = 0;
-			globalEvent.state(2);
-            uiControl.disconnect();
-			L2.reset();
-			//update_websocketstate();  //Test UI
-			//this.socket = false;
-            /*if(L3.file != "0000000000" && L3.file){
-                this.beforedisconnect = 1;
-            } else {
-                if(data.login<5){
-                    this.beforedisconnect = 2;
+            this.socket.on('connect', function () {
+                clearTimeout(L1.firstTimeout);
+                this.reconnectcounter = 0;
+                data.set('loadinginfo', "");
+                console.log("open");
+                L1.state = 2;
+                var L2 = new L2_typ();
+                L2.init();
+                globalEvent.state(1);
+                if(global.firstConnect){
+                    //uiControl.view('start');
+                    global.firstConnect = false;
+                    uiControl.connect();
                 } else {
-                    this.beforedisconnect = 0;
+                    uiControl.reconnect();
                 }
-            }*/
-            /*this.countErrors++;
-			if(global.retry_when_disconnected){
-                if(this.countErrors<global.websocket_slow_down){
-				    //L1.onload();
+                //update_websocketstate();  //Test UI
+                });
+
+            this.socket.on('disconnect', function (msg) {
+                console.log('dissi');
+                data.set('loadinginfo', "disconnected [trying to reconnect]");
+                setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT20';", 100);
+                L1.state = 0;
+                globalEvent.state(2);
+                uiControl.disconnect();
+                L2.reset();
+                //update_websocketstate();  //Test UI
+                //this.socket = false;
+                /*if(L3.file != "0000000000" && L3.file){
+                    this.beforedisconnect = 1;
                 } else {
-                    //setTimeout("L1.onload();", global.websocket_slow_time);
-                }
-				}*/
-			});
-	 
-		this.socket.on('message', function (msg) {
-            //console.log(msg);
-			L2.recieve(msg);
-			//newmsg(msg); //Test UI
-			});
-        
-        this.socket.on('reconnect_failed', function () {
-            console.log('reconnect_failed');
-            uiControl.crash('connection lost - please reload');
-        });
-        
-        this.socket.on('connecting', function () {
-            console.log('connecting');
-        });
-        
-        this.socket.on('connect_failed', function () {
-            console.log('connect_failed');
-        });
-        var that = this;
-        this.socket.on('error', function (data) {
-            console.log('error');
-            console.log(data);
-            that.lasterror = data;
-            //uiControl.crash('connection crashed - please reload');
-        });
-        
-        this.socket.on('reconnect', function () {
-            console.log('reconnect');
-        });
-        
-        this.socket.on('reconnecting', function () {
-            console.log('reconnecting');
-            this.reconnectcounter++;
-            if(this.reconnectcounter>9){
+                    if(data.login<5){
+                        this.beforedisconnect = 2;
+                    } else {
+                        this.beforedisconnect = 0;
+                    }
+                }*/
+                /*this.countErrors++;
+                if(global.retry_when_disconnected){
+                    if(this.countErrors<global.websocket_slow_down){
+                        //L1.onload();
+                    } else {
+                        //setTimeout("L1.onload();", global.websocket_slow_time);
+                    }
+                    }*/
+                });
+
+            this.socket.on('message', function (msg) {
+                //console.log(msg);
+                L2.recieve(msg);
+                //newmsg(msg); //Test UI
+                });
+
+            this.socket.on('reconnect_failed', function () {
+                console.log('reconnect_failed');
                 uiControl.crash('connection lost - please reload');
-            }
-        });
-	     
+            });
+
+            this.socket.on('connecting', function () {
+                console.log('connecting');
+            });
+
+            this.socket.on('connect_failed', function () {
+                console.log('connect_failed');
+            });
+            var that = this;
+            this.socket.on('error', function (data) {
+                console.log('error');
+                console.log(data);
+                that.lasterror = data;
+                //uiControl.crash('connection crashed - please reload');
+            });
+
+            this.socket.on('reconnect', function () {
+                console.log('reconnect');
+            });
+
+            this.socket.on('reconnecting', function () {
+                console.log('reconnecting');
+                this.reconnectcounter++;
+                if(this.reconnectcounter>9){
+                    uiControl.crash('connection lost - please reload');
+                }
+            });
+        } else {
+            console.error("secondconnection is not allowed");
+        }
 		//this.Server.connect();
 		};
 	
@@ -3850,8 +4107,8 @@ var staticItems_typ = function staticItems_typ(){
     this.saveid = function(id){
         if(document.getElementById(id)){
             var content = document.getElementById(id).innerHTML;
-            data.files[L3.file][id] = content;
-            data.edited_UI(id);
+            //data.files[L3.file][id] = content;
+            data.edited_UI(id, content);
         } else {
             error.report(3, "ID: "+id+" Content: "+content);
         }
@@ -3930,6 +4187,9 @@ var L3_typ = function L3_typ(){
     this.loginDat = { };
     this.firstload = true;
     this.callbacks = { };
+    this.creatingUser = false;
+    this.createUserDat = {};
+    this.firstCreateTry = true;
 	
     this.init = function(){
         //Random generierter Username 
@@ -4006,6 +4266,9 @@ var L3_typ = function L3_typ(){
                 }
                 data.fileList = daten;
                 data.set('dirObject', tempdir);
+                if(this.file!=""){
+                    data.set('readonly', !fRights.isUserAllowedTo(this.file, 'write'));
+                }
                 //dirCreator.setDir(daten);
                 console.log("Beforeevent => "+this.beforeEvent);
                 switch(this.beforeEvent){
@@ -4055,6 +4318,14 @@ var L3_typ = function L3_typ(){
                 }
                 break;
             
+            case sID.fileUserList:
+                data.set('fileUserList', JSON.parse(daten));
+                break;
+                
+            case sID.fileRigths:
+                data.set('fileRights', JSON.parse(daten));
+                break;
+                
             case sID.userList:
                 data.users = daten;
                 break;
@@ -4080,13 +4351,31 @@ var L3_typ = function L3_typ(){
                 }
                 break;
 
+            case sID.createAccount:
+                var x = JSON.parse(daten);
+                if(x.value){
+                    uiControl.alert("User created with id "+x.userID);
+                    setTimeout('location.href = location.origin+"/pragm/";',2000);
+                } else {
+                    uiControl.alert(x.text);
+                }
+                break;
+
             case sID.legitimationID:
                 data.legitimationID = daten;
-                if(this.firstload){
-                    L3.login();
+                if(this.creatingUser){
+                    this.creatingUser = false;
+                    this.firstCreateTry = false;
                     L3.firstload = false;
+                    this.createUserDat.legitimationID = data.legitimationID;
+                    L2.send(sID.createAccount, JSON.stringify(this.createUserDat));
                 } else {
-                    
+                    if(this.firstload){
+                        L3.login();
+                        L3.firstload = false;
+                    } else {
+
+                    }
                 }
                 break;
                 
@@ -4130,7 +4419,7 @@ var L3_typ = function L3_typ(){
                 break;
                 
                 
-            case sID.getUserName:
+            case sID.returnUserName:
                 var dataobject = JSON.parse(daten);
                 data.nameCache[dataobject.id] = dataobject.name;
                 data.update('nameCache');
@@ -4197,6 +4486,17 @@ var L3_typ = function L3_typ(){
     this.uiEdit = function (file, id){
         if(L3.file == file){ // Todo: catch wrong ID's
             L2.send(id, data.files[file][id]);
+        }
+    };
+    
+    this.createUser = function (obj) {
+        this.createUserDat = obj;
+        if(this.firstCreateTry){
+            this.creatingUser = true;
+            L1.onload();
+        } else {
+            this.createUserDat.legitimationID = data.legitimationID;
+            L2.send(sID.createAccount, JSON.stringify(this.createUserDat));
         }
     };
 

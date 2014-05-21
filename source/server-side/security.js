@@ -67,6 +67,21 @@ var secure_typ = function secure_typ(){
 		//L2.send(clientID, sID.legitimationID, this.userLegitimationIDs[clientID]);
 	};
 
+	this.createAccount = function(clientID, accObject){
+		if(this.userRights[clientID] == global.mNoLogin){
+			if(this.userLegitimationIDs[clientID] == accObject.legitimationID){
+                if(inviteKey.isKeyFree(accObject.invitekey)){
+				    pfile.addUser(clientID, accObject);
+                } else {
+                    L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": false, "text": "InviteKey incorrect!"}));
+                }
+			} else {
+				L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": false, "text": "LegitimationID incorrect!"}));
+				this.legitimationSet(clientID);
+			}
+		}
+	};
+
 	this.reset = function(clientID){
 		log("CONNECTION LOST => User '"+ L3.users[clientID]['username']+"' ID '"+L3.users[clientID]['userID']+"' Mandant '"+this.userRights[clientID]+"'");
 		if(this.userRights[clientID]){delete this.userRights[clientID]};

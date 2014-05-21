@@ -2353,3 +2353,66 @@ background-position:100px 50%;*/
     height: 1px;
 }
 
+
+.fileRights {
+    position: fixed;
+    top: 16px;
+    right: 6px;
+    background: #EC0000;
+    color: white;
+    padding: 6px;
+    font-family: monospace;
+    border-radius: 4px;
+}
+.fileRightsYellow {
+    position: fixed;
+    top: 16px;
+    right: 6px;
+    /*background: #FFD600;*/
+    color: white;
+    padding: 6px;
+    font-family: monospace;
+    border-radius: 4px;
+    -webkit-animation:readonly 0.1s infinite;
+    animation:readonly 0.1s infinite;
+}
+
+@keyframes readonly{
+from {background:#EC0000;}
+to {background:#FFD600;}
+}
+@-webkit-keyframes readonly{
+from {background:#EC0000;}
+to {background:#FFD600;}
+}
+
+.userlist {
+	position: absolute;
+    right: 0px;
+    bottom: 0px;
+    height: 21px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    z-index: 14;
+}
+
+.userlist li {
+    position: relative;
+    float: right;
+    color: #333333;
+    font-family: 'Open Sans';
+    font-size: 14px;
+    padding: 1px;
+    padding-left: 9px;
+    padding-right: 9px;
+    bottom: 0px;
+    border-left: 1px solid #DBDBDB;
+    transition: all 0.1s ease-in-out;
+    cursor: default;
+}
+.userlist li:hover {
+    color: #000000;
+    background: #e2e2e2;
+}
+

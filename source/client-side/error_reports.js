@@ -42,7 +42,7 @@ var error_typ = function error_typ(){
 			this.text = "Fatalerror";
 			break;
 		}
-		console.log("Error: ["+number+"] => "+this.text+"; "+info+";");
+		console.error("Error: ["+number+"] => "+this.text+"; "+info+";");
 	};
 };
 

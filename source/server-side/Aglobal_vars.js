@@ -48,7 +48,7 @@ var global_typ = function global_typ(){
     this.firewall[this.mManage] = new Array('1', '2', '3', '4', '5');
     this.firewall[this.mDefault] = new Array('1', '2', '3', '4');
     this.firewall[this.mGuest] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, '1');
-    this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName);
+    this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, sID.createAccount);
     
     //this.config = { };
     //log(fs.readFileSync('config.json', 'UTF8'));

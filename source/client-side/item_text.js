@@ -269,8 +269,8 @@ var textbox_typ = function textbox_typ(){
         //var value = textbox.content+":"+textbox.posX+":"+textbox.posY+":"+textbox.width;
         
         //console.log(textbox.value);
-        data.files[L3.file][id] = textbox.value;
-        data.edited_UI(id);
+        //data.files[L3.file][id] = textbox.value;
+        data.edited_UI(id, textbox.value);
         //console.log(value);
         //SYNC_CONNECT
     };

@@ -8,6 +8,7 @@
         <div class="loginwait">{{alertinfo}}<br><br><input class="alertbutton" type="button" value="OK" ng-click="unalert();">
         </div>
     </div>
+<div class="{{fileRights}}" ng-hide="!readonly">readonly</div>
 <ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('Print')"><img src="img/doc/print.png" unselectable="on"></li>
@@ -85,13 +86,15 @@
     <li unselectable="on" id="color22" onclick="color.setcolor(this.style.background);" style="background: #ffffff;"><input type="button" unselectable="on" class="unselectinput"></li>
     <li unselectable="on" id="color23" onclick="color.setcolor(this.style.background);" style="background: transparent; border: 1px solid black;"><input type="button" unselectable="on" class="unselectinput"></li>
 </ul>
-FID: {{fileID}}
-<div class="borderchange">
-<div class="slideline">
-<div class="slider" onmousedown="slidestart();" id="slider" style="left: 0px;"></div>
-</div>
-<input type="text" class="slidesolve" value="0" id="slidesolve" onchange="slideset(this.value);"><div class="slideeinheit">%</div>
 
-
-</div>
+<!--<div class="borderchange">
+    <div class="slideline">
+        <div class="slider" onmousedown="slidestart();" id="slider" style="left: 0px;"></div>
+    </div>
+    <input type="text" class="slidesolve" value="0" id="slidesolve" onchange="slideset(this.value);"><div class="slideeinheit">%</div>
+</div>-->
+<ul class="userlist">
+    <li ng-repeat="user in fileUserList">{{resolveName(user[1])}}{{getEnd(user[1], user[0])}}</li>
+    <li>Users:</li>
+    </ul>
 </div>

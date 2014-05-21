@@ -25,36 +25,48 @@
 
 var L2x1_typ = function L2x1_typ(){
 
-	this.firewall = new Array();
+	this.firewall = [];
 	this.mandant = global.mNoLogin;
 	this.id_pre = "2";
 	
 	this.send = function(clientID, id, data) {
-        var mandant = secure.check(clientID);
+        try{
+            var mandant = secure.check(clientID);
 
-        this.firewall = global.firewall[mandant];
+            this.firewall = global.firewall[mandant];
 
-        this.id_pre = id.substr(0, 1);
+            this.id_pre = id.substr(0, 1);
 
-        if(this.firewall.indexOf(this.id_pre) >= 0 || this.firewall.indexOf(id) >= 0){
-	        L2.send(clientID, id, data);
-     	} else {
-     		error.report(4, "Firewall blocked send ID "+id+" of User "+clientID+" Mandant "+mandant);
-     	}
+            if(this.firewall.indexOf(this.id_pre) >= 0 || this.firewall.indexOf(id) >= 0){
+                L2.send(clientID, id, data);
+            } else {
+                error.report(4, "Firewall blocked send ID "+id+" of User "+clientID+" Mandant "+mandant);
+            }
+        } catch(e){
+            console.log("=> FIREWALL CRASH SEND=> ClientID="+clientID+" ID="+id);
+            console.log("=> FIREWALL CRASH SEND=> Mandant="+JSON.stringify(secure.check(clientID))+" Firewall="+JSON.stringify(global.firewall[secure.check(clientID)]));
+            console.log(e);
+        }
      };
 	
 	this.recieve = function(clientID, id, text) {
-        var mandant = secure.check(clientID);
+        try{
+            var mandant = secure.check(clientID);
 
-        this.firewall = global.firewall[mandant];
+            this.firewall = global.firewall[mandant];
 
-        this.id_pre = id.substr(0, 1);
+            this.id_pre = id.substr(0, 1);
 
-        if(this.firewall.indexOf(this.id_pre) >= 0 || this.firewall.indexOf(id) >= 0){
-	        L3.recieve(clientID, id, text);
-     	} else {
-     		error.report(4, "Firewall blocked recieved ID "+id+" of User "+clientID+" Mandant "+mandant);
-     	}
+            if(this.firewall.indexOf(this.id_pre) >= 0 || this.firewall.indexOf(id) >= 0){
+                L3.recieve(clientID, id, text);
+            } else {
+                error.report(4, "Firewall blocked recieved ID "+id+" of User "+clientID+" Mandant "+mandant);
+            }
+        } catch(e){
+            console.log("=> FIREWALL CRASH RESS=> ClientID="+clientID+" ID="+id);
+            console.log("=> FIREWALL CRASH RESS=> Mandant="+JSON.stringify(secure.check(clientID))+" Firewall="+JSON.stringify(global.firewall[secure.check(clientID)]));
+            console.log(e);
+        }
 	 };
 };
 

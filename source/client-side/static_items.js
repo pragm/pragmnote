@@ -46,8 +46,8 @@ var staticItems_typ = function staticItems_typ(){
     this.saveid = function(id){
         if(document.getElementById(id)){
             var content = document.getElementById(id).innerHTML;
-            data.files[L3.file][id] = content;
-            data.edited_UI(id);
+            //data.files[L3.file][id] = content;
+            data.edited_UI(id, content);
         } else {
             error.report(3, "ID: "+id+" Content: "+content);
         }

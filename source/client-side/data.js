@@ -38,11 +38,30 @@ var data_typ = function data_typ(){
     this.crashinfo = "unknown crash";
     this.selectionarray = [ ];
     this.shareshow = false;
+    this.deleteDir = "4DELETED00";
+    this.guestUser = "5GUESTUSER";
+    this.systemUsr = "5000000000";
+    this.userDir   = "4000000000";
+    this.dirFile   = "DirIndexFile";
     this.nameCache = {"5GUESTUSER": "Guest"};
+    this.readonlycb = false;
+    this.fileUserList = [];
+    this.readonly = true;
+    this.fileRights = {"read": false,"write": false,"perm": false};
+    
+    this.unbindCallbacks = function(){
+        this.callbacks = null;
+        this.callbacks = { };
+    }
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
         callback(this[object]);
+    };
+    
+    this.updatebind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback();
     };
     
     this.set = function(object, value){
@@ -56,6 +75,10 @@ var data_typ = function data_typ(){
         if(this.callbacks[object]){
             this.callbacks[object](data[object]);
         }
+    };
+    
+    this.readonlyinfo = function(cb){
+        this.readonlycb = cb;
     };
     
     this.edited_sync = function(fileID, contentID){
@@ -74,9 +97,18 @@ var data_typ = function data_typ(){
         }
     };
     
-    this.edited_UI = function(contentID){
+    this.edited_UI = function(contentID, data){
         //L3.send(contentID);
-        L3.uiEdit(uiControl.file, contentID);
+        var tempfile = L3.file;
+        if(this.fileRights.write){
+            this.files[tempfile][contentID] = data;
+            L3.uiEdit(uiControl.file, contentID);
+        } else {
+            this.edited_sync(tempfile, contentID);
+            if(this.readonlycb){
+                this.readonlycb();
+            }
+        }
     };
     
     this.reset = function(){
