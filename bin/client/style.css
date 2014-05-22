@@ -2415,4 +2415,15 @@ to {background:#FFD600;}
     color: #000000;
     background: #e2e2e2;
 }
+.printoverlay{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 999;
+}
 

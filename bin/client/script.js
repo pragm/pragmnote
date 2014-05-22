@@ -1,4 +1,4 @@
-var clientversion = "0.2.1881"/******************************************************************************************
+var clientversion = "0.2.1891"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -3635,6 +3635,16 @@ var rich_typ = function rich_typ (){
 	this.showtitles = 0;
 	this.showtitletimer;
 	this.unshowtitletimer;
+    
+    this.print = function() {
+      var printContents = document.getElementById('notecon').innerHTML;
+      var originalContents = document.body.innerHTML;        
+      var popupWin = window.open('', '_blank', 'width='+(screen.width-60)+',height='+(screen.height-110)+'');
+      popupWin.moveTo(0,0);
+      popupWin.document.open()
+      popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body>' + printContents + '<div class="printoverlay"></div></html>');
+      popupWin.document.close();
+    }; 
 
 	this.fontEdit = function(x,y){
 		document.execCommand(x,"",y);
@@ -4711,10 +4721,10 @@ var tab_typ = function tab_typ(){
                 //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
                 try{
                     var tempName = data.dirObject[this.tabArray[numb]].name;
+                    out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
                 } catch(e){
                     var tempName = "ERROR";
                 }
-                out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
             }
             numb++;
         }
