@@ -1,4 +1,4 @@
-var clientversion = "0.2.1869"/******************************************************************************************
+var clientversion = "0.2.1881"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1190,7 +1190,8 @@ function setcolor(mycolor){
 var color = new color_typ();
 
 pragmApp.controller('accountController', function($scope, $location) {
-		$scope.lan = 'cool';
+		data.unbindCallbacks();
+        $scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
         uiControl.finishRoedel();
         $scope.form = {};
@@ -1289,7 +1290,8 @@ pragmApp.controller('accountController', function($scope, $location) {
         }
 	});
 pragmApp.controller('crashController', function($scope) {
-		$scope.lan = 'cool';
+		data.unbindCallbacks();
+        $scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
         uiControl.finishRoedel();
         
@@ -2022,11 +2024,12 @@ pragmApp.controller('filesController', function($scope, $location) {
     }
 });
 pragmApp.controller('loadingController', function($scope) {
-		$scope.lan = 'cool';
+		data.unbindCallbacks();
+        $scope.lan = 'cool';
 		$scope.message = 'Please wait us! JK. This is just a demo.';
 	});
 pragmApp.controller('loginController', function($scope, $location) {
-        
+        data.unbindCallbacks();
          if($location.search().login == "guest"){
              console.info("autologin guest"); 
              uiControl.autologinguest = true;
@@ -3771,7 +3774,7 @@ function getHTTPObject(){
 } 
 
 
-function searchServer(){
+function searchServer_typ(){
     
     this.list = global.config.list;
     this.protocols = {"http":80,"ftp":21,"https":443};
@@ -3829,7 +3832,12 @@ function searchServer(){
         }
     };
     
+    
+    this.generateList();
+    this.checkAll();
 }
+
+var searchServer = new searchServer_typ();
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -4324,6 +4332,14 @@ var L3_typ = function L3_typ(){
                 
             case sID.fileRigths:
                 data.set('fileRights', JSON.parse(daten));
+                if(data.fileRights.read == false){
+                    if(data.login.userID == data.guestUser){
+                        uiControl.crash("You are kicked!");
+                    } else {
+                        uiControl.view("files");
+                        uiControl.alert("You are kicked!");
+                    }
+                }
                 break;
                 
             case sID.userList:
@@ -4335,8 +4351,13 @@ var L3_typ = function L3_typ(){
                 break;
 
             case sID.message:
-                if(daten == "Access Denied!" && data.login.userID == "5GUESTUSER"){
-                    uiControl.crash(daten);
+                if(daten == "Access Denied!"){
+                    if(data.login.userID == "5GUESTUSER"){
+                        uiControl.crash(daten);
+                    } else {
+                        uiControl.unloadFile();
+                        uiControl.alert(daten);
+                    }
                 } else {
                     uiControl.alert(daten);
                 }
@@ -4892,6 +4913,7 @@ var uiControl_typ = function global_typ(){
             L3.unloadFileCallback(L3.file, function(){
                 console.log('Callback => UNLOADED')
             });
+            tab.deactivateTab();
             uiControl.view('files');
         } else {
             uiControl.alert("Not allowed for guests! Get a free account!");

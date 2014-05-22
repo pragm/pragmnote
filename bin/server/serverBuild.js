@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1869
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1869 BETA"); console.log("");
+//Server-Build Version: BETA => 0.2.1881
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1881 BETA"); console.log("");
     /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1102,6 +1102,9 @@ var fRights_typ = function fRights_typ(){
             if(userID in pfile.dirObject[fileID].share){
                 var out = { };
                 out.read = true, out.write = pfile.dirObject[fileID].share[userID] > 0, out.perm = pfile.dirObject[fileID].share[userID] > 1;
+                if(pfile.guestUser in pfile.dirObject[fileID].share){
+                    out.write = pfile.dirObject[fileID].share[pfile.guestUser] > 0 || out.write;
+                }
                 return out;
             }
             if(pfile.guestUser in pfile.dirObject[fileID].share){
@@ -1818,12 +1821,12 @@ var pfile_typ = function pfile_typ(){
                 var list1 = pfile.getFileClients(fileInfo.id);
                 this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
                 this.dirObject[fileInfo.id].share = fileInfo.share;
-                log("SHARE => "+JSON.stringify(fileInfo));
+                //log("SHARE => "+JSON.stringify(fileInfo));
                 var list2 = pfile.getFileClients(fileInfo.id);
                 
-                log("Client "+clientID);
+                //log("Client "+clientID);
                 var list = this.joinArrays(list1, list2);
-                log("LIST After "+JSON.stringify(list));
+                //log("LIST After "+JSON.stringify(list));
                 for(key in list){
                     if(list[key] != clientID){
                         if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
@@ -2391,13 +2394,20 @@ var L3_typ = function L3_typ(){
         if('lastFileRights' in this.users[clientID]){
             if(this.users[clientID].lastFileRights != temp){
                 this.users[clientID].lastFileRights = temp;
+                console.log("     > Change > "+clientID)
                 L2x1.send(clientID, sID.fileRigths, temp);
             }    
+        } else {
+            this.users[clientID].lastFileRights = temp;
+            console.log("     > Change > "+clientID)
+            L2x1.send(clientID, sID.fileRigths, temp);
         }
     };
     
     this.updateFileRightsOfFile = function(fileID){
+        console.log(" > updateFileRightsOfFile > "+fileID);
         for(i in this.usersAtFile[fileID]){
+            console.log("   > Client "+this.usersAtFile[fileID][i][0]);
             this.updateFileRights(this.usersAtFile[fileID][i][0]); //Possible Security Bug
         }
     };

@@ -54,7 +54,7 @@ $temp = str_replace ("\x0B","",$temp);
 <div class="background"></div>-->
 <div class="fileTabs" id="fileTabs" style="height: 0px;">
     <div class="startshow" id="startshow"><div class="centerPicStart"></div></div>
-    <div class="fileTabButton" onclick="uiControl.unloadFile(); tab.deactivateTab();">
+    <div class="fileTabButton" onclick="uiControl.unloadFile();">
         <div unselectable="on" class="fileTabsPragm" id="pragmico2"></div>
      </div>
     <nobr>

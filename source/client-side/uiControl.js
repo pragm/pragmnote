@@ -75,6 +75,7 @@ var uiControl_typ = function global_typ(){
             L3.unloadFileCallback(L3.file, function(){
                 console.log('Callback => UNLOADED')
             });
+            tab.deactivateTab();
             uiControl.view('files');
         } else {
             uiControl.alert("Not allowed for guests! Get a free account!");

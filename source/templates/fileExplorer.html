@@ -59,10 +59,12 @@
 <div class="noteconBackground" id="noteconBackground" ng-mouseup="mouseup();" ng-mousemove="clog(); mousemove($event);"><!--ng-mousedown="setinactive();"-->
     <div class="fileListOverlay">
         <div class="infoBox" id="Infobox" ng-mouseover="mouseout();">
-            <div class="nameBox" id="nameBox">Bob King</div>
+            <div class="nameBox" id="nameBox">{{dirObject[mainDir].firstname}} {{dirObject[mainDir].lastname}}</div>
             
             <div class="infoline" id="infoline">Server:</div>
             <div class="infoline" id="infoline">{{getServerAddress()}}</div><br>
+            <div class="infoline" id="infoline">Your UserID:</div>
+            <div class="infoline" id="infoline">{{mainDir}}</div><br>
             <div class="infoline" id="infoline">data storage ({{storagePercent}}% used)</div>
             <div class="userstate" id="userstate"><div class="userstorage" id="userstorage" style="width: {{storagePercent}}%;"></div></div><br>
             <div class="infoline" id="infoline">Language choice:</div>

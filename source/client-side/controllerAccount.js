@@ -1,5 +1,6 @@
 pragmApp.controller('accountController', function($scope, $location) {
-		$scope.lan = 'cool';
+		data.unbindCallbacks();
+        $scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
         uiControl.finishRoedel();
         $scope.form = {};

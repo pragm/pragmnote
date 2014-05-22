@@ -8,7 +8,7 @@ function getHTTPObject(){
 } 
 
 
-function searchServer(){
+function searchServer_typ(){
     
     this.list = global.config.list;
     this.protocols = {"http":80,"ftp":21,"https":443};
@@ -66,4 +66,9 @@ function searchServer(){
         }
     };
     
+    
+    this.generateList();
+    this.checkAll();
 }
+
+var searchServer = new searchServer_typ();

@@ -1,5 +1,6 @@
 pragmApp.controller('crashController', function($scope) {
-		$scope.lan = 'cool';
+		data.unbindCallbacks();
+        $scope.lan = 'cool';
 		$scope.crashinfo = 'unknown crash';
         uiControl.finishRoedel();
         

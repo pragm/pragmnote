@@ -169,6 +169,14 @@ var L3_typ = function L3_typ(){
                 
             case sID.fileRigths:
                 data.set('fileRights', JSON.parse(daten));
+                if(data.fileRights.read == false){
+                    if(data.login.userID == data.guestUser){
+                        uiControl.crash("You are kicked!");
+                    } else {
+                        uiControl.view("files");
+                        uiControl.alert("You are kicked!");
+                    }
+                }
                 break;
                 
             case sID.userList:
@@ -180,8 +188,13 @@ var L3_typ = function L3_typ(){
                 break;
 
             case sID.message:
-                if(daten == "Access Denied!" && data.login.userID == "5GUESTUSER"){
-                    uiControl.crash(daten);
+                if(daten == "Access Denied!"){
+                    if(data.login.userID == "5GUESTUSER"){
+                        uiControl.crash(daten);
+                    } else {
+                        uiControl.unloadFile();
+                        uiControl.alert(daten);
+                    }
                 } else {
                     uiControl.alert(daten);
                 }

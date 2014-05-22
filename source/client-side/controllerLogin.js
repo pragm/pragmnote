@@ -1,5 +1,5 @@
 pragmApp.controller('loginController', function($scope, $location) {
-        
+        data.unbindCallbacks();
          if($location.search().login == "guest"){
              console.info("autologin guest"); 
              uiControl.autologinguest = true;
