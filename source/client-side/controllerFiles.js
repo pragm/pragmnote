@@ -516,7 +516,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         }
         
         $scope.getLink = function(){
-            return "http://localhost/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
+            return location.origin+"/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
         }
         
         //$scope.loadfileshare();

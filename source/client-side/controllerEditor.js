@@ -57,6 +57,13 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                     $scope.$apply();
                 }
             });
+            
+            // Print -------------------------------------------------------------------
+            
+            globalEvent.ctrlbind('P', function(){
+                console.log("CRTL+P");
+                rich.print();
+            });
 
             // Alert handler   ---------------------------------------------------------
             $scope.alertinfo = "";

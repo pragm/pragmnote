@@ -9,9 +9,13 @@ pragmApp.controller('loginController', function($scope, $location) {
 		$scope.lan = 'cool';
 		//$scope.loadslide = '';
         
-        $scope.getServerAddress = function(){
-            return global.config.serveraddress;
-        };
+        $scope.serverAddress = "searching...";
+        data.databind('serveraddress', function(x){
+		  $scope.serverAddress = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         
         global.onSchange(function(){
             $scope.$apply();

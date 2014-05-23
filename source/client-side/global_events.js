@@ -34,10 +34,24 @@ var globalEvent_typ = function globalEvent_typ(){
         globalEvent.ctrl[i] = callback;
     };
     
+    this.unbindAll = function(){
+        this.ctrl = null;
+        this.ctrl = {};
+    }
+    
     this.keydown = function(event){  // X=88 C=67 V=86 A=65
         var key = event.keyCode;
         switch(key){
                 case 17:
+                    global.ctrl = true;
+                break;
+                case 91:
+                    global.ctrl = true;
+                break;
+                case 93:
+                    global.ctrl = true;
+                break;
+                case 224:
                     global.ctrl = true;
                 break;
                 case 16:
@@ -71,6 +85,14 @@ var globalEvent_typ = function globalEvent_typ(){
                         }
                     }
                 break;
+                case 80:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.P){
+                            globalEvent.ctrl.P();
+                            return false;
+                        }
+                    }
+                break;
         }
     };
     
@@ -78,6 +100,15 @@ var globalEvent_typ = function globalEvent_typ(){
         var key = event.keyCode;
         switch(key){
                 case 17:
+                    global.ctrl = false;
+                break;
+                case 91:
+                    global.ctrl = false;
+                break;
+                case 93:
+                    global.ctrl = false;
+                break;
+                case 224:
                     global.ctrl = false;
                 break;
                 case 16:

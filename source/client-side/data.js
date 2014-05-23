@@ -48,10 +48,13 @@ var data_typ = function data_typ(){
     this.fileUserList = [];
     this.readonly = true;
     this.fileRights = {"read": false,"write": false,"perm": false};
+    this.serveraddress = "No Server Found!";
+    this.serverfound = false;
     
     this.unbindCallbacks = function(){
         this.callbacks = null;
         this.callbacks = { };
+        globalEvent.unbindAll();
     }
     
     this.databind = function(object, callback){

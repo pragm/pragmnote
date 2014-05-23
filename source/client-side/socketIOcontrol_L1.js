@@ -52,14 +52,14 @@ var L1_typ = function L1_typ(){
     };
  
 	this.onload = function() {
-        if(this.onlyoneload){
+        if(this.onlyoneload && data.serverfound){
             this.onlyoneload = false;
             data.set('loadinginfo', "connecting to server");
             L1.state = 1;
             this.countErrors = 0;
             //update_websocketstate();  //Test UI
             globalEvent.state(2);
-            var address = global.get_websocket_server_address();
+            var address = data.serveraddress;
             //this.Server = new SimplebSocket(address);
             // this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000, secure: true});  SSL SSL SSL
             this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});

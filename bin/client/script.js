@@ -1,4 +1,4 @@
-var clientversion = "0.2.1891"/******************************************************************************************
+var clientversion = "0.2.1896"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1361,6 +1361,13 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                     $scope.$apply();
                 }
             });
+            
+            // Print -------------------------------------------------------------------
+            
+            globalEvent.ctrlbind('P', function(){
+                console.log("CRTL+P");
+                rich.print();
+            });
 
             // Alert handler   ---------------------------------------------------------
             $scope.alertinfo = "";
@@ -1983,7 +1990,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         }
         
         $scope.getLink = function(){
-            return "http://localhost/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
+            return location.origin+"/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
         }
         
         //$scope.loadfileshare();
@@ -2039,9 +2046,13 @@ pragmApp.controller('loginController', function($scope, $location) {
 		$scope.lan = 'cool';
 		//$scope.loadslide = '';
         
-        $scope.getServerAddress = function(){
-            return global.config.serveraddress;
-        };
+        $scope.serverAddress = "searching...";
+        data.databind('serveraddress', function(x){
+		  $scope.serverAddress = x;
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
         
         global.onSchange(function(){
             $scope.$apply();
@@ -2168,10 +2179,13 @@ var data_typ = function data_typ(){
     this.fileUserList = [];
     this.readonly = true;
     this.fileRights = {"read": false,"write": false,"perm": false};
+    this.serveraddress = "No Server Found!";
+    this.serverfound = false;
     
     this.unbindCallbacks = function(){
         this.callbacks = null;
         this.callbacks = { };
+        globalEvent.unbindAll();
     }
     
     this.databind = function(object, callback){
@@ -2909,10 +2923,24 @@ var globalEvent_typ = function globalEvent_typ(){
         globalEvent.ctrl[i] = callback;
     };
     
+    this.unbindAll = function(){
+        this.ctrl = null;
+        this.ctrl = {};
+    }
+    
     this.keydown = function(event){  // X=88 C=67 V=86 A=65
         var key = event.keyCode;
         switch(key){
                 case 17:
+                    global.ctrl = true;
+                break;
+                case 91:
+                    global.ctrl = true;
+                break;
+                case 93:
+                    global.ctrl = true;
+                break;
+                case 224:
                     global.ctrl = true;
                 break;
                 case 16:
@@ -2946,6 +2974,14 @@ var globalEvent_typ = function globalEvent_typ(){
                         }
                     }
                 break;
+                case 80:
+                    if(global.ctrl){
+                        if(globalEvent.ctrl.P){
+                            globalEvent.ctrl.P();
+                            return false;
+                        }
+                    }
+                break;
         }
     };
     
@@ -2953,6 +2989,15 @@ var globalEvent_typ = function globalEvent_typ(){
         var key = event.keyCode;
         switch(key){
                 case 17:
+                    global.ctrl = false;
+                break;
+                case 91:
+                    global.ctrl = false;
+                break;
+                case 93:
+                    global.ctrl = false;
+                break;
+                case 224:
                     global.ctrl = false;
                 break;
                 case 16:
@@ -3822,7 +3867,10 @@ function searchServer_typ(){
             if(httpresponsText.length > 20 && httpresponsText.length<80){
                 if(that.currentAddress.prio<addr.prio){
                     that.currentAddress = JSON.parse(JSON.stringify(addr));
-                    global.config.serveraddress = that.currentAddress.protocol+"://"+that.currentAddress.domain+":"+that.currentAddress.port+"/";
+                    var temp = that.currentAddress.protocol+"://"+that.currentAddress.domain+":"+that.currentAddress.port+"/";
+                    global.config.serveraddress = temp;
+                    data.set('serveraddress', temp);
+                    data.set('serverfound', true);
                 }
             }
         }
@@ -3966,14 +4014,14 @@ var L1_typ = function L1_typ(){
     };
  
 	this.onload = function() {
-        if(this.onlyoneload){
+        if(this.onlyoneload && data.serverfound){
             this.onlyoneload = false;
             data.set('loadinginfo', "connecting to server");
             L1.state = 1;
             this.countErrors = 0;
             //update_websocketstate();  //Test UI
             globalEvent.state(2);
-            var address = global.get_websocket_server_address();
+            var address = data.serveraddress;
             //this.Server = new SimplebSocket(address);
             // this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000, secure: true});  SSL SSL SSL
             this.socket = io.connect(address, {'connect timeout': 5000, 'reconnection limit': 2000});

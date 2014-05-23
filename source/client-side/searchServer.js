@@ -46,7 +46,10 @@ function searchServer_typ(){
             if(httpresponsText.length > 20 && httpresponsText.length<80){
                 if(that.currentAddress.prio<addr.prio){
                     that.currentAddress = JSON.parse(JSON.stringify(addr));
-                    global.config.serveraddress = that.currentAddress.protocol+"://"+that.currentAddress.domain+":"+that.currentAddress.port+"/";
+                    var temp = that.currentAddress.protocol+"://"+that.currentAddress.domain+":"+that.currentAddress.port+"/";
+                    global.config.serveraddress = temp;
+                    data.set('serveraddress', temp);
+                    data.set('serverfound', true);
                 }
             }
         }
