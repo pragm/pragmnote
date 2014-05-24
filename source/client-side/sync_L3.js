@@ -167,6 +167,10 @@ var L3_typ = function L3_typ(){
                 data.set('fileUserList', JSON.parse(daten));
                 break;
                 
+            case sID.ownclientID:
+                data.set('ownclientID', daten);
+                break;
+                
             case sID.fileRigths:
                 data.set('fileRights', JSON.parse(daten));
                 if(data.fileRights.read == false){
@@ -320,6 +324,21 @@ var L3_typ = function L3_typ(){
         uiControl.loadHandler();
         this.loadedFile = true;
         L2.send(sID.file, id);  
+    };
+    
+    this.setUserEditing = function(id){
+        if(id != data.userEdit){
+            data.userEdit = id;
+            console.log("SET USER EDITING");
+            L2.send(sID.userEdit, id);
+        }
+    };
+    
+    this.unsetUserEditIfSame = function(id){
+        if(data.userEdit == id){
+            console.log("SET USER EDITING NULL");
+            this.setUserEditing("");
+        }
     };
     
     this.loadFileCallback = function(id, callback){

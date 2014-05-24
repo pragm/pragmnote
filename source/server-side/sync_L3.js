@@ -124,6 +124,9 @@ var L3_typ = function L3_typ(){
                 //Server sendet Userliste
                 error.report(2,"static id $id not connectet to a function");
                 break;
+            case sID.userEdit:
+                this.setUserEditing(clientID, data);
+                break;
             case sID.deleteID:
                 L3.deleteItemID(clientID, id, data);
                 //Server loescht ID und schickt das weiter
@@ -175,6 +178,7 @@ var L3_typ = function L3_typ(){
         //this.users[clientID].fileRights = { };
         this.staticSave[clientID] = { };
         secure.legitimationSet(clientID);
+        L2x1.send(clientID, sID.ownclientID, clientID);
     };
 
     this.getServer = function (clientID, id, data) {
@@ -221,11 +225,11 @@ var L3_typ = function L3_typ(){
                 L3.updateUser(clientID);
             }
             if(data in this.usersAtFile){
-                this.usersAtFile[data].push([clientID, this.users[clientID].userID]);
+                this.usersAtFile[data].push([clientID, this.users[clientID].userID, ""]);
                 this.updateUserList(data);
             } else {
                 this.usersAtFile[data] = [];
-                this.usersAtFile[data].push([clientID, this.users[clientID].userID]);
+                this.usersAtFile[data].push([clientID, this.users[clientID].userID, ""]);
                 this.updateUserList(data);
             }
         } else {
@@ -241,6 +245,29 @@ var L3_typ = function L3_typ(){
         //delete this.users[clientID].files[this.users[clientID]['file']];
         this.users[clientID].file = "";
         L2x1.send(clientID, sID.fileunloadtrue, tempid);
+    };
+    
+    this.setUserEditing = function(clientID, id){
+        var data = this.users[clientID].file;
+        if(data in this.usersAtFile){
+            var found = false;    
+            for(i in this.usersAtFile[data]){
+                if(this.usersAtFile[data][i][0] == clientID){
+                    this.usersAtFile[data][i][2] = id;
+                    this.updateUserList(data);
+                    found = true;
+                    break;
+                }
+            }
+            if(!found){
+                this.usersAtFile[data].push([clientID, this.users[clientID].userID, id]);
+                this.updateUserList(data);
+            }
+        } else {
+            this.usersAtFile[data] = [];
+            this.usersAtFile[data].push([clientID, this.users[clientID].userID, id]);
+            this.updateUserList(data);
+        }
     };
     
     this.deleteFromUserList = function(clientID, fileID){

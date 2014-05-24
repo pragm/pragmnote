@@ -96,11 +96,88 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                 }
             }
             
-            // userlist
+            // userlist - ----------------------------------------------------
+            
+            $scope.userClients = {};
+            $scope.freeColors = JSON.parse(JSON.stringify(global.userColors));
+            $scope.usedColors = [];
+            $scope.oldBList = [];
+            
+            $scope.getFreeColor = function(){
+                if($scope.freeColors.length > 0){
+                    var out = $scope.freeColors.pop();
+                    $scope.usedColors.push(out);
+                    return out;
+                } else {
+                    return "#000000";
+                }
+            };
+            
+            $scope.setFreeColor = function(color){
+                var i = $scope.usedColors.indexOf(color);
+                if(i >= 0){
+                    var temp = $scope.usedColors.splice(i,1)[0];
+                    $scope.freeColors.push(temp);
+                }
+            };
+            
+            $scope.getClientColor = function(clientID){
+                if(!(clientID in $scope.userClients)){
+                    $scope.userClients[clientID] = $scope.getFreeColor();
+                }
+                return $scope.userClients[clientID];
+            };
+            
+            $scope.setClientColorFree = function(clientID){
+                if(clientID in $scope.userClients){
+                    $scope.setFreeColor($scope.userClients[clientID]);
+                    delete $scope.userClients[clientID];
+                }
+            };
+            
+            $scope.bgcolor = function(color){
+                return tools.hexToRgb(color, 0.1);
+            };
+            
             
             data.databind('fileUserList', function(x){
+                //GET FileUserList
+                var cList = [];
+                for(i in x){
+                    cList.push(x[i][0].toString());
+                }
+                for(i in $scope.userClients){
+                    if(cList.indexOf(i) < 0){
+                        $scope.setClientColorFree(i);
+                    }
+                }
+                for(i in x){
+                    x[i][3] = $scope.getClientColor(x[i][0]);
+                }
+                var bList = [];
+                for(i in x){
+                    if(x[i][2] != "" && x[i][0] != data.ownclientID){
+                        bList.push(x[i][2].toString());
+                        console.log("BLOCK="+x[i][2]);
+                        if($scope.oldBList.indexOf(x[i][2].toString()) < 0){
+                            console.log("BLOCKTRUE="+x[i][2]);
+                            if(!textbox.setBlocked(x[i][2], x[i][3])){
+                                bList.pop();
+                            }
+                        }
+                    }
+                }
+                console.log("BLIST");
+                console.log(bList);
+                for(i in $scope.oldBList){
+                    if(bList.indexOf($scope.oldBList[i].toString()) < 0){
+                        console.log("UNBLOCK="+$scope.oldBList[i]);
+                        textbox.setUnBlocked($scope.oldBList[i]);
+                    }
+                }
+                $scope.oldBList = null;
+                $scope.oldBList = bList;
               $scope.fileUserList = x;
-              $scope.updateAlert();
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }
@@ -111,12 +188,17 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             };
             
             $scope.getEnd = function(id, cid){
+                var me = "";
+                if(cid == data.ownclientID){
+                    me = " (me)";
+                }
                 for(i in $scope.fileUserList){
                     if($scope.fileUserList[i][1] == id && $scope.fileUserList[i][0] != cid){
-                        return ":"+cid;
+                        return ":"+cid+me;
                     }
                 }
-                return "";
+                
+                return me;
             };
             
             data.updatebind('nameCache', function(){

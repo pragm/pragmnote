@@ -50,6 +50,8 @@ var data_typ = function data_typ(){
     this.fileRights = {"read": false,"write": false,"perm": false};
     this.serveraddress = "No Server Found!";
     this.serverfound = false;
+    this.userEdit = "";
+    this.ownclientID;
     
     this.unbindCallbacks = function(){
         this.callbacks = null;

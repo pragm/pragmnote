@@ -94,7 +94,7 @@
     <input type="text" class="slidesolve" value="0" id="slidesolve" onchange="slideset(this.value);"><div class="slideeinheit">%</div>
 </div>-->
 <ul class="userlist">
-    <li ng-repeat="user in fileUserList">{{resolveName(user[1])}}{{getEnd(user[1], user[0])}}</li>
-    <li>Users:</li>
+    <li ng-repeat="user in fileUserList" style="border-left: 5px solid {{user[3]}}; background: {{bgcolor(user[3])}};">{{resolveName(user[1])}}{{getEnd(user[1], user[0])}}</li>
+    <li style="background: #f5f5f5;">Users:</li>
     </ul>
 </div>

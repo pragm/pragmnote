@@ -90,6 +90,8 @@ var global_typ = function global_typ(){
     this.difcut = 457;
     this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);"  onfocus="staticItems.focus();" onblur="staticItems.blur();"id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
     
+    this.userColors = ["#ff0000", "#009999", "#c062d3", "#64de89", "#ffb970", "#63afd0", "#bc008d", "#00ca01", "#a149ff", "#0090ff", "#ff8200", "#6800d5", "#009801", "#ca0000", "#ffca00", "#006abc"];
+    
     this.setTime = function(time){
         this.time = time;
     };

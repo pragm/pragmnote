@@ -26,6 +26,8 @@
 var textbox_typ = function textbox_typ(){
     
     this.focusactive = false;
+    this.usingTimeout;
+    this.lastusingid;
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
@@ -56,6 +58,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.drag = function (id){
+        this.activateUsing(id);
         document.getElementById("editarea"+id).className = "editareax2";
 	    textbox.draging = 1;
         textbox.draganddropid = id;
@@ -74,7 +77,10 @@ var textbox_typ = function textbox_typ(){
         elem = document.getElementById("editing"+textbox.draganddropid); //This is the element that you want to move the caret to the end of
         textbox.setEndOfContenteditable(elem);
         textbox.saveid('editing'+textbox.draganddropid);
-		}
+        if(!(textbox.focusactive && textbox.id == textbox.draganddropid)){
+            this.deactivateUsing();
+        }
+    }
 	textbox.draging = 0;
 	textbox.resizeing = 0;
 	};
@@ -100,26 +106,29 @@ var textbox_typ = function textbox_typ(){
     };
     
     this.resize = function (id){
-	   document.getElementById("editarea"+id).className = "editareax2";
-	   textbox.resizeing = 1;
-	   textbox.draganddropid = id;
-	   textbox.resizeid = "editarea"+id;
-	   textbox.Ereignis = window.event;
-	   textbox.startXsize = textbox.Ereignis.clientX;
-	   textbox.objectXsize = document.getElementById(textbox.resizeid).style.width;
-	   textbox.objectXsize = parseInt(textbox.objectXsize.replace(/px/g, ""));
+        this.activateUsing(id);
+	    document.getElementById("editarea"+id).className = "editareax2";
+	    textbox.resizeing = 1;
+	    textbox.draganddropid = id;
+	    textbox.resizeid = "editarea"+id;
+	    textbox.Ereignis = window.event;
+	    textbox.startXsize = textbox.Ereignis.clientX;
+	    textbox.objectXsize = document.getElementById(textbox.resizeid).style.width;
+	    textbox.objectXsize = parseInt(textbox.objectXsize.replace(/px/g, ""));
 	};
     
     this.aktivatefocus = function (id){
         this.focusactive = true;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
+        this.activateUsing(textbox.id);
 	   textbox.aktiveid = textbox.id;
 	   document.getElementById("editarea"+textbox.id).className = "editareax2";
 	   color.setcolorswitch(textbox.id);
 	   }
 
     this.deaktivatefocus = function (id){
+        this.deactivateUsing();
 	   textbox.eid = id;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
@@ -130,6 +139,7 @@ var textbox_typ = function textbox_typ(){
 	}
         
     this.setid =function (id, value){
+        L3.unsetUserEditIfSame(id);
         textbox.init = convert.string_to_int(value.substr(0,1));
         
         var temp = ''+textbox.init/16+'';
@@ -170,6 +180,7 @@ var textbox_typ = function textbox_typ(){
            textbox.newdiv.contenteditable	 = 'false';
            textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(id, content);	   
            document.getElementById('notecon').appendChild(textbox.newdiv);
+           data.update('fileUserList');
        }
 	};
     
@@ -250,29 +261,55 @@ var textbox_typ = function textbox_typ(){
         
         textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
         
-        var tempContent = textbox.content;
-        
-        /*tempContent = tempContent.replace(/�/g, "&Auml;");
-        tempContent = tempContent.replace(/�/g, "&auml;");
-        tempContent = tempContent.replace(/�/g, "&Ouml;");
-        tempContent = tempContent.replace(/�/g, "&ouml;");
-        tempContent = tempContent.replace(/�/g, "&Uuml;");
-        tempContent = tempContent.replace(/�/g, "&uuml;");
-        tempContent = tempContent.replace(/�/g, "&sect;");
-        tempContent = tempContent.replace(/�/g, "&szlig;");
-        tempContent = tempContent.replace(/�/g, "&deg;");
-        tempContent = tempContent.replace(/�/g, "&euro;");*/
-        
+        var tempContent = textbox.content;        
         
         textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
 					
-        //var value = textbox.content+":"+textbox.posX+":"+textbox.posY+":"+textbox.width;
-        
-        //console.log(textbox.value);
-        //data.files[L3.file][id] = textbox.value;
         data.edited_UI(id, textbox.value);
-        //console.log(value);
-        //SYNC_CONNECT
+    };
+    
+    this.deactivateUsingNow = function(){
+           L3.setUserEditing("");
+        if(this.draging != 1 && this.resizeing != 1 &&  this.focusactive == false){
+           //L3.setUserEditing("");
+        }
+    };
+    
+    this.deactivateUsing = function(){
+        if(this.draging != 1 && this.resizeing != 1){
+            clearTimeout(this.usingTimeout);
+           this.usingTimeout = setTimeout('textbox.deactivateUsingNow();', 100);
+        }
+    };
+           
+    this.activateUsing = function(id){
+        clearTimeout(this.usingTimeout);
+        this.lastusingid = id;
+        L3.setUserEditing(id);
+    };
+    
+    this.setBlocked = function(id, color){
+        L3.unsetUserEditIfSame(id);
+        if(document.getElementById("editarea"+id)){
+            document.getElementById("editarea"+id).style.boxShadow = "inset 0px 5px 5px -5px "+tools.hexToRgb(color, 0.4)+", inset 5px 0px 0px 0px "+color+", inset 5px -5px 5px -5px "+tools.hexToRgb(color, 0.4)+", inset 0px 0px 5px 0px "+tools.hexToRgb(color, 0.2)+"";
+            document.getElementById("editarea"+id).style.background = tools.hexToRgb(color, 0.04);
+            document.getElementById("editarea"+id).style.borderRadius = "5px";
+            return true;
+        } else {
+            return false;
+        }
+    };
+    
+    this.setUnBlocked = function(id){
+        //this.unsetUserEditIfSame(id);
+        if(document.getElementById("editarea"+id)){
+            document.getElementById("editarea"+id).style.boxShadow = "";
+            document.getElementById("editarea"+id).style.background = "";
+            document.getElementById("editarea"+id).style.borderRadius = "";
+            return true;
+        } else {
+            return false;
+        }
     };
 };
 

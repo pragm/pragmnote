@@ -36,6 +36,7 @@ var sID_typ = function sID_typ(){
 	this.userName          = "2000000007"; //Übergibt den Login Benutzernamen an den Server
 	this.userPassword      = "2000000008"; //Übergibt das Login Passwort an den Server
 	this.legitimationID    = "2000000009"; //Übergibt das Login Passwort an den Server
+	this.userEdit          = "2000000016"; //Übergibt das Login Passwort an den Server
 
 	//SEND_TO_SERVER ACTIONS WITH LEGITIMATION ID
 	this.Login 			   = "2001000000"; //Übergabe und Rückgabe des Login Objektes
@@ -62,6 +63,7 @@ var sID_typ = function sID_typ(){
     this.fileUserList      = "2000000013"; //Server sends userlist of a file to client
     this.returnUserName    = "2000000014";
     this.fileRigths        = "2000000015"; //Server sends userlist of a file to client
+    this.ownclientID       = "2000000017";
     
 	/*
 	LEGITIMATION ID: Idee: 

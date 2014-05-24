@@ -1,4 +1,4 @@
-var clientversion = "0.2.1896"/******************************************************************************************
+var clientversion = "0.2.1960"/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -708,6 +708,7 @@ var sID_typ = function sID_typ(){
 	this.userName          = "2000000007"; //Übergibt den Login Benutzernamen an den Server
 	this.userPassword      = "2000000008"; //Übergibt das Login Passwort an den Server
 	this.legitimationID    = "2000000009"; //Übergibt das Login Passwort an den Server
+	this.userEdit          = "2000000016"; //Übergibt das Login Passwort an den Server
 
 	//SEND_TO_SERVER ACTIONS WITH LEGITIMATION ID
 	this.Login 			   = "2001000000"; //Übergabe und Rückgabe des Login Objektes
@@ -734,6 +735,7 @@ var sID_typ = function sID_typ(){
     this.fileUserList      = "2000000013"; //Server sends userlist of a file to client
     this.returnUserName    = "2000000014";
     this.fileRigths        = "2000000015"; //Server sends userlist of a file to client
+    this.ownclientID       = "2000000017";
     
 	/*
 	LEGITIMATION ID: Idee: 
@@ -1400,11 +1402,88 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                 }
             }
             
-            // userlist
+            // userlist - ----------------------------------------------------
+            
+            $scope.userClients = {};
+            $scope.freeColors = JSON.parse(JSON.stringify(global.userColors));
+            $scope.usedColors = [];
+            $scope.oldBList = [];
+            
+            $scope.getFreeColor = function(){
+                if($scope.freeColors.length > 0){
+                    var out = $scope.freeColors.pop();
+                    $scope.usedColors.push(out);
+                    return out;
+                } else {
+                    return "#000000";
+                }
+            };
+            
+            $scope.setFreeColor = function(color){
+                var i = $scope.usedColors.indexOf(color);
+                if(i >= 0){
+                    var temp = $scope.usedColors.splice(i,1)[0];
+                    $scope.freeColors.push(temp);
+                }
+            };
+            
+            $scope.getClientColor = function(clientID){
+                if(!(clientID in $scope.userClients)){
+                    $scope.userClients[clientID] = $scope.getFreeColor();
+                }
+                return $scope.userClients[clientID];
+            };
+            
+            $scope.setClientColorFree = function(clientID){
+                if(clientID in $scope.userClients){
+                    $scope.setFreeColor($scope.userClients[clientID]);
+                    delete $scope.userClients[clientID];
+                }
+            };
+            
+            $scope.bgcolor = function(color){
+                return tools.hexToRgb(color, 0.1);
+            };
+            
             
             data.databind('fileUserList', function(x){
+                //GET FileUserList
+                var cList = [];
+                for(i in x){
+                    cList.push(x[i][0].toString());
+                }
+                for(i in $scope.userClients){
+                    if(cList.indexOf(i) < 0){
+                        $scope.setClientColorFree(i);
+                    }
+                }
+                for(i in x){
+                    x[i][3] = $scope.getClientColor(x[i][0]);
+                }
+                var bList = [];
+                for(i in x){
+                    if(x[i][2] != "" && x[i][0] != data.ownclientID){
+                        bList.push(x[i][2].toString());
+                        console.log("BLOCK="+x[i][2]);
+                        if($scope.oldBList.indexOf(x[i][2].toString()) < 0){
+                            console.log("BLOCKTRUE="+x[i][2]);
+                            if(!textbox.setBlocked(x[i][2], x[i][3])){
+                                bList.pop();
+                            }
+                        }
+                    }
+                }
+                console.log("BLIST");
+                console.log(bList);
+                for(i in $scope.oldBList){
+                    if(bList.indexOf($scope.oldBList[i].toString()) < 0){
+                        console.log("UNBLOCK="+$scope.oldBList[i]);
+                        textbox.setUnBlocked($scope.oldBList[i]);
+                    }
+                }
+                $scope.oldBList = null;
+                $scope.oldBList = bList;
               $scope.fileUserList = x;
-              $scope.updateAlert();
                 if(!$scope.$$phase) {
                     $scope.$apply();
                 }
@@ -1415,12 +1494,17 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             };
             
             $scope.getEnd = function(id, cid){
+                var me = "";
+                if(cid == data.ownclientID){
+                    me = " (me)";
+                }
                 for(i in $scope.fileUserList){
                     if($scope.fileUserList[i][1] == id && $scope.fileUserList[i][0] != cid){
-                        return ":"+cid;
+                        return ":"+cid+me;
                     }
                 }
-                return "";
+                
+                return me;
             };
             
             data.updatebind('nameCache', function(){
@@ -2181,6 +2265,8 @@ var data_typ = function data_typ(){
     this.fileRights = {"read": false,"write": false,"perm": false};
     this.serveraddress = "No Server Found!";
     this.serverfound = false;
+    this.userEdit = "";
+    this.ownclientID;
     
     this.unbindCallbacks = function(){
         this.callbacks = null;
@@ -3199,6 +3285,8 @@ var global_typ = function global_typ(){
     this.difcut = 457;
     this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);"  onfocus="staticItems.focus();" onblur="staticItems.blur();"id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
     
+    this.userColors = ["#ff0000", "#009999", "#c062d3", "#64de89", "#ffb970", "#63afd0", "#bc008d", "#00ca01", "#a149ff", "#0090ff", "#ff8200", "#6800d5", "#009801", "#ca0000", "#ffca00", "#006abc"];
+    
     this.setTime = function(time){
         this.time = time;
     };
@@ -3237,6 +3325,8 @@ var global = new global_typ();
 var textbox_typ = function textbox_typ(){
     
     this.focusactive = false;
+    this.usingTimeout;
+    this.lastusingid;
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
@@ -3267,6 +3357,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.drag = function (id){
+        this.activateUsing(id);
         document.getElementById("editarea"+id).className = "editareax2";
 	    textbox.draging = 1;
         textbox.draganddropid = id;
@@ -3285,7 +3376,10 @@ var textbox_typ = function textbox_typ(){
         elem = document.getElementById("editing"+textbox.draganddropid); //This is the element that you want to move the caret to the end of
         textbox.setEndOfContenteditable(elem);
         textbox.saveid('editing'+textbox.draganddropid);
-		}
+        if(!(textbox.focusactive && textbox.id == textbox.draganddropid)){
+            this.deactivateUsing();
+        }
+    }
 	textbox.draging = 0;
 	textbox.resizeing = 0;
 	};
@@ -3311,26 +3405,29 @@ var textbox_typ = function textbox_typ(){
     };
     
     this.resize = function (id){
-	   document.getElementById("editarea"+id).className = "editareax2";
-	   textbox.resizeing = 1;
-	   textbox.draganddropid = id;
-	   textbox.resizeid = "editarea"+id;
-	   textbox.Ereignis = window.event;
-	   textbox.startXsize = textbox.Ereignis.clientX;
-	   textbox.objectXsize = document.getElementById(textbox.resizeid).style.width;
-	   textbox.objectXsize = parseInt(textbox.objectXsize.replace(/px/g, ""));
+        this.activateUsing(id);
+	    document.getElementById("editarea"+id).className = "editareax2";
+	    textbox.resizeing = 1;
+	    textbox.draganddropid = id;
+	    textbox.resizeid = "editarea"+id;
+	    textbox.Ereignis = window.event;
+	    textbox.startXsize = textbox.Ereignis.clientX;
+	    textbox.objectXsize = document.getElementById(textbox.resizeid).style.width;
+	    textbox.objectXsize = parseInt(textbox.objectXsize.replace(/px/g, ""));
 	};
     
     this.aktivatefocus = function (id){
         this.focusactive = true;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
+        this.activateUsing(textbox.id);
 	   textbox.aktiveid = textbox.id;
 	   document.getElementById("editarea"+textbox.id).className = "editareax2";
 	   color.setcolorswitch(textbox.id);
 	   }
 
     this.deaktivatefocus = function (id){
+        this.deactivateUsing();
 	   textbox.eid = id;
 	   textbox.iding = id.split("editing");
 	   textbox.id = textbox.iding[1];
@@ -3341,6 +3438,7 @@ var textbox_typ = function textbox_typ(){
 	}
         
     this.setid =function (id, value){
+        L3.unsetUserEditIfSame(id);
         textbox.init = convert.string_to_int(value.substr(0,1));
         
         var temp = ''+textbox.init/16+'';
@@ -3381,6 +3479,7 @@ var textbox_typ = function textbox_typ(){
            textbox.newdiv.contenteditable	 = 'false';
            textbox.newdiv.innerHTML 		 = textbox.getTextboxHTML(id, content);	   
            document.getElementById('notecon').appendChild(textbox.newdiv);
+           data.update('fileUserList');
        }
 	};
     
@@ -3461,29 +3560,55 @@ var textbox_typ = function textbox_typ(){
         
         textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
         
-        var tempContent = textbox.content;
-        
-        /*tempContent = tempContent.replace(/�/g, "&Auml;");
-        tempContent = tempContent.replace(/�/g, "&auml;");
-        tempContent = tempContent.replace(/�/g, "&Ouml;");
-        tempContent = tempContent.replace(/�/g, "&ouml;");
-        tempContent = tempContent.replace(/�/g, "&Uuml;");
-        tempContent = tempContent.replace(/�/g, "&uuml;");
-        tempContent = tempContent.replace(/�/g, "&sect;");
-        tempContent = tempContent.replace(/�/g, "&szlig;");
-        tempContent = tempContent.replace(/�/g, "&deg;");
-        tempContent = tempContent.replace(/�/g, "&euro;");*/
-        
+        var tempContent = textbox.content;        
         
         textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
 					
-        //var value = textbox.content+":"+textbox.posX+":"+textbox.posY+":"+textbox.width;
-        
-        //console.log(textbox.value);
-        //data.files[L3.file][id] = textbox.value;
         data.edited_UI(id, textbox.value);
-        //console.log(value);
-        //SYNC_CONNECT
+    };
+    
+    this.deactivateUsingNow = function(){
+           L3.setUserEditing("");
+        if(this.draging != 1 && this.resizeing != 1 &&  this.focusactive == false){
+           //L3.setUserEditing("");
+        }
+    };
+    
+    this.deactivateUsing = function(){
+        if(this.draging != 1 && this.resizeing != 1){
+            clearTimeout(this.usingTimeout);
+           this.usingTimeout = setTimeout('textbox.deactivateUsingNow();', 100);
+        }
+    };
+           
+    this.activateUsing = function(id){
+        clearTimeout(this.usingTimeout);
+        this.lastusingid = id;
+        L3.setUserEditing(id);
+    };
+    
+    this.setBlocked = function(id, color){
+        L3.unsetUserEditIfSame(id);
+        if(document.getElementById("editarea"+id)){
+            document.getElementById("editarea"+id).style.boxShadow = "inset 0px 5px 5px -5px "+tools.hexToRgb(color, 0.4)+", inset 5px 0px 0px 0px "+color+", inset 5px -5px 5px -5px "+tools.hexToRgb(color, 0.4)+", inset 0px 0px 5px 0px "+tools.hexToRgb(color, 0.2)+"";
+            document.getElementById("editarea"+id).style.background = tools.hexToRgb(color, 0.04);
+            document.getElementById("editarea"+id).style.borderRadius = "5px";
+            return true;
+        } else {
+            return false;
+        }
+    };
+    
+    this.setUnBlocked = function(id){
+        //this.unsetUserEditIfSame(id);
+        if(document.getElementById("editarea"+id)){
+            document.getElementById("editarea"+id).style.boxShadow = "";
+            document.getElementById("editarea"+id).style.background = "";
+            document.getElementById("editarea"+id).style.borderRadius = "";
+            return true;
+        } else {
+            return false;
+        }
     };
 };
 
@@ -4388,6 +4513,10 @@ var L3_typ = function L3_typ(){
                 data.set('fileUserList', JSON.parse(daten));
                 break;
                 
+            case sID.ownclientID:
+                data.set('ownclientID', daten);
+                break;
+                
             case sID.fileRigths:
                 data.set('fileRights', JSON.parse(daten));
                 if(data.fileRights.read == false){
@@ -4541,6 +4670,21 @@ var L3_typ = function L3_typ(){
         uiControl.loadHandler();
         this.loadedFile = true;
         L2.send(sID.file, id);  
+    };
+    
+    this.setUserEditing = function(id){
+        if(id != data.userEdit){
+            data.userEdit = id;
+            console.log("SET USER EDITING");
+            L2.send(sID.userEdit, id);
+        }
+    };
+    
+    this.unsetUserEditIfSame = function(id){
+        if(data.userEdit == id){
+            console.log("SET USER EDITING NULL");
+            this.setUserEditing("");
+        }
     };
     
     this.loadFileCallback = function(id, callback){
@@ -4894,6 +5038,19 @@ function stopTest() {
 function onmousemove() {
     alert(1);
 }
+function tools_typ(){
+    this.hexToRgb = function (hex, a) {
+        var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+            return r + r + g + g + b + b;
+        });
+
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return "rgba("+parseInt(result[1], 16)+","+parseInt(result[2], 16)+","+parseInt(result[3], 16)+","+a+")";
+    };
+}
+
+var tools = new tools_typ();
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
