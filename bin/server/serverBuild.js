@@ -1,6 +1,5 @@
-//Server-Build Version: BETA => 0.2.1960
-console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1960 BETA"); console.log("");
-    /******************************************************************************************
+//Server-Build Version: BETA => 0.2.1971
+console.log("pragm-Websocket-Server => BUILD 0.2.1971 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -764,8 +763,7 @@ var sURL_typ = function sURL_typ(){
 var sURL = new sURL_typ();
 var sID = new sID_typ();
 
-
-    /******************************************************************************************
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #

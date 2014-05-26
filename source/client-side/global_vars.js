@@ -24,7 +24,7 @@
 
 
 var global_typ = function global_typ(){
-    this.config = JSON.parse(globalconfig);
+    this.config = globalconfig;
     this.websocket_server_address_online = 'ws://pragm.dyndns-work.com:9343';
     this.websocket_server_address_local  = 'ws://localhost:9343';
 	this.websocket_server_address = 'ws://91.89.70.45:9343'; 

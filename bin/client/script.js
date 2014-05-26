@@ -1,4 +1,5 @@
-var clientversion = "0.2.1960"/******************************************************************************************
+var clientversion = "0.2.1971";
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -763,7 +764,7 @@ var sURL = new sURL_typ();
 var sID = new sID_typ();
 
 
-    /******************************************************************************************
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -3219,7 +3220,7 @@ window.onmouseup = globalEvent.mouseup;
 
 
 var global_typ = function global_typ(){
-    this.config = JSON.parse(globalconfig);
+    this.config = globalconfig;
     this.websocket_server_address_online = 'ws://pragm.dyndns-work.com:9343';
     this.websocket_server_address_local  = 'ws://localhost:9343';
 	this.websocket_server_address = 'ws://91.89.70.45:9343'; 

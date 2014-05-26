@@ -21,14 +21,7 @@
 #       Version/Release...............: 0.5xx
 #
 ******************************************************************************************/-->
-<?php 
-$temp = trim(file_get_contents('config.json')); 
-$temp = str_replace ("\t","",$temp);
-$temp = str_replace ("\n","",$temp);
-$temp = str_replace ("\r","",$temp);
-$temp = str_replace ("\0","",$temp);
-$temp = str_replace ("\x0B","",$temp);
-?>
+
 <!DOCTYPE HTML>
 <html ng-app="pragmApp" id="ng-app">
 <head>
@@ -37,10 +30,12 @@ $temp = str_replace ("\x0B","",$temp);
 <title id="title">pragm</title>
 <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
 <link href="font.css" rel="stylesheet" type="text/css">
+<script src="config.js"></script>
 <script src="jquery.min.js"></script> <!-- //ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js -->
 <script src="angular.min.js"></script> <!-- https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js -->
 <script type="text/javascript" src="socket.io.min.js"></script> <!--node_modules/socket.io-client/dist/socket.io.min.js-->
-<script type="text/javascript">var globalconfig = '<?php echo $temp; ?>';</script>
+<script type="text/javascript" src="script.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
 
 <!-- #buildSoftwareCut# -->
 
