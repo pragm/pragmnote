@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 var clientversion = "0.2.1971";
 /******************************************************************************************
+=======
+var clientversion = "0.2.1966"/******************************************************************************************
+>>>>>>> FETCH_HEAD
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1199,7 +1203,7 @@ pragmApp.controller('accountController', function($scope, $location) {
         uiControl.finishRoedel();
         $scope.form = {};
         tab.position("slideIn");
-        if($location.search().invitekey.length >1){
+        if($location.search().invitekey && $location.search().invitekey.length >1){
             document.getElementById('forminvitekey').value = $location.search().invitekey;
         }
         

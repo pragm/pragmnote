@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 //Server-Build Version: BETA => 0.2.1971
 console.log("pragm-Websocket-Server => BUILD 0.2.1971 BETA");/******************************************************************************************
+=======
+//Server-Build Version: BETA => 0.2.1966
+console.log(""); console.log("pragm-Websocket-Server => BUILD 0.2.1966 BETA"); console.log("");
+    /******************************************************************************************
+>>>>>>> FETCH_HEAD
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #

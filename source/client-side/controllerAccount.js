@@ -5,7 +5,7 @@ pragmApp.controller('accountController', function($scope, $location) {
         uiControl.finishRoedel();
         $scope.form = {};
         tab.position("slideIn");
-        if($location.search().invitekey.length >1){
+        if($location.search().invitekey && $location.search().invitekey.length >1){
             document.getElementById('forminvitekey').value = $location.search().invitekey;
         }
         
