@@ -3,17 +3,17 @@ var fs = require('fs');
 var versionfirst = "0.2";
 
 
-var exportServer = 'pragmnote/bin/server/serverBuild.js';
-var exportServerDir = 'pragmnote/bin/server/';
-var exportClient = 'pragmnote/bin/client/index.html';
-var exportClientCSS = 'pragmnote/bin/client/style.css';
-var exportClientJS = 'pragmnote/bin/client/script.js';
-var exportTemplateDir = 'pragmnote/bin/client/templates/';
-var serverDir = 'pragmnote/source/server-side/';
-var globalDir = 'pragmnote/source/both-side/';
-var clientDir = 'pragmnote/source/client-side/';
-var cstyleDir =   'pragmnote/source/client-style/';
-var templateDir = 'pragmnote/source/templates/';
+var exportServer = 'bin/server/serverBuild.js';
+var exportServerDir = 'bin/server/';
+var exportClient = 'bin/client/index.html';
+var exportClientCSS = 'bin/client/style.css';
+var exportClientJS = 'bin/client/script.js';
+var exportTemplateDir = 'bin/client/templates/';
+var serverDir = 'source/server-side/';
+var globalDir = 'source/both-side/';
+var clientDir = 'source/client-side/';
+var cstyleDir =   'source/client-style/';
+var templateDir = 'source/templates/';
 
 
 
