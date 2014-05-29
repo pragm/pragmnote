@@ -55,6 +55,8 @@ var pfile_typ = function pfile_typ(){
             if(i[0]=="5"){
                 fobj[i].maxStorageScore = 200000;
                 console.log('    SET maxStorageScore TO 1000');
+                fobj[i].active = true;
+                console.log('    SET active True');
             }
         }
         console.log('    CHECKING DONE !');
@@ -257,6 +259,7 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].username = y.username;
             this.dirObject[id].email = y.email;
             this.dirObject[id].password = y.password;
+            this.dirObject[id].active = true;
             this.dirObject[id].userRight = 3;
             this.dirObject[id].content = [];
             this.dirObject[id].share = {};
