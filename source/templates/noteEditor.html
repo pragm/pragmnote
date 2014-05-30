@@ -8,7 +8,11 @@
         <div class="loginwait">{{alertinfo}}<br><br><input class="alertbutton" type="button" value="OK" ng-click="unalert();">
         </div>
     </div>
-<div class="{{fileRights}}" ng-hide="!readonly">readonly</div>
+<ul class="infoList">
+    <li class="{{fileRights}}" ng-hide="!readonly">readonly</li>
+    <li style="background: #00c313;" ng-hide="!ecomode">EcoMode</li>
+</ul>
+
 <ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.print()"><img src="img/doc/print.png" unselectable="on"></li>

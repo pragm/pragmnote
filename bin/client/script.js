@@ -1,4 +1,4 @@
-var clientversion = "0.2.1993";
+var clientversion = "0.2.1982";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1409,6 +1409,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             $scope.freeColors = JSON.parse(JSON.stringify(global.userColors));
             $scope.usedColors = [];
             $scope.oldBList = [];
+            $scope.ecomode = false;
             
             $scope.getFreeColor = function(){
                 if($scope.freeColors.length > 0){
@@ -1484,6 +1485,11 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                 }
                 $scope.oldBList = null;
                 $scope.oldBList = bList;
+                if(x.length <=1){
+                    $scope.ecomode = true;
+                } else {
+                    $scope.ecomode = false;
+                }
               $scope.fileUserList = x;
                 if(!$scope.$$phase) {
                     $scope.$apply();
