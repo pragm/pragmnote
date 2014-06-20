@@ -574,7 +574,7 @@
 	top: 0px;
 	left: 0px;
 	width: 140px;
-	height: 21px;
+	max-height: 18px;
 	margin: 0;
 	font-family: Helvetica;
 	font-size: 13px;
@@ -584,6 +584,7 @@
 	padding-top: 2px;
 	color: #333333;
 	cursor: pointer;
+    overflow: hidden;
 	}
 
 ::-webkit-scrollbar {
@@ -679,15 +680,11 @@
 
 .body{
     background: #ffffff;
-	-webkit-user-select: none;
 	min-width: 580px;
-	overflow: hidden;
-	position: fixed;
 	top: 0px;
-	bottom: 0px;
 	left: 0px;
-	right: 0px;
 	margin: 0;
+    -webkit-user-select: none;
 	}
 .Tabs{
 	position: absolute;
@@ -984,6 +981,13 @@
 .fileIcon{
     position: absolute;
     top: 12px;
+}
+.ico6{
+    position: absolute;
+    top: 12px;
+    width: 20px;
+    height: 20px;
+    background: url('img/doc/code.png');
 }
 .ico5{
     position: absolute;
@@ -1919,11 +1923,8 @@ weis{
 }
 
 .angularView {
-    position: absolute;
     top: 0px;
     left: 0px;
-    right: 0px;
-    bottom: 0px;
     background: #f5f5f5;
     z-index: 9;
 }
@@ -2311,7 +2312,7 @@ weis{
     border: 1px solid transparent;
     font-size: 12px;
     font-family: Arial;
-    color: #b3b3b3;
+    color: #333333;
     top: 41px;
     background: transparent;
     width: 472px;
@@ -2465,5 +2466,119 @@ to {background:#FFD600;}
     border-radius: 4px;
     float: right;
     margin-left: 6px;
+}
+
+.unselectinputColor {
+	position: relative;
+    top: -2px;
+	z-index: 11;
+	outline: none;
+}
+
+.toplinebackground {
+    background: #f5f5f5;
+    position: fixed;
+    top: 10px;
+    right: 0px;
+    left: 0px;
+    height: 40px;
+}
+
+.manageBack {
+    position:absolute;
+    top: 50px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #f8f8f8;
+}
+
+.manageTitle {
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    font-family: 'Open Sans'; 
+    font-size: 36px; 
+    color: #333; 
+    font-weight: lighter; 
+    margin-left: 0px;
+}
+
+.manageLog {
+    position: fixed;
+    top: 80px;
+    left: 10px;
+    right: 10px;
+    bottom: 30px;
+    background: #fff;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.17);
+    border: 0px;
+    z-index: 1;
+    padding-left: 10px;
+    font-family: monospace;
+    overflow: auto;
+}
+
+.manageConsole {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 20px;
+    background: #fff;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.17);
+    outline: none;
+    border: 0px;
+    margin: 0;
+    padding-left: 10px;
+    font-family: monospace;
+}
+
+.onoffswitch {
+    position: relative; width: 70px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+    margin-top: -5px;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 3px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 20px; padding: 0; line-height: 20px;
+    font-size: 11px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "active";
+    padding-left: 5px;
+    background-color: #00D92B; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "inactive";
+    padding-right: 5px;
+    background-color: #EEEEEE; color: #999999;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 6px; margin: 7px;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 3px;
+    position: absolute; top: 0; bottom: 0; right: 46px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
 }
 

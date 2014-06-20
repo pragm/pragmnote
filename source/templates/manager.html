@@ -1,0 +1,112 @@
+
+
+    
+
+    <div class="loginoverlay" style="display:{{loadshow}};">
+        <div class="loginwait">{{loadinginfo}}<div class="loadicon"></div>
+            <div class="loadingslideIN" id="loadingslide"></div>
+        </div>
+    </div>
+
+    <div class="loginoverlay" style="display:{{alertshow}};">
+        <div class="loginwait">{{alertinfo}}<br><br><input class="alertbutton" type="button" value="OK" ng-click="unalert();">
+        </div>
+    </div>
+
+    <div class="loginTop" style="border-bottom: 3px solid #ff3100; heigth: 47px;">
+        <div class="loginLogo"></div>
+    </div>
+<div class="noteconBackground" id="noteconBackground" ng-mouseup="mouseup();" ng-mousemove="clog(); mousemove($event);"><!--ng-mousedown="setinactive();"-->
+    <div class="fileListOverlay">
+        <div class="infoBox" id="Infobox" ng-mouseover="mouseout();">
+            <div class="nameBox" id="nameBox">Manager</div>
+            
+            <div class="infoline" id="infoline">Server:</div>
+            <div class="infoline" id="infoline">{{getServerAddress()}}</div><br>
+            <div class="infoline" id="infoline">Your UserID:</div>
+            <div class="infoline" id="infoline">{{mainDir}}</div><br>
+            <div class="infoline" id="infoline">data storage (0% used)</div>
+            <div class="userstate" id="userstate"><div class="userstorage" id="userstorage" style="width: 0%;"></div></div><br>
+            <div class="infoline" id="infoline">Language choice:</div>
+            <select class="infoline" >
+                <option>English</option>
+                <option disabled>(not available)</option>
+            </select><br>
+            <div class="infoline" id="infoline">Back to Filelist</div>
+            <input class="infoline" type="button" value="Back" onclick="uiControl.view('files');">
+            <br>
+            <div class="infoline" id="infoline">Create new Invite Key</div>
+            <input class="infoline" type="button" value="Create" onclick="console.info('create Invite Key');">
+            <br>
+            <div class="infoline" id="infoline">Show Data:</div>
+            <input class="infoline" type="button" value="Invite Keys / Users" ng-click="toggleShow()">
+            <!--<ul class="datachoice">
+                <li>files</li>
+                <li>settings</li>
+            </ul>-->
+        
+        </div>
+        <div class="newsBox" id="newsbox" ng-mouseover="mouseout();">
+            <div class="news" id="news">News</div>
+            <div class="newsline" id="newsline">pragm is cool</div><br>
+            <!--<pre>
+draganddropactive   = {{draganddropactive}}
+draganddrop         = {{draganddrop}}
+elmdisplay          = {{elmdisplay}}
+moveto              = {{moveto}}
+movetofile          = {{movetofile}}
+elmtop              = {{elmtop}}
+elmleft             = {{elmleft}}
+            </pre>-->
+        </div>
+    <div class="fileOperationsBar">
+        <ul class="dirShow" id="dirShow">
+            <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name || "..."}}</li>
+        </ul>
+        <ul class="dirButtons">
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDir();" title="refresh dir" ng-mouseover="mouseout();"><img src="img/doc/refresh.png" style="margin-top: -3px; opacity: 0.6;"></li>
+        </ul>
+        </div>    
+    <ul class="fileListUl" id="fileListUl">
+        <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();">
+            <div class="selectcounter">{{activenum}}</div>
+            <font style="position: relative; left: 30px;">TITLE</font>
+            <div class="ownerFile">ACTIVE</div>
+            <div class="lastChange">LAST ACTIVE</div>
+        </li>
+        <li ng-repeat="key in dirObject['5000000000'].inviteKeyArray" class="fileListUlli" ng-hide="hideKeys">
+            <div class="ico6"></div>
+            <input type="text" value="{{key.key}}" class="filenameDir" style="position: relative; left: 30px; width: 270px;">
+                <font class="privateFile">
+                </font>
+            <div class="ownerFile">
+                <input type="button" value="delete" ng-hide="key.used.userID" ng-click="deleteInviteKey(key.key);">{{key.used.userID || ""}}
+            </div>
+            <div class="lastChange">
+                {{showDateUsed(key.used.time)}}
+            </div>
+        </li>
+        <li ng-repeat="key in dirShow" class="fileListUlli" ng-hide="hideUser">
+            <div class="ico5"></div>
+            <font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}
+                <font class="privateFile">{{sharedinfo(key)}}
+                </font>
+            </font>
+            <div class="ownerFile">
+                <div class="onoffswitch">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch{{key}}" checked="{{dirObject[key].active}}">
+                    <label class="onoffswitch-label" for="myonoffswitch{{key}}">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="lastChange">{{showDate(dirObject[key].lastactive);}}</div>
+        </li>
+    </ul>
+        <div class="fileListCut">
+            
+        </div>
+    </div>
+    
+</div>

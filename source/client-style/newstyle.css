@@ -401,7 +401,7 @@
 	top: 0px;
 	left: 0px;
 	width: 140px;
-	height: 21px;
+	max-height: 18px;
 	margin: 0;
 	font-family: Helvetica;
 	font-size: 13px;
@@ -411,6 +411,7 @@
 	padding-top: 2px;
 	color: #333333;
 	cursor: pointer;
+    overflow: hidden;
 	}
 
 ::-webkit-scrollbar {

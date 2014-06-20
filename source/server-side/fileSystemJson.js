@@ -48,15 +48,16 @@ var pfile_typ = function pfile_typ(){
         var change = false;
         for(i in fobj){
             if(typeof fobj[i].share == 'array' || fobj[i].share instanceof Array){
-                fobj[i].share = { };
-                console.log('    SET SHARE TO OBJECT');
-                change = true;
+                //fobj[i].share = { };
+                //console.log('    SET SHARE TO OBJECT');
+                //change = true;
             }
             if(i[0]=="5"){
-                fobj[i].maxStorageScore = 200000;
-                console.log('    SET maxStorageScore TO 1000');
-                fobj[i].active = true;
-                console.log('    SET active True');
+                //fobj[i].maxStorageScore = 200000;
+                //console.log('    SET maxStorageScore TO 1000');
+                //fobj[i].active = true;
+                //fobj[i].lastactive = Date.now();
+                //console.log('    SET active True');
             }
         }
         console.log('    CHECKING DONE !');
@@ -90,7 +91,7 @@ var pfile_typ = function pfile_typ(){
                 if(operation=='file'){
 		            dlog("UPDATE OLD");
                     L3.files[id] = JSON.parse(fileData);
-		            L3.oldFiles[id] = JSON.parse(fileData);
+		            //L3.oldFiles[id] = JSON.parse(fileData);
 		            L3.updateUser(clientID);
                 }
   			}
@@ -173,6 +174,7 @@ var pfile_typ = function pfile_typ(){
                 temp.userRight = this.dirObject[userID].userRight;
                 temp.username = username;
                 temp.userID = userID;
+                this.dirObject[userID].lastactive = Date.now();
             }
         }
         secure.loginData(clientID, temp); // Todo: When mulible users cause problems copy temp object in another way
@@ -313,7 +315,7 @@ var pfile_typ = function pfile_typ(){
                 }
             }
             this.generateUserFilelist(clientID, userID);
-            pfile.writeStr(12, 'dir', 12);
+            pfile.saveDirObject(false);
         } else {
             dlog("Deleteclient = "+clientID);
             dlog("DeleteuserID = "+userID);
@@ -325,7 +327,7 @@ var pfile_typ = function pfile_typ(){
                 this.dirObject[id].parent = this.deleteDir;
                 this.addLink(this.deleteDir, id);
                 this.generateUserFilelist(clientID, userID);
-                pfile.writeStr(12, 'dir', 12);
+                pfile.saveDirObject(false);
             } else {
                 L2x1.send(clientID, sID.message, "Deleting file abort! Permission Denied!");
             }
@@ -350,7 +352,7 @@ var pfile_typ = function pfile_typ(){
                     this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
                 } 
             }
-            pfile.writeStr(12, 'dir', 12);
+            pfile.saveDirObject(false);
         } else {
             if(k>1){
                 //L2x1.send(clientID, sID.message, "Moving of "+k+" files abort!");
@@ -449,7 +451,7 @@ var pfile_typ = function pfile_typ(){
                 this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
             } 
         }
-        pfile.writeStr(12, 'dir', 12);
+        pfile.saveDirObject(false);
     };
     
     this.copyFile = function (copylist, clientID, userID, id, toid){
@@ -659,7 +661,7 @@ var pfile_typ = function pfile_typ(){
                         }
                     }
                 }
-                pfile.writeStr(12, 'dir', 12);
+                pfile.saveDirObject(false);
             } else {
                 this.generateUserFilelist(clientID, userID);
                 L2x1.send(clientID, sID.message, "Rename file abort! Permission Denied!");
@@ -684,7 +686,7 @@ var pfile_typ = function pfile_typ(){
                     }
                 }
                 L3.updateFileRightsOfFile(fileInfo.id);
-                pfile.writeStr(12, 'dir', 12);
+                pfile.saveDirObject(false);
             } else {
                 this.generateUserFilelist(clientID, userID);
                 L2x1.send(clientID, sID.message, "Change file config abort! Permission Denied!");
@@ -766,6 +768,32 @@ var pfile_typ = function pfile_typ(){
     
     this.getUserStorageScore = function(clientID, userID){
         
+    };
+    
+    // Smart Saver 
+    
+    this.minSaveTime = 180000; // 3 Minutes
+    this.waitSaveTime = 1000; // 1 Second
+    
+    this.minSaveTimer;
+    this.waitSaveTimer;
+    this.isSaved = true;
+    this.editDirObject = false;
+    
+    this.forceSave = function(){
+        clearTimeout(this.waitSaveTimer);
+        if(this.editDirObject == false){
+            pfile.writeStr(12, 'dir', 12);
+            this.isSaved = true;
+        } else {
+            this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
+        }
+    };
+    
+    this.saveDirObject = function(force){
+        this.isSaved = false;
+        clearTimeout(this.waitSaveTimer);
+        this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
     };
 };
 

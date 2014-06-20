@@ -156,6 +156,19 @@ var L3_typ = function L3_typ(){
             case sID.fileInfo:
                 pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;      
+            case sID.createInviteKey:
+                inviteKey.createInviteKey();
+                break;      
+            case sID.deleteInviteKey:
+                inviteKey.deleteInviteKey();
+                break;      
+            case sID.setUserActive:
+                if(L3.users[clientID]['userID'] == pfile.systemUsr){
+                    var obj = JSON.parse(data);
+                    manager.setUserActive(obj.userID, obj.active);
+                    pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
+                }
+                break;      
             case sID.getUserName:
                 var x = {};
                 x.id = data;
@@ -489,6 +502,8 @@ var L3_typ = function L3_typ(){
         
         pfile.writeStr(id, 'file', 123);
     };
+    
+    
 
     this.checkRight = function (id, clientID){
         //for

@@ -89,7 +89,63 @@ var text = "0206224400ffshjnkbgmmm";
 // Optional. You will see this name in eg. 'ps' or 'top' command
 process.title = 'pragm-websocket';
 
+//TEMP ======================================
 
+function roughSizeOfObject( object ) {
+
+    var objectList = [];
+    var stack = [ object ];
+    var bytes = 0;
+
+    while ( stack.length ) {
+        var value = stack.pop();
+
+        if ( typeof value === 'boolean' ) {
+            bytes += 4;
+        }
+        else if ( typeof value === 'string' ) {
+            bytes += value.length * 2;
+        }
+        else if ( typeof value === 'number' ) {
+            bytes += 8;
+        }
+        else if
+        (
+            typeof value === 'object'
+            && objectList.indexOf( value ) === -1
+        )
+        {
+            objectList.push( value );
+
+            for( var i in value ) {
+                stack.push( value[ i ] );
+            }
+        }
+    }
+    return bytes;
+}
+
+function printMemoryUsage(){
+    console.log("============MEMORY USAGE============");
+    console.log("| secure  "+roughSizeOfObject(secure));
+    console.log("| io  "+roughSizeOfObject(io));
+    console.log("| L2      "+roughSizeOfObject(L2));
+    console.log("| L2x1    "+roughSizeOfObject(L2x1));
+    console.log("| L3      "+roughSizeOfObject(L3));
+    console.log("|  files       "+roughSizeOfObject(L3.files));
+    console.log("|  oldFiles    "+roughSizeOfObject(L3.oldFiles));
+    console.log("|  users       "+roughSizeOfObject(L3.users));
+    console.log("|  staticSave  "+roughSizeOfObject(L3.staticSave));
+    console.log("|  usersAtFile "+roughSizeOfObject(L3.usersAtFile));
+    console.log("| pfile   "+roughSizeOfObject(pfile));
+    console.log("| clients "+roughSizeOfObject(clients));
+    console.log("==========MEMORY USAGE END==========");
+};
+function startPrint(){
+    setInterval(printMemoryUsage, 30000);
+}
+setTimeout(startPrint, 2000);
+// ==========================
 
 // Port where we'll run the websocket server
 if(!global.config.port){
@@ -167,8 +223,8 @@ io.sockets.on('connection', function (socket) {
     clients[clientID] = socket;
     connectionCounter++;
     secure.init(clientID);
-    L2.cache[clientID] = new Array();
-    L3.users[clientID] = new Array();
+    L2.cache[clientID] = [];
+    L3.users[clientID] = [];
     L3.users[clientID]['file'] = "";
     iLog('CONNECTION: CLIENTID: '+clientID+' IP: '+address.address+' PORT: '+address.port);
 
@@ -192,8 +248,9 @@ io.sockets.on('connection', function (socket) {
         //clients.splice(clientID, 1);
         if(clients[clientID]){delete clients[clientID]};
         iLog("CLIENTID=>"+clientID+" disconnected!");
-        secure.reset(clientID);
-        L3.reset(clientID);
+        L2.reset(clientID);
+        //secure.reset(clientID);
+        //L3.reset(clientID);
     });
 
 });

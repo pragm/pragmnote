@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.1982
-console.log("pragm-Websocket-Server => BUILD 0.2.1982 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2129
+console.log("pragm-Websocket-Server => BUILD 0.2.2129 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -723,6 +723,9 @@ var sID_typ = function sID_typ(){
     this.fileInfo          = "2001000008";
     this.getUserName       = "2001000009";
     this.createAccount     = "2001000010"; //Sends and Returns Account Information
+    this.deleteInviteKey   = "2001000011"; //Sends and Returns Account Information
+    this.setUserActive     = "2001000012"; //Sends and Returns Account Information
+    this.createInviteKey   = "2001000013"; 
 
     
     //GET_FROM_SERVER
@@ -868,17 +871,17 @@ var commander = new commander_typ();
 
 var L2_typ = function L2_typ(){
 
-	this.cache = new Array();
+	this.cache = [];
     
-    this.old = new Object();
+    this.old = {};
     this.old.Stext;
     this.old.Scache;
     this.old.dif = new Object();
     this.old.dif.pos1 = 0;
     this.old.dif.pos2 = 0;
     this.old.dif.edit = "";
-    this.lastSendID = new Array();
-    this.lastReceiveID = new Array();
+    this.lastSendID = [];
+    this.lastReceiveID = [];
 	
 	this.send = function(clientID, id, text) {
         //global.setTime(new Date().getTime());
@@ -985,9 +988,10 @@ var L2_typ = function L2_typ(){
 		};
 		
 	this.reset = function(clientID) {
-		this.cache[clientID] = new Array();
-        L3.reset(clientID);
+		this.cache[clientID] = null;
+		this.cache[clientID] = [];
         secure.reset(clientID);
+        L3.reset(clientID);
 		};	
 };
 
@@ -1202,15 +1206,16 @@ var pfile_typ = function pfile_typ(){
         var change = false;
         for(i in fobj){
             if(typeof fobj[i].share == 'array' || fobj[i].share instanceof Array){
-                fobj[i].share = { };
-                console.log('    SET SHARE TO OBJECT');
-                change = true;
+                //fobj[i].share = { };
+                //console.log('    SET SHARE TO OBJECT');
+                //change = true;
             }
             if(i[0]=="5"){
-                fobj[i].maxStorageScore = 200000;
-                console.log('    SET maxStorageScore TO 1000');
-                fobj[i].active = true;
-                console.log('    SET active True');
+                //fobj[i].maxStorageScore = 200000;
+                //console.log('    SET maxStorageScore TO 1000');
+                //fobj[i].active = true;
+                //fobj[i].lastactive = Date.now();
+                //console.log('    SET active True');
             }
         }
         console.log('    CHECKING DONE !');
@@ -1244,7 +1249,7 @@ var pfile_typ = function pfile_typ(){
                 if(operation=='file'){
 		            dlog("UPDATE OLD");
                     L3.files[id] = JSON.parse(fileData);
-		            L3.oldFiles[id] = JSON.parse(fileData);
+		            //L3.oldFiles[id] = JSON.parse(fileData);
 		            L3.updateUser(clientID);
                 }
   			}
@@ -1327,6 +1332,7 @@ var pfile_typ = function pfile_typ(){
                 temp.userRight = this.dirObject[userID].userRight;
                 temp.username = username;
                 temp.userID = userID;
+                this.dirObject[userID].lastactive = Date.now();
             }
         }
         secure.loginData(clientID, temp); // Todo: When mulible users cause problems copy temp object in another way
@@ -1467,7 +1473,7 @@ var pfile_typ = function pfile_typ(){
                 }
             }
             this.generateUserFilelist(clientID, userID);
-            pfile.writeStr(12, 'dir', 12);
+            pfile.saveDirObject(false);
         } else {
             dlog("Deleteclient = "+clientID);
             dlog("DeleteuserID = "+userID);
@@ -1479,7 +1485,7 @@ var pfile_typ = function pfile_typ(){
                 this.dirObject[id].parent = this.deleteDir;
                 this.addLink(this.deleteDir, id);
                 this.generateUserFilelist(clientID, userID);
-                pfile.writeStr(12, 'dir', 12);
+                pfile.saveDirObject(false);
             } else {
                 L2x1.send(clientID, sID.message, "Deleting file abort! Permission Denied!");
             }
@@ -1504,7 +1510,7 @@ var pfile_typ = function pfile_typ(){
                     this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
                 } 
             }
-            pfile.writeStr(12, 'dir', 12);
+            pfile.saveDirObject(false);
         } else {
             if(k>1){
                 //L2x1.send(clientID, sID.message, "Moving of "+k+" files abort!");
@@ -1603,7 +1609,7 @@ var pfile_typ = function pfile_typ(){
                 this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
             } 
         }
-        pfile.writeStr(12, 'dir', 12);
+        pfile.saveDirObject(false);
     };
     
     this.copyFile = function (copylist, clientID, userID, id, toid){
@@ -1813,7 +1819,7 @@ var pfile_typ = function pfile_typ(){
                         }
                     }
                 }
-                pfile.writeStr(12, 'dir', 12);
+                pfile.saveDirObject(false);
             } else {
                 this.generateUserFilelist(clientID, userID);
                 L2x1.send(clientID, sID.message, "Rename file abort! Permission Denied!");
@@ -1838,7 +1844,7 @@ var pfile_typ = function pfile_typ(){
                     }
                 }
                 L3.updateFileRightsOfFile(fileInfo.id);
-                pfile.writeStr(12, 'dir', 12);
+                pfile.saveDirObject(false);
             } else {
                 this.generateUserFilelist(clientID, userID);
                 L2x1.send(clientID, sID.message, "Change file config abort! Permission Denied!");
@@ -1920,6 +1926,32 @@ var pfile_typ = function pfile_typ(){
     
     this.getUserStorageScore = function(clientID, userID){
         
+    };
+    
+    // Smart Saver 
+    
+    this.minSaveTime = 180000; // 3 Minutes
+    this.waitSaveTime = 1000; // 1 Second
+    
+    this.minSaveTimer;
+    this.waitSaveTimer;
+    this.isSaved = true;
+    this.editDirObject = false;
+    
+    this.forceSave = function(){
+        clearTimeout(this.waitSaveTimer);
+        if(this.editDirObject == false){
+            pfile.writeStr(12, 'dir', 12);
+            this.isSaved = true;
+        } else {
+            this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
+        }
+    };
+    
+    this.saveDirObject = function(force){
+        this.isSaved = false;
+        clearTimeout(this.waitSaveTimer);
+        this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
     };
 };
 
@@ -2029,9 +2061,57 @@ function inviteKey_typ(){
             }
         }
     };
+    
+    this.deleteInviteKey = function(key){
+        var kill = false;
+        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
+            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
+                if(!pfile.dirObject['5000000000'].inviteKeyArray[i].used){
+                    kill = i;
+                }
+            }
+        }
+        if(kill){
+            pfile.dirObject['5000000000'].inviteKeyArray = pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+        }
+    };
+    
+    this.createInviteKey = function(){
+        var found = true;
+        var newKey = "";
+        while(found){
+            newKey = this.generateKey();
+            found = false;
+            for(i in pfile.dirObject['5000000000'].inviteKeyArray){
+                if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == newKey){
+                    found = true;
+                }
+            }
+        }
+        pfile.dirObject['5000000000'].inviteKeyArray.push({"key":newKey,"used":false});
+    };
+    
+    this.generateKey = function(){
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < 32; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    };
 }
 
 var inviteKey = new inviteKey_typ();
+
+function manager_typ(){
+    
+    this.setUserActive = function(userID, active){
+        pfile.dirObject[userID].active = active;
+    };
+}
+
+var manager = new manager_typ();
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2292,6 +2372,19 @@ var L3_typ = function L3_typ(){
                 break;      
             case sID.fileInfo:
                 pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;      
+            case sID.createInviteKey:
+                inviteKey.createInviteKey();
+                break;      
+            case sID.deleteInviteKey:
+                inviteKey.deleteInviteKey();
+                break;      
+            case sID.setUserActive:
+                if(L3.users[clientID]['userID'] == pfile.systemUsr){
+                    var obj = JSON.parse(data);
+                    manager.setUserActive(obj.userID, obj.active);
+                    pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
+                }
                 break;      
             case sID.getUserName:
                 var x = {};
@@ -2626,6 +2719,8 @@ var L3_typ = function L3_typ(){
         
         pfile.writeStr(id, 'file', 123);
     };
+    
+    
 
     this.checkRight = function (id, clientID){
         //for
@@ -2796,7 +2891,63 @@ var text = "0206224400ffshjnkbgmmm";
 // Optional. You will see this name in eg. 'ps' or 'top' command
 process.title = 'pragm-websocket';
 
+//TEMP ======================================
 
+function roughSizeOfObject( object ) {
+
+    var objectList = [];
+    var stack = [ object ];
+    var bytes = 0;
+
+    while ( stack.length ) {
+        var value = stack.pop();
+
+        if ( typeof value === 'boolean' ) {
+            bytes += 4;
+        }
+        else if ( typeof value === 'string' ) {
+            bytes += value.length * 2;
+        }
+        else if ( typeof value === 'number' ) {
+            bytes += 8;
+        }
+        else if
+        (
+            typeof value === 'object'
+            && objectList.indexOf( value ) === -1
+        )
+        {
+            objectList.push( value );
+
+            for( var i in value ) {
+                stack.push( value[ i ] );
+            }
+        }
+    }
+    return bytes;
+}
+
+function printMemoryUsage(){
+    console.log("============MEMORY USAGE============");
+    console.log("| secure  "+roughSizeOfObject(secure));
+    console.log("| io  "+roughSizeOfObject(io));
+    console.log("| L2      "+roughSizeOfObject(L2));
+    console.log("| L2x1    "+roughSizeOfObject(L2x1));
+    console.log("| L3      "+roughSizeOfObject(L3));
+    console.log("|  files       "+roughSizeOfObject(L3.files));
+    console.log("|  oldFiles    "+roughSizeOfObject(L3.oldFiles));
+    console.log("|  users       "+roughSizeOfObject(L3.users));
+    console.log("|  staticSave  "+roughSizeOfObject(L3.staticSave));
+    console.log("|  usersAtFile "+roughSizeOfObject(L3.usersAtFile));
+    console.log("| pfile   "+roughSizeOfObject(pfile));
+    console.log("| clients "+roughSizeOfObject(clients));
+    console.log("==========MEMORY USAGE END==========");
+};
+function startPrint(){
+    setInterval(printMemoryUsage, 30000);
+}
+setTimeout(startPrint, 2000);
+// ==========================
 
 // Port where we'll run the websocket server
 if(!global.config.port){
@@ -2874,8 +3025,8 @@ io.sockets.on('connection', function (socket) {
     clients[clientID] = socket;
     connectionCounter++;
     secure.init(clientID);
-    L2.cache[clientID] = new Array();
-    L3.users[clientID] = new Array();
+    L2.cache[clientID] = [];
+    L3.users[clientID] = [];
     L3.users[clientID]['file'] = "";
     iLog('CONNECTION: CLIENTID: '+clientID+' IP: '+address.address+' PORT: '+address.port);
 
@@ -2899,8 +3050,9 @@ io.sockets.on('connection', function (socket) {
         //clients.splice(clientID, 1);
         if(clients[clientID]){delete clients[clientID]};
         iLog("CLIENTID=>"+clientID+" disconnected!");
-        secure.reset(clientID);
-        L3.reset(clientID);
+        L2.reset(clientID);
+        //secure.reset(clientID);
+        //L3.reset(clientID);
     });
 
 });

@@ -230,6 +230,11 @@ var uiControl_typ = function global_typ(){
                 tab.position("slideIn");
                 document.title = "CRASH - pragm";
 	            break;
+	        case "manager":
+                window.location.href = "#manager";
+                tab.position("slideIn");
+                document.title = "pragm - manager";
+	            break;
             default:
 	            console.log("command '"+code+"' does not exist");
 	            break;

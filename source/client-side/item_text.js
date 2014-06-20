@@ -28,16 +28,38 @@ var textbox_typ = function textbox_typ(){
     this.focusactive = false;
     this.usingTimeout;
     this.lastusingid;
+    this.startscrollTop = 0;
+    this.startscrollLeft = 0;
+    this.startscrollHeight = 0;
+    this.catchNoSave = [];
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
 	   if(textbox.draging==1){
            textbox.x = textbox.Ereignis.clientX;
            textbox.y = textbox.Ereignis.clientY;
-           textbox.movX = textbox.x-textbox.startX;
-           textbox.movY = textbox.y-textbox.startY;
+           
+            var tempTop = document.getElementById('notecon').scrollTop;
+            var tempLeft = document.getElementById('notecon').scrollLeft;
+           
+           var tempTopDif = textbox.startscrollTop-tempTop;
+           var tempLeftDif = textbox.startscrollLeft-tempLeft;
+           
+           textbox.movX = textbox.x-textbox.startX-tempLeftDif;
+           textbox.movY = textbox.y-textbox.startY-tempTopDif;
            textbox.actualX = textbox.movX+textbox.objectX;
            textbox.actualY = textbox.movY+textbox.objectY;
+           
+           
+           var tempHeight = document.getElementById('notecon').scrollHeight;
+           console.log("old: "+textbox.startscrollHeight+" act: "+tempHeight);
+           if(textbox.startscrollHeight-10<tempHeight){
+               //document.getElementById('notecon').scrollTop += tempHeight+10-textbox.startscrollHeight;
+           }
+           if(textbox.startscrollHeight+10>tempHeight){
+               //document.getElementById('notecon').scrollTop -= textbox.startscrollHeight+10-tempHeight;
+           }
+           
            if(!(textbox.actualX<=10)){
                document.getElementById(textbox.dragid).style.left = textbox.actualX+"px";
            }
@@ -60,6 +82,9 @@ var textbox_typ = function textbox_typ(){
     this.drag = function (id){
         this.activateUsing(id);
         document.getElementById("editarea"+id).className = "editareax2";
+        textbox.startscrollHeight = document.getElementById('notecon').scrollHeight;
+        textbox.startscrollTop = document.getElementById('notecon').scrollTop;
+        textbox.startscrollLeft = document.getElementById('notecon').scrollLeft;
 	    textbox.draging = 1;
         textbox.draganddropid = id;
         textbox.dragid = "editarea"+id;
@@ -76,7 +101,7 @@ var textbox_typ = function textbox_typ(){
     if(textbox.draging == 1 || textbox.resizeing == 1){
         elem = document.getElementById("editing"+textbox.draganddropid); //This is the element that you want to move the caret to the end of
         textbox.setEndOfContenteditable(elem);
-        textbox.saveid('editing'+textbox.draganddropid);
+        textbox.saveid('editing'+textbox.draganddropid, true);
         if(!(textbox.focusactive && textbox.id == textbox.draganddropid)){
             this.deactivateUsing();
         }
@@ -188,8 +213,8 @@ var textbox_typ = function textbox_typ(){
         if(!this.focusactive && !staticItems.focusactive){
            this.id = textbox.makeid('100');
            this.Ereignis = window.event;
-           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
-           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
+           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif+document.getElementById('notecon').scrollLeft;//changestartsize42 8
+           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif+document.getElementById('notecon').scrollTop; //changestartsize42 18
            textbox.newdiv = document.createElement("div");
            textbox.newdiv.className		 = "editareax";
            textbox.newdiv.id				 = 'editarea'+this.id;
@@ -222,50 +247,68 @@ var textbox_typ = function textbox_typ(){
     };
 
     this.deleteelement = function (id){
+        var tid = id;
         id = id.split("editing")[1];
         textbox.tempcon = document.getElementById("editing"+id).innerHTML;
         if(textbox.tempcon == "<br>" || textbox.tempcon==""){
             textbox.removeElement("editarea"+id);
             data.delete_UI(id);
-		    }
+		    } else {
+                textbox.saveid(tid, true);
+            }
 	   };
     
-    this.saveid = function (id){
+    this.saveid = function (id, force){
         id = id.split("editing")[1];
-        textbox.content		=	document.getElementById('editing'+id).innerHTML;
-        textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0
-        textbox.posY 		=	document.getElementById('editarea'+id).style.top;  // 4^1
-        textbox.width 		=	document.getElementById('editarea'+id).style.width;// 4^2
-					
-        textbox.posX = textbox.posX.replace(/px/g, "");
-        textbox.posY = textbox.posY.replace(/px/g, "");
-        textbox.width = textbox.width.replace(/px/g, ""); //parseInt()
-        
-        textbox.posXL = textbox.posX.length;
-        while(textbox.posXL<3){
-            textbox.posX = '0'+textbox.posX;
+        var force = force || false;
+        if(data.ecoMode == false || force == true){
+            textbox.content		=	document.getElementById('editing'+id).innerHTML;
+            textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0
+            textbox.posY 		=	document.getElementById('editarea'+id).style.top;  // 4^1
+            textbox.width 		=	document.getElementById('editarea'+id).style.width;// 4^2
+
+            textbox.posX = textbox.posX.replace(/px/g, "");
+            textbox.posY = textbox.posY.replace(/px/g, "");
+            textbox.width = textbox.width.replace(/px/g, ""); //parseInt()
+
             textbox.posXL = textbox.posX.length;
-        }
-        
-        textbox.posYL = textbox.posY.length;
-        while(textbox.posYL<3){
-            textbox.posY = '0'+textbox.posY;
+            while(textbox.posXL<3){
+                textbox.posX = '0'+textbox.posX;
+                textbox.posXL = textbox.posX.length;
+            }
+
             textbox.posYL = textbox.posY.length;
-        }
-        
-        textbox.widthL = textbox.width.length;
-        while(textbox.widthL<3){
-            textbox.width = '0'+textbox.width;
+            while(textbox.posYL<3){
+                textbox.posY = '0'+textbox.posY;
+                textbox.posYL = textbox.posY.length;
+            }
+
             textbox.widthL = textbox.width.length;
+            while(textbox.widthL<3){
+                textbox.width = '0'+textbox.width;
+                textbox.widthL = textbox.width.length;
+            }
+
+            textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
+
+            var tempContent = textbox.content;        
+
+            textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
+
+            data.edited_UI(id, textbox.value);
+        } else {
+            if(textbox.catchNoSave.indexOf(id) < 0){
+                textbox.catchNoSave.push(id);
+            }
         }
-        
-        textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
-        
-        var tempContent = textbox.content;        
-        
-        textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
-					
-        data.edited_UI(id, textbox.value);
+    };
+    
+    this.deactivateEcoMode = function(){
+        for(i in this.catchNoSave){
+            this.saveid(this.catchNoSave[i], true);
+        }
+        this.catchNoSave = null;
+        this.catchNoSave = [];
     };
     
     this.deactivateUsingNow = function(){

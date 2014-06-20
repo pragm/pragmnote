@@ -52,6 +52,11 @@ var data_typ = function data_typ(){
     this.serverfound = false;
     this.userEdit = "";
     this.ownclientID;
+    this.ecoMode = false;
+    this.ecoModeLastId = false;
+    this.ecoModeLastContent = false;
+    this.ecoModeTimer = false;
+    this.ecoModeLongTimer = false;
     
     this.unbindCallbacks = function(){
         this.callbacks = null;

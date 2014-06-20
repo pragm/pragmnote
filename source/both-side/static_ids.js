@@ -50,6 +50,9 @@ var sID_typ = function sID_typ(){
     this.fileInfo          = "2001000008";
     this.getUserName       = "2001000009";
     this.createAccount     = "2001000010"; //Sends and Returns Account Information
+    this.deleteInviteKey   = "2001000011"; //Sends and Returns Account Information
+    this.setUserActive     = "2001000012"; //Sends and Returns Account Information
+    this.createInviteKey   = "2001000013"; 
 
     
     //GET_FROM_SERVER

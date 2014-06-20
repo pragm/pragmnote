@@ -1,4 +1,4 @@
-var clientversion = "0.2.1982";
+var clientversion = "0.2.2129";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -723,6 +723,9 @@ var sID_typ = function sID_typ(){
     this.fileInfo          = "2001000008";
     this.getUserName       = "2001000009";
     this.createAccount     = "2001000010"; //Sends and Returns Account Information
+    this.deleteInviteKey   = "2001000011"; //Sends and Returns Account Information
+    this.setUserActive     = "2001000012"; //Sends and Returns Account Information
+    this.createInviteKey   = "2001000013"; 
 
     
     //GET_FROM_SERVER
@@ -764,6 +767,70 @@ var sURL = new sURL_typ();
 var sID = new sID_typ();
 
 
+/******************************************************************************************
+#
+#       Copyright 2014 Dustin Robert Hoffner
+#
+#       Licensed under the Apache License, Version 2.0 (the "License");
+#       you may not use this file except in compliance with the License.
+#       You may obtain a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#       Unless required by applicable law or agreed to in writing, software
+#       distributed under the License is distributed on an "AS IS" BASIS,
+#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#       See the License for the specific language governing permissions and
+#       limitations under the License.
+#       
+#       Projectname...................: pragm
+#
+#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
+#       Filename......................: SimpleWebSocket.js
+#       Version/Release...............: 0.5xx
+#
+******************************************************************************************/
+
+var SimplebSocket = function(url)
+{
+	var callbacks = {};
+	var conn;
+
+	this.bind = function(eventName, callback){
+		callbacks[eventName] = callbacks[eventName] || [];
+		callbacks[eventName].push(callback);
+		return this;
+	};
+
+	this.send = function(event_name, event_data){
+		this.conn.send( event_data );
+		return this;
+	};
+
+	this.connect = function() {
+		if ( typeof(MozWebSocket) == 'function' )
+			this.conn = new MozWebSocket(url);
+		else
+			this.conn = new WebSocket(url);
+		this.conn.onmessage = function(evt){
+			dispatch('message', evt.data);
+		};
+		this.conn.onclose = function(){dispatch('close',null)}
+		this.conn.onopen = function(){dispatch('open',null)}
+	};
+
+	this.disconnect = function() {
+		this.conn.close();
+	};
+
+	var dispatch = function(eventName, message){
+		var chain = callbacks[eventName];
+		if(typeof chain == 'undefined') return;
+		for(var i = 0; i < chain.length; i++){
+			chain[i]( message )
+		}
+	}
+};
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -849,7 +916,7 @@ var addFile_typ = function addFile_typ(){
 }
 
 var addFile = new addFile_typ();
-var pragmApp = angular.module('pragmApp', []);
+var pragmApp = angular.module('pragmApp', ['ngRoute']);
 
 	// configure our routes
 	pragmApp.config(function($routeProvider) {
@@ -889,6 +956,10 @@ var pragmApp = angular.module('pragmApp', []);
 			.when('/account', {
 				templateUrl : 'templates/createAccount.html',
 				controller  : 'accountController'
+			})
+			.when('/manager', {
+				templateUrl : 'templates/manager.html',
+				controller  : 'managerController'
 			})
             .otherwise({ redirectTo: '/crash' });
 	});
@@ -1042,7 +1113,7 @@ var color_typ = function color_typ(){
         switch (type) {
 			    case "100":
 				    //unfocusline();
-				    if(color.switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";}
+				    if(color.switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontcolor'></input>";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontbackground'></input>";}
 				    break;
 			    case "101":
 				    //unfocusline();
@@ -1068,9 +1139,9 @@ var color_typ = function color_typ(){
 				    //unfocusline();
 					if(color.switchbox==0){color.switchbox=1;}else{color.switchbox=0;}
 				    if(color.switchbox==0){
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontcolor'></input>";
 				    }else{
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontbackground'></input>";
 				    }
 				    break;
 			    case "101":
@@ -1096,6 +1167,7 @@ var color_typ = function color_typ(){
 			    default:
 				    break;
 		}
+        document.STOP_EXEC_COMMAND = true; 
         return false;
 	};
 
@@ -1487,8 +1559,13 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                 $scope.oldBList = bList;
                 if(x.length <=1){
                     $scope.ecomode = true;
+                    data.ecoMode = true;
                 } else {
-                    $scope.ecomode = false;
+                    if($scope.ecoMode == true || data.ecoMode == true){
+                        $scope.ecomode = false;
+                        data.ecoMode = false;
+                        textbox.deactivateEcoMode();
+                    }
                 }
               $scope.fileUserList = x;
                 if(!$scope.$$phase) {
@@ -2220,6 +2297,147 @@ pragmApp.controller('loginController', function($scope, $location) {
             setTimeout(uiControl.finishRoedel, 100);
         }
 	});
+pragmApp.controller('managerController', function($scope, $location) {
+    data.unbindCallbacks();
+    
+    $scope.hideKeys = true;
+    $scope.hideUser = false;
+    
+    var run = true;
+        if('login' in data){
+            if('userRight' in data.login){
+                if(data.login.userRight > 4){
+                    run = false;
+                }
+            } else {
+            run = false;
+            }
+        } else {
+            run = false;
+        }
+        
+        if(!run){
+            uiControl.loadview = "manager";
+            $location.path('/');
+        } else {
+            uiControl.finishRoedel();
+
+            $scope.mainDir = data.login.userID;
+            $scope.dirShow = [];
+            $scope.deleteButton = '<input type="button" value="delete" ng-click="deleteInviteKey()">';
+
+            // Load Handler ----------------------------
+            $scope.loadinginfo = "";
+            $scope.loadshow = 'none';
+            $scope.updateLoad = function(){
+                if($scope.loadinginfo==""){
+                  $scope.loadshow = 'none';
+                    tab.position("slide10In");
+                } else {
+                  $scope.loadshow = 'block';
+                    tab.position("slideOut");
+                  document.getElementById('loadingslide').className = 'loadingslideIN';
+                }
+            }
+            data.databind('loadinginfo', function(x){
+              //console.log("Data: "+JSON.stringify(x));
+              $scope.loadinginfo = x;
+              $scope.updateLoad();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+
+            // Alert handler   ---------------------------------------------------------
+            $scope.alertinfo = "";
+            $scope.alertshow = 'none';
+            $scope.updateAlert = function(){
+                //console.log("Update Angular "+$scope.alertinfo);
+                if($scope.alertinfo==""){
+                  $scope.alertshow = 'none';
+                    if(!$scope.shareshowbool){
+                        tab.position("slideOut");
+                    }
+                } else {
+                  $scope.alertshow = 'block';
+                    tab.position("slideIn");
+                }
+            }
+            data.databind('alertinfo', function(x){
+              //console.log("Data: "+JSON.stringify(x));
+              $scope.alertinfo = x;
+              $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+
+            $scope.unalert = function(){
+                data.alertinfo = "";
+                $scope.alertinfo = "";
+                $scope.updateAlert();
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            };
+            
+            // BIND Dirobject ==============================================================
+
+            data.databind('dirObject', function(x){
+              //console.log("Data: "+JSON.stringify(x));
+              $scope.dirObject = x;
+
+              $scope.dirShow = [];
+                for(i in x){
+                    if(i[0] == 5){
+                        $scope.dirShow.push(i);
+                    }
+                }
+              $scope.storageScore = Math.round($scope.dirObject.storageScore/1000000000*100);
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            });
+            
+            // Something else :D ========================================================
+            
+            $scope.toggleShow = function(){
+                $scope.hideKeys = !$scope.hideKeys;
+                $scope.hideUser = !$scope.hideUser;
+                if(!$scope.$$phase) {
+                    $scope.$apply();
+                }
+            };
+            
+            $scope.getServerAddress = function(){
+                return global.config.serveraddress;
+            };
+            
+            $scope.showDate = function(x){
+                return date.showDate(x);
+            };
+            
+            $scope.showDateUsed = function(x){
+                if(x){
+                    return date.showDate(x);
+                } else {
+                    return "Never!";
+                }
+            };
+            
+            $scope.deleteInviteKey = function(key){
+                console.log("Delete Invite Key: "+key);
+                L2.send(sID.deleteInviteKey, key);
+            };
+            
+            $scope.setUserActive = function(userID, active){
+                console.log("Set User Active: "+userID+" "+active);
+                L2.send(sID.setUserActive, JSON.stringify({"userID:":userID,"active":active}));
+            };
+            
+        }
+    
+	});
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2274,6 +2492,11 @@ var data_typ = function data_typ(){
     this.serverfound = false;
     this.userEdit = "";
     this.ownclientID;
+    this.ecoMode = false;
+    this.ecoModeLastId = false;
+    this.ecoModeLastContent = false;
+    this.ecoModeTimer = false;
+    this.ecoModeLongTimer = false;
     
     this.unbindCallbacks = function(){
         this.callbacks = null;
@@ -3334,16 +3557,38 @@ var textbox_typ = function textbox_typ(){
     this.focusactive = false;
     this.usingTimeout;
     this.lastusingid;
+    this.startscrollTop = 0;
+    this.startscrollLeft = 0;
+    this.startscrollHeight = 0;
+    this.catchNoSave = [];
 	
     this.mousemove = function (){
        textbox.Ereignis = window.event;
 	   if(textbox.draging==1){
            textbox.x = textbox.Ereignis.clientX;
            textbox.y = textbox.Ereignis.clientY;
-           textbox.movX = textbox.x-textbox.startX;
-           textbox.movY = textbox.y-textbox.startY;
+           
+            var tempTop = document.getElementById('notecon').scrollTop;
+            var tempLeft = document.getElementById('notecon').scrollLeft;
+           
+           var tempTopDif = textbox.startscrollTop-tempTop;
+           var tempLeftDif = textbox.startscrollLeft-tempLeft;
+           
+           textbox.movX = textbox.x-textbox.startX-tempLeftDif;
+           textbox.movY = textbox.y-textbox.startY-tempTopDif;
            textbox.actualX = textbox.movX+textbox.objectX;
            textbox.actualY = textbox.movY+textbox.objectY;
+           
+           
+           var tempHeight = document.getElementById('notecon').scrollHeight;
+           console.log("old: "+textbox.startscrollHeight+" act: "+tempHeight);
+           if(textbox.startscrollHeight-10<tempHeight){
+               //document.getElementById('notecon').scrollTop += tempHeight+10-textbox.startscrollHeight;
+           }
+           if(textbox.startscrollHeight+10>tempHeight){
+               //document.getElementById('notecon').scrollTop -= textbox.startscrollHeight+10-tempHeight;
+           }
+           
            if(!(textbox.actualX<=10)){
                document.getElementById(textbox.dragid).style.left = textbox.actualX+"px";
            }
@@ -3366,6 +3611,9 @@ var textbox_typ = function textbox_typ(){
     this.drag = function (id){
         this.activateUsing(id);
         document.getElementById("editarea"+id).className = "editareax2";
+        textbox.startscrollHeight = document.getElementById('notecon').scrollHeight;
+        textbox.startscrollTop = document.getElementById('notecon').scrollTop;
+        textbox.startscrollLeft = document.getElementById('notecon').scrollLeft;
 	    textbox.draging = 1;
         textbox.draganddropid = id;
         textbox.dragid = "editarea"+id;
@@ -3382,7 +3630,7 @@ var textbox_typ = function textbox_typ(){
     if(textbox.draging == 1 || textbox.resizeing == 1){
         elem = document.getElementById("editing"+textbox.draganddropid); //This is the element that you want to move the caret to the end of
         textbox.setEndOfContenteditable(elem);
-        textbox.saveid('editing'+textbox.draganddropid);
+        textbox.saveid('editing'+textbox.draganddropid, true);
         if(!(textbox.focusactive && textbox.id == textbox.draganddropid)){
             this.deactivateUsing();
         }
@@ -3494,8 +3742,8 @@ var textbox_typ = function textbox_typ(){
         if(!this.focusactive && !staticItems.focusactive){
            this.id = textbox.makeid('100');
            this.Ereignis = window.event;
-           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif;   //changestartsize42 8
-           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif;  //changestartsize42 18
+           this.x = this.Ereignis.clientX-global.chX-global.textboxXdif+document.getElementById('notecon').scrollLeft;//changestartsize42 8
+           this.y = this.Ereignis.clientY-global.chY-global.textboxXdif+document.getElementById('notecon').scrollTop; //changestartsize42 18
            textbox.newdiv = document.createElement("div");
            textbox.newdiv.className		 = "editareax";
            textbox.newdiv.id				 = 'editarea'+this.id;
@@ -3528,50 +3776,68 @@ var textbox_typ = function textbox_typ(){
     };
 
     this.deleteelement = function (id){
+        var tid = id;
         id = id.split("editing")[1];
         textbox.tempcon = document.getElementById("editing"+id).innerHTML;
         if(textbox.tempcon == "<br>" || textbox.tempcon==""){
             textbox.removeElement("editarea"+id);
             data.delete_UI(id);
-		    }
+		    } else {
+                textbox.saveid(tid, true);
+            }
 	   };
     
-    this.saveid = function (id){
+    this.saveid = function (id, force){
         id = id.split("editing")[1];
-        textbox.content		=	document.getElementById('editing'+id).innerHTML;
-        textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0
-        textbox.posY 		=	document.getElementById('editarea'+id).style.top;  // 4^1
-        textbox.width 		=	document.getElementById('editarea'+id).style.width;// 4^2
-					
-        textbox.posX = textbox.posX.replace(/px/g, "");
-        textbox.posY = textbox.posY.replace(/px/g, "");
-        textbox.width = textbox.width.replace(/px/g, ""); //parseInt()
-        
-        textbox.posXL = textbox.posX.length;
-        while(textbox.posXL<3){
-            textbox.posX = '0'+textbox.posX;
+        var force = force || false;
+        if(data.ecoMode == false || force == true){
+            textbox.content		=	document.getElementById('editing'+id).innerHTML;
+            textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0
+            textbox.posY 		=	document.getElementById('editarea'+id).style.top;  // 4^1
+            textbox.width 		=	document.getElementById('editarea'+id).style.width;// 4^2
+
+            textbox.posX = textbox.posX.replace(/px/g, "");
+            textbox.posY = textbox.posY.replace(/px/g, "");
+            textbox.width = textbox.width.replace(/px/g, ""); //parseInt()
+
             textbox.posXL = textbox.posX.length;
-        }
-        
-        textbox.posYL = textbox.posY.length;
-        while(textbox.posYL<3){
-            textbox.posY = '0'+textbox.posY;
+            while(textbox.posXL<3){
+                textbox.posX = '0'+textbox.posX;
+                textbox.posXL = textbox.posX.length;
+            }
+
             textbox.posYL = textbox.posY.length;
-        }
-        
-        textbox.widthL = textbox.width.length;
-        while(textbox.widthL<3){
-            textbox.width = '0'+textbox.width;
+            while(textbox.posYL<3){
+                textbox.posY = '0'+textbox.posY;
+                textbox.posYL = textbox.posY.length;
+            }
+
             textbox.widthL = textbox.width.length;
+            while(textbox.widthL<3){
+                textbox.width = '0'+textbox.width;
+                textbox.widthL = textbox.width.length;
+            }
+
+            textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
+
+            var tempContent = textbox.content;        
+
+            textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
+
+            data.edited_UI(id, textbox.value);
+        } else {
+            if(textbox.catchNoSave.indexOf(id) < 0){
+                textbox.catchNoSave.push(id);
+            }
         }
-        
-        textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
-        
-        var tempContent = textbox.content;        
-        
-        textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
-					
-        data.edited_UI(id, textbox.value);
+    };
+    
+    this.deactivateEcoMode = function(){
+        for(i in this.catchNoSave){
+            this.saveid(this.catchNoSave[i], true);
+        }
+        this.catchNoSave = null;
+        this.catchNoSave = [];
     };
     
     this.deactivateUsingNow = function(){
@@ -4028,70 +4294,6 @@ function searchServer_typ(){
 }
 
 var searchServer = new searchServer_typ();
-/******************************************************************************************
-#
-#       Copyright 2014 Dustin Robert Hoffner
-#
-#       Licensed under the Apache License, Version 2.0 (the "License");
-#       you may not use this file except in compliance with the License.
-#       You may obtain a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#       Unless required by applicable law or agreed to in writing, software
-#       distributed under the License is distributed on an "AS IS" BASIS,
-#       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#       See the License for the specific language governing permissions and
-#       limitations under the License.
-#       
-#       Projectname...................: pragm
-#
-#       Developer/Date................: Dustin Robert Hoffner, 16.01.2014
-#       Filename......................: SimpleWebSocket.js
-#       Version/Release...............: 0.5xx
-#
-******************************************************************************************/
-
-var SimplebSocket = function(url)
-{
-	var callbacks = {};
-	var conn;
-
-	this.bind = function(eventName, callback){
-		callbacks[eventName] = callbacks[eventName] || [];
-		callbacks[eventName].push(callback);
-		return this;
-	};
-
-	this.send = function(event_name, event_data){
-		this.conn.send( event_data );
-		return this;
-	};
-
-	this.connect = function() {
-		if ( typeof(MozWebSocket) == 'function' )
-			this.conn = new MozWebSocket(url);
-		else
-			this.conn = new WebSocket(url);
-		this.conn.onmessage = function(evt){
-			dispatch('message', evt.data);
-		};
-		this.conn.onclose = function(){dispatch('close',null)}
-		this.conn.onopen = function(){dispatch('open',null)}
-	};
-
-	this.disconnect = function() {
-		this.conn.close();
-	};
-
-	var dispatch = function(eventName, message){
-		var chain = callbacks[eventName];
-		if(typeof chain == 'undefined') return;
-		for(var i = 0; i < chain.length; i++){
-			chain[i]( message )
-		}
-	}
-};
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -5289,6 +5491,11 @@ var uiControl_typ = function global_typ(){
 				//document.getElementById('fileTabs').style.height = "0px";
                 tab.position("slideIn");
                 document.title = "CRASH - pragm";
+	            break;
+	        case "manager":
+                window.location.href = "#manager";
+                tab.position("slideIn");
+                document.title = "pragm - manager";
 	            break;
             default:
 	            console.log("command '"+code+"' does not exist");

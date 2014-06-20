@@ -1,4 +1,4 @@
-var pragmApp = angular.module('pragmApp', []);
+var pragmApp = angular.module('pragmApp', ['ngRoute']);
 
 	// configure our routes
 	pragmApp.config(function($routeProvider) {
@@ -38,6 +38,10 @@ var pragmApp = angular.module('pragmApp', []);
 			.when('/account', {
 				templateUrl : 'templates/createAccount.html',
 				controller  : 'accountController'
+			})
+			.when('/manager', {
+				templateUrl : 'templates/manager.html',
+				controller  : 'managerController'
 			})
             .otherwise({ redirectTo: '/crash' });
 	});

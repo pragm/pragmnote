@@ -25,17 +25,17 @@
 
 var L2_typ = function L2_typ(){
 
-	this.cache = new Array();
+	this.cache = [];
     
-    this.old = new Object();
+    this.old = {};
     this.old.Stext;
     this.old.Scache;
     this.old.dif = new Object();
     this.old.dif.pos1 = 0;
     this.old.dif.pos2 = 0;
     this.old.dif.edit = "";
-    this.lastSendID = new Array();
-    this.lastReceiveID = new Array();
+    this.lastSendID = [];
+    this.lastReceiveID = [];
 	
 	this.send = function(clientID, id, text) {
         //global.setTime(new Date().getTime());
@@ -142,9 +142,10 @@ var L2_typ = function L2_typ(){
 		};
 		
 	this.reset = function(clientID) {
-		this.cache[clientID] = new Array();
-        L3.reset(clientID);
+		this.cache[clientID] = null;
+		this.cache[clientID] = [];
         secure.reset(clientID);
+        L3.reset(clientID);
 		};	
 };
 
