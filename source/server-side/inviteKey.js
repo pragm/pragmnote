@@ -33,7 +33,7 @@ function inviteKey_typ(){
             }
         }
         if(kill){
-            pfile.dirObject['5000000000'].inviteKeyArray = pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+            pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
         }
     };
     

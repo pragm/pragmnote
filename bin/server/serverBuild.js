@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2129
-console.log("pragm-Websocket-Server => BUILD 0.2.2129 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2134
+console.log("pragm-Websocket-Server => BUILD 0.2.2134 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -696,76 +696,75 @@ var net = new net_typ();
 ******************************************************************************************/
 
 
-var sID_typ = function sID_typ(){
-    //bei veränderung auch veränderungen in sync_L3.php vornehemen!
+var sID_typ = function sID_typ() {
+    //bei verÃ¤nderung auch verÃ¤nderungen in sync_L3.php vornehemen!
     //GET_FROM_SERVER
-	this.idLength          = 10; //Zeichenlänge einer ID
+    this.idLength = 10; //ZeichenlÃ¤nge einer ID
 
-	this.getServer         = "2000000000"; //Fragt Server nach bestimmter static ID
-    
+    this.getServer = "2000000000"; //Fragt Server nach bestimmter static ID
+
     //SEND_TO_SERVER
-	this.clientName        = "2000000001"; //Übergibt den Clientnamen der Instanz an den Server
-	this.file              = "2000000002"; //Übergibt zu landene DateiID an den Server
-	this.userName          = "2000000007"; //Übergibt den Login Benutzernamen an den Server
-	this.userPassword      = "2000000008"; //Übergibt das Login Passwort an den Server
-	this.legitimationID    = "2000000009"; //Übergibt das Login Passwort an den Server
-	this.userEdit          = "2000000016"; //Übergibt das Login Passwort an den Server
+    this.clientName = "2000000001"; //Ãœbergibt den Clientnamen der Instanz an den Server
+    this.file = "2000000002"; //Ãœbergibt zu landene DateiID an den Server
+    this.userName = "2000000007"; //Ãœbergibt den Login Benutzernamen an den Server
+    this.userPassword = "2000000008"; //Ãœbergibt das Login Passwort an den Server
+    this.legitimationID = "2000000009"; //Ãœbergibt das Login Passwort an den Server
+    this.userEdit = "2000000016"; //Ãœbergibt das Login Passwort an den Server
 
-	//SEND_TO_SERVER ACTIONS WITH LEGITIMATION ID
-	this.Login 			   = "2001000000"; //Übergabe und Rückgabe des Login Objektes
-	this.unloadFile		   = "2001000001"; //Schließt die Datei
-	this.addFile		   = "2001000002"; //Fügt eine Datei ins Verzeichnis hinzu
-	this.deleteFile		   = "2001000003"; //Löscht eine Datei von ID
-	this.killServer		   = "2001000004"; //Löscht eine Datei von ID
-	this.moveFile		   = "2001000005"; //Löscht eine Datei von ID
-	this.copyFile		   = "2001000006"; //Löscht eine Datei von ID
-    this.checkKillLink     = "2001000007"; //Prüft ob Datei noch existiert und löscht wenn nicht den link
-    this.fileInfo          = "2001000008";
-    this.getUserName       = "2001000009";
-    this.createAccount     = "2001000010"; //Sends and Returns Account Information
-    this.deleteInviteKey   = "2001000011"; //Sends and Returns Account Information
-    this.setUserActive     = "2001000012"; //Sends and Returns Account Information
-    this.createInviteKey   = "2001000013"; 
+    //SEND_TO_SERVER ACTIONS WITH LEGITIMATION ID
+    this.Login = "2001000000"; //Ãœbergabe und RÃ¼ckgabe des Login Objektes
+    this.unloadFile = "2001000001"; //SchlieÃŸt die Datei
+    this.addFile = "2001000002"; //FÃ¼gt eine Datei ins Verzeichnis hinzu
+    this.deleteFile = "2001000003"; //LÃ¶scht eine Datei von ID
+    this.killServer = "2001000004"; //LÃ¶scht eine Datei von ID
+    this.moveFile = "2001000005"; //LÃ¶scht eine Datei von ID
+    this.copyFile = "2001000006"; //LÃ¶scht eine Datei von ID
+    this.checkKillLink = "2001000007"; //PrÃ¼ft ob Datei noch existiert und lÃ¶scht wenn nicht den link
+    this.fileInfo = "2001000008";
+    this.getUserName = "2001000009";
+    this.createAccount = "2001000010"; //Sends and Returns Account Information
+    this.deleteInviteKey = "2001000011"; //Sends and Returns Account Information
+    this.setUserActive = "2001000012"; //Sends and Returns Account Information
+    this.createInviteKey = "2001000013";
 
-    
+
     //GET_FROM_SERVER
-	this.fileList          = "2000000003"; //Server sendet Dateiliste
-	this.userList          = "2000000004"; //Server sendet Userliste
-	this.deleteID          = "2000000005"; //Server sendet zu löschende ID
-	this.message           = "2000000006"; //Server sendet anzuzeigende Nachricht
-	this.testid			   = "2000000010";
-    this.updated           = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
-    this.fileunloadtrue    = "2000000012"; //Server says, that closing file completed GitHub => #5
-    this.fileUserList      = "2000000013"; //Server sends userlist of a file to client
-    this.returnUserName    = "2000000014";
-    this.fileRigths        = "2000000015"; //Server sends userlist of a file to client
-    this.ownclientID       = "2000000017";
-    
-	/*
-	LEGITIMATION ID: Idee: 
-	- wird vom server erstellt und gesendet
-	- kann nur einmal verwendet werden für wichtige sachen (Login)
-	- danach wird neue benötigt
-	- wenn falsch 24h IP-Ban 
-	*/
+    this.fileList = "2000000003"; //Server sendet Dateiliste
+    this.userList = "2000000004"; //Server sendet Userliste
+    this.deleteID = "2000000005"; //Server sendet zu lÃ¶schende ID
+    this.message = "2000000006"; //Server sendet anzuzeigende Nachricht
+    this.testid = "2000000010";
+    this.updated = "2000000011"; //Server meldet, dass Datei fertig geladen hat.
+    this.fileunloadtrue = "2000000012"; //Server says, that closing file completed GitHub => #5
+    this.fileUserList = "2000000013"; //Server sends userlist of a file to client
+    this.returnUserName = "2000000014";
+    this.fileRigths = "2000000015"; //Server sends userlist of a file to client
+    this.ownclientID = "2000000017";
+
+    /*
+    	LEGITIMATION ID: Idee: 
+    	- wird vom server erstellt und gesendet
+    	- kann nur einmal verwendet werden fÃ¼r wichtige sachen (Login)
+    	- danach wird neue benÃ¶tigt
+    	- wenn falsch 24h IP-Ban 
+    	*/
 };
 
-var sURL_typ = function sURL_typ(){
-    //bei veränderung auch veränderungen in sync_L3.php vornehemen!
+var sURL_typ = function sURL_typ() {
+    //bei verÃ¤nderung auch verÃ¤nderungen in sync_L3.php vornehemen!
     //GET_FROM_SERVER
-	//this.getUserDir        = "hex/pragm/dirServer/dirServer.php?jop=getUserDir"; //URL für UserID
-	this.fileserver = {
-  		hostname: 'hex',
-  		port: 80,
- 		path: '/pragm/dirServer/dirServer.php',
-  		method: 'POST'
-	};
+    //this.getUserDir        = "hex/pragm/dirServer/dirServer.php?jop=getUserDir"; //URL fÃ¼r UserID
+    this.fileserver = {
+        hostname: 'hex',
+        port: 80,
+        path: '/pragm/dirServer/dirServer.php',
+        method: 'POST'
+    };
 
 };
 
 var sURL = new sURL_typ();
 var sID = new sID_typ();
-
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1328,7 +1327,7 @@ var pfile_typ = function pfile_typ(){
             }
         }
         if(userID != null && userID[0] == "5"){
-            if(this.dirObject[userID].password == password){
+            if(this.dirObject[userID].active == true && this.dirObject[userID].password == password){
                 temp.userRight = this.dirObject[userID].userRight;
                 temp.username = username;
                 temp.userID = userID;
@@ -2072,7 +2071,7 @@ function inviteKey_typ(){
             }
         }
         if(kill){
-            pfile.dirObject['5000000000'].inviteKeyArray = pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+            pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
         }
     };
     
@@ -2374,10 +2373,16 @@ var L3_typ = function L3_typ(){
                 pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;      
             case sID.createInviteKey:
-                inviteKey.createInviteKey();
+                if(L3.users[clientID]['userID'] == pfile.systemUsr){
+                    inviteKey.createInviteKey();
+                    pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
+                };
                 break;      
             case sID.deleteInviteKey:
-                inviteKey.deleteInviteKey();
+                if(L3.users[clientID]['userID'] == pfile.systemUsr){
+                    inviteKey.deleteInviteKey(data);
+                    pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
+                }
                 break;      
             case sID.setUserActive:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){
@@ -2946,7 +2951,7 @@ function printMemoryUsage(){
 function startPrint(){
     setInterval(printMemoryUsage, 30000);
 }
-setTimeout(startPrint, 2000);
+//setTimeout(startPrint, 2000);
 // ==========================
 
 // Port where we'll run the websocket server

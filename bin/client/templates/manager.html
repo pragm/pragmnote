@@ -16,6 +16,15 @@
     <div class="loginTop" style="border-bottom: 3px solid #ff3100; heigth: 47px;">
         <div class="loginLogo"></div>
     </div>
+
+    <div class="userinfooverlay" ng-hide="!userinfo">
+        <div class="userinfofield">
+            <input class="alertbutton" id="closeStyleFix" type="button" value="CLOSE" ng-click="closeUserInfo();">
+            <div class="inneruserinfo">  
+            <div ng-repeat="(key, value) in userinfodata">{{key}}: {{value}}</div>
+                </div>
+        </div>
+    </div>
 <div class="noteconBackground" id="noteconBackground" ng-mouseup="mouseup();" ng-mousemove="clog(); mousemove($event);"><!--ng-mousedown="setinactive();"-->
     <div class="fileListOverlay">
         <div class="infoBox" id="Infobox" ng-mouseover="mouseout();">
@@ -36,7 +45,7 @@
             <input class="infoline" type="button" value="Back" onclick="uiControl.view('files');">
             <br>
             <div class="infoline" id="infoline">Create new Invite Key</div>
-            <input class="infoline" type="button" value="Create" onclick="console.info('create Invite Key');">
+            <input class="infoline" type="button" value="Create" ng-click="createInviteKey();">
             <br>
             <div class="infoline" id="infoline">Show Data:</div>
             <input class="infoline" type="button" value="Invite Keys / Users" ng-click="toggleShow()">
@@ -88,13 +97,13 @@ elmleft             = {{elmleft}}
         </li>
         <li ng-repeat="key in dirShow" class="fileListUlli" ng-hide="hideUser">
             <div class="ico5"></div>
-            <font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}
-                <font class="privateFile">{{sharedinfo(key)}}
+            <font class="filenameDir" style="position: relative; left: 30px;" ng-click="showUserInfo(key);">{{dirObject[key].name}}
+                <font class="privateFile">
                 </font>
             </font>
             <div class="ownerFile">
                 <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch{{key}}" checked="{{dirObject[key].active}}">
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch{{key}}" ng-checked="{{dirObject[key].active}}" ng-click="toggleOnOff(key)">
                     <label class="onoffswitch-label" for="myonoffswitch{{key}}">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>

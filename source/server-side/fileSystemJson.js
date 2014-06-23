@@ -170,7 +170,7 @@ var pfile_typ = function pfile_typ(){
             }
         }
         if(userID != null && userID[0] == "5"){
-            if(this.dirObject[userID].password == password){
+            if(this.dirObject[userID].active == true && this.dirObject[userID].password == password){
                 temp.userRight = this.dirObject[userID].userRight;
                 temp.username = username;
                 temp.userID = userID;

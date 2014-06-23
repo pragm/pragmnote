@@ -144,7 +144,7 @@ function printMemoryUsage(){
 function startPrint(){
     setInterval(printMemoryUsage, 30000);
 }
-setTimeout(startPrint, 2000);
+//setTimeout(startPrint, 2000);
 // ==========================
 
 // Port where we'll run the websocket server
@@ -205,8 +205,11 @@ function stopServerNow(){
     }*/
     process.abort();;
 }
-
-pfile.readStr('123', 'dir', 2);
+if(fs.existsSync(global.config.dir+pfile.dirFile+".json")){
+    pfile.readStr('123', 'dir', 2);
+} else {
+    manager.resetSystem();
+}
 
 
 var connectionCounter = 0;
