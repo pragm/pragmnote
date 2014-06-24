@@ -75,9 +75,14 @@
             </select>
             <br><br>
             <div class="infoline" id="infoline">Please help <br>to keep pragm free!</div>
-            <input class="infoline" type="button" value="Get Involved" onclick="OpenInNewTab();">
+            <input class="fileexpinput cursorpointer" type="button" value="Get Involved" onclick="OpenInNewTab();">
             <div class="infoline" id="infoline">or</div>
-            <input class="infoline" type="button" value="Donate" onclick="uiControl.alert();">
+            <input class="fileexpinput cursorpointer" type="button" value="Donate" onclick="uiControl.alert('todo');"><br><br>
+            <div class="infoline" id="infoline">Change Password</div>
+            <input class="fileexpinput" type="password" value="" placeholder="OLD">
+            <input class="fileexpinput" type="password" value="" placeholder="NEW">
+            <input class="fileexpinput" type="password" value="" placeholder="NEW AGAIN">
+            <input class="fileexpinput cursorpointer" type="button" value="Buy a washer!" onclick="uiControl.alert('tomorrow');">
             <br><br>
             <input class="infoline" type="button" value="System Manager" onclick="uiControl.view('manager');" ng-hide="mainDir != '5000000000'">
             <!--<ul class="datachoice">

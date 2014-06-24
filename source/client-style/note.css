@@ -1993,3 +1993,41 @@ to {background:#FFD600;}
     display: none;
     overflow: auto;
 }
+
+.fileexpinput {
+    outline:none;
+    border-radius:3px;
+    border-radius:3px;
+    -moz-border-radius:3px;
+    padding: 4px;
+    background-color: #ffffff;
+    border: 1px solid #9a9a9a;
+    color: #808080;
+    font-family: 'Open Sans';
+    cursor: text;
+    font-weight: bold;
+    transition: all 0.03s ease-in-out;
+    position: relative;
+    font-family: Open Sans, Arial;
+    font-size: 10px;
+    left: 20px;
+    margin-top: 3px;
+}
+.fileexpinput:hover{
+    color: #333333;
+    box-shadow: 0 0 3px #808080;
+}
+.fileexpinput:focus{
+    background-color: #FFFFFF;
+    color: #333333;
+    box-shadow: 0 0 3px #808080;
+}
+.fileexpinput:active{
+    background-color: #FFFFFF;
+    color: #333333;
+    box-shadow: inset 0 0 3px #808080;
+}
+
+.cursorpointer {
+    cursor: pointer;
+}
