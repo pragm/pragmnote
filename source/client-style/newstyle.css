@@ -52,9 +52,10 @@
     position: absolute;
     left: 12px;
     bottom: 13px;
-    background-image: url('img/doc/pragm_1_white.png');
+    background-image: url('img/doc/pragm_1_white_retina.png');
     width: 81px;
     height: 24px;
+    background-size: 81px 24px;
 }
 .fileTabButton{
     position: absolute;

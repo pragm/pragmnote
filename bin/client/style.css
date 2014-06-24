@@ -49,7 +49,8 @@
     height: 24px; 
     width: 81px; 
     margin-left: -40px;
-    background: url("img/doc/pragm_1_white.png");
+    background-image: url("img/doc/pragm_1_white_retina.png");
+    background-size: 81px 24px;
 }
 	.welcome{position: absolute; top: 0px; left: 245px; font-family: 'Open Sans'; font-size: 36px; color: #E9E9E9;}
 .centerPic{
@@ -225,9 +226,10 @@
     position: absolute;
     left: 12px;
     bottom: 13px;
-    background-image: url('img/doc/pragm_1_white.png');
+    background-image: url('img/doc/pragm_1_white_retina.png');
     width: 81px;
     height: 24px;
+    background-size: 81px 24px;
 }
 .fileTabButton{
     position: absolute;
@@ -2682,5 +2684,10 @@ to {background:#FFD600;}
 
 .cursorpointer {
     cursor: pointer;
+}
+
+#pragmico1 {
+    width: 81px;
+    height: 24px;
 }
 

@@ -1,4 +1,4 @@
-var clientversion = "0.2.2180";
+var clientversion = "0.2.2188";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -3458,24 +3458,24 @@ var globalEvent_typ = function globalEvent_typ(){
         switch(n){
             case 0:
                 //document.getElementById("pragmico1").src = "img/doc/pragm_1.png";
-                document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_white.png')";
+                document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_retina_white.png')";
                 //document.getElementById('fileTabs').style.height = "";
                 //document.getElementById('noteconBackground').style.display = "none";
                 break;
             case 1:
                 //document.getElementById("pragmico1").src = "img/doc/pragm_1_green.png";
-                document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_lightgreen.png')";
-                this.stateTimer = setTimeout('globalEvent.state(0)', 1000);
+                //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_lightgreen.png')";
+                //this.stateTimer = setTimeout('globalEvent.state(0)', 1000);
                 break;
             case 2:
                 //document.getElementById("pragmico1").src = "img/doc/pragm_1_red.png";
-                document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_red.png')";
+                //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_red.png')";
                 //document.getElementById('fileTabs').style.height = "50px";
                 //document.getElementById('noteconBackground').style.display = "";
                 break;
             case 3:
                 //document.getElementById("pragmico1").src = "img/doc/pragm_1_yellow.png";
-                document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_yellow.png')";
+                //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_yellow.png')";
                 //document.getElementById('fileTabs').style.height = "50px";
                 //document.getElementById('noteconBackground').style.display = "";
                 break;
