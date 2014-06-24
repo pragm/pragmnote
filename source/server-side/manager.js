@@ -8,13 +8,14 @@ function manager_typ() {
         log("RESETTING SYSTEM");
         var dir = fs.readdirSync(global.config.dir);
         for (i in dir) {
-            if (fs.existsSync(dir[i])) {
-                fs.unlinkSync(dir[i]);
-                log("File " + id + ".json deleted");
+            log("Deleting " + dir[i] + " ...");
+            if (fs.existsSync(global.config.dir+dir[i])) {
+                fs.unlinkSync(global.config.dir+dir[i]);
+                log("File " + dir[i] + " deleted");
             }
         }
         pfile.checkFileSystem(JSON.parse(JSON.stringify(defaultData.dirObject)));
-        pfile.saveDirObject(true);
+        pfile.writeStr('x', 'dir', 12);
     };
 }
 

@@ -22,7 +22,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             uiControl.loadview = "editor/"+$scope.fileID;
             $location.path('/');
         } else {
-            if(uiControl.autologinguest){
+            if(uiControl.autologinguest && data.login.userID == "5GUESTUSER" && data.login.userRight < 5){
                 setTimeout(uiControl.finishRoedel, 100);
             }
 

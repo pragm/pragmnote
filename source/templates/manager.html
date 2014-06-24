@@ -73,7 +73,7 @@ elmleft             = {{elmleft}}
             <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name || "..."}}</li>
         </ul>
         <ul class="dirButtons">
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDir();" title="refresh dir" ng-mouseover="mouseout();"><img src="img/doc/refresh.png" style="margin-top: -3px; opacity: 0.6;"></li>
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDirBackground();" title="refresh dir" ng-mouseover="mouseout();"><img src="img/doc/refresh.png" style="margin-top: -3px; opacity: 0.6;"></li>
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">

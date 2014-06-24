@@ -210,7 +210,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-        if(!this.focusactive && !staticItems.focusactive){
+        if(!this.focusactive && !staticItems.focusactive && !data.readonly){
            this.id = textbox.makeid('100');
            this.Ereignis = window.event;
            this.x = this.Ereignis.clientX-global.chX-global.textboxXdif+document.getElementById('notecon').scrollLeft;//changestartsize42 8

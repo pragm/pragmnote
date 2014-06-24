@@ -1,4 +1,4 @@
-var clientversion = "0.2.2134";
+var clientversion = "0.2.2146";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1400,7 +1400,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             uiControl.loadview = "editor/"+$scope.fileID;
             $location.path('/');
         } else {
-            if(uiControl.autologinguest){
+            if(uiControl.autologinguest && data.login.userID == "5GUESTUSER" && data.login.userRight < 5){
                 setTimeout(uiControl.finishRoedel, 100);
             }
 
@@ -3795,7 +3795,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-        if(!this.focusactive && !staticItems.focusactive){
+        if(!this.focusactive && !staticItems.focusactive && !data.readonly){
            this.id = textbox.makeid('100');
            this.Ereignis = window.event;
            this.x = this.Ereignis.clientX-global.chX-global.textboxXdif+document.getElementById('notecon').scrollLeft;//changestartsize42 8
