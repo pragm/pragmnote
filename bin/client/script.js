@@ -1,4 +1,4 @@
-var clientversion = "0.2.2146";
+var clientversion = "0.2.2162";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -3420,6 +3420,7 @@ var globalEvent_typ = function globalEvent_typ(){
         //uiControl.view('start');
         //L1.onload();
         //uiControl.view("start");
+        this.checkBrowser();
     };
     
     this.onConnect = function (){
@@ -3430,6 +3431,16 @@ var globalEvent_typ = function globalEvent_typ(){
         //slidestop();
         //drawmouseup();
         textbox.drop();
+    };
+    
+    this.checkBrowser = function(){
+        if(navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1)){
+            // true
+            document.getElementById("browserfail").style.display = "none";
+        } else {
+            // false
+            document.getElementById("browserfail").style.display = "block";
+        }
     };
         
     this.updateMainFieldPosition = function (){

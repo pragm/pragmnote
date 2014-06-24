@@ -1976,3 +1976,20 @@ to {background:#FFD600;}
     overflow: auto;
 }
 
+
+.browserfail {
+    position:fixed;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #eaeaea;
+    width: 100%;
+    font-size: 18px;
+    font-family: Open Sans;
+    text-align:center;
+    color: #b70000;
+    z-index: 1010;
+    display: none;
+    overflow: auto;
+}

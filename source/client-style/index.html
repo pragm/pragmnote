@@ -24,43 +24,81 @@
 
 <!DOCTYPE HTML>
 <html ng-app="pragmApp" id="ng-app">
+
 <head>
 
 
-<title id="title">pragm</title>
-<link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-<link href="font.css" rel="stylesheet" type="text/css">
-<script src="config.js"></script> 
-<script src="jquery.min.js"></script> <!-- //ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js -->
-<script src="angular.min.js"></script>
-<script src="angular-route.min.js"></script>
-<script src="angular-route.js"></script>
-<script type="text/javascript" src="socket.io.min.js"></script> <!--node_modules/socket.io-client/dist/socket.io.min.js-->
-<script type="text/javascript" src="script.js"></script>
-<link rel="stylesheet" type="text/css" href="style.css">
+    <title id="title">pragm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link href="font.css" rel="stylesheet" type="text/css">
+    <script src="config.js"></script>
+    <script src="jquery.min.js"></script>
+    <!-- //ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js -->
+    <script src="angular.min.js"></script>
+    <script src="angular-route.min.js"></script>
+    <script src="angular-route.js"></script>
+    <script type="text/javascript" src="socket.io.min.js"></script>
+    <!--node_modules/socket.io-client/dist/socket.io.min.js-->
+    <script type="text/javascript" src="script.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
 
-<!-- #buildSoftwareCut# -->
+    <!-- #buildSoftwareCut# -->
 
-</head><!--ng-view-->
+</head>
+<!--ng-view-->
+
 <body class="body" name="body" id="body" onload="globalEvent.onload();" onmouseup="globalEvent.drop();" onclick="globalEvent.onclick();" onmousemove="globalEvent.mousemove();" ng-controller="loginController">
 
-<!--<div class="loading" id="pleasewait">
+    <!--<div class="loading" id="pleasewait">
     <div class="loadicon"></div>
 </div>
 
 <div class="background"></div>-->
-    <div class="startshow" id="startshow"><div class="centerPicStart"></div></div>
-<div class="fileTabs" id="fileTabs" style="height: 0px;">
-    <div class="fileTabButton" onclick="uiControl.unloadFile();">
-        <div unselectable="on" class="fileTabsPragm" id="pragmico2"></div>
-     </div>
-    <nobr>
-    <ul class="Tabs" id="tabsUL">
-    </ul>
-    </nobr>
-    <div class="TabsIn1" onclick="uiControl.unloadFile(); tab.deactivateTab();"></div>
-    <div class="TabsIn2"></div>
-    <!--<ul class="draweditul" id="draweditul" style="">
+    <div class="browserfail" id="browserfail">
+        <br>pragm
+        <br>
+        <br>
+        <div class="centerPic"></div>
+        <p><big><big><big><big><b>Your Browser is not supported!</b></big></big>
+            </big>
+            </big>
+        </p>
+        <p>Supported Browsers:</p>
+        <small>Google Chrome</small>
+        <br>
+        <small>Safari</small>
+        <br>
+        <br>
+        <p>Others:</p>
+        <br>Internet Explorer 11:
+        <br>
+        <small><small>Will be supported in near future when I find some time!</small></small>
+        <br>
+        <br>Mozilla Firefox:
+        <br>
+        <small><small>NOT Supportet! Not planed to support in near future!</small></small>
+        <br>
+        <br>Opera+Others:
+        <br>
+        <small><small>Don't even think about supporting them!</small></small>
+        <br>
+        <br>
+
+    </div>
+    <div class="startshow" id="startshow">
+        <div class="centerPicStart"></div>
+    </div>
+    <div class="fileTabs" id="fileTabs" style="height: 0px;">
+        <div class="fileTabButton" onclick="uiControl.unloadFile();">
+            <div unselectable="on" class="fileTabsPragm" id="pragmico2"></div>
+        </div>
+        <nobr>
+            <ul class="Tabs" id="tabsUL">
+            </ul>
+        </nobr>
+        <div class="TabsIn1" onclick="uiControl.unloadFile(); tab.deactivateTab();"></div>
+        <div class="TabsIn2"></div>
+        <!--<ul class="draweditul" id="draweditul" style="">
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add rect (out of work)"><input class="unselectinput" type="button" onclick="addrect();"><img src="img/doc/rect.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add circle (out of work)"><input class="unselectinput" type="button" onclick="addline(3,3);"><img src="img/doc/circle.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add triangle (out of work)"><input class="unselectinput" type="button" onclick="rich.fontEdit('insertunorderedlist');"><img src="img/doc/triangle.png"></li>
@@ -69,9 +107,9 @@
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="delete element (out of work)"><input class="unselectinput" type="button" onclick="killfocusline();"><img src="img/doc/delete.png"></li>
      </ul>-->
     </div>
-    
+
     <div class="angularView" ng-view></div>
-<!--<ul class="editul" id="editarea" unselectable="on">
+    <!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('Print')"><img src="img/doc/print.png" unselectable="on"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Bold');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('bold')"><img src="img/doc/fett.png" unselectable="on"></li>
@@ -89,7 +127,7 @@
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Numbering');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('insertorderedlist');"><img src="img/doc/numblist.png"></li>
  <!--<li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add link (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addlink.png"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Add image (Out of order)');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" onclick="rich.fontEdit('');"><img src="img/doc/addimg.png"></li>-->
-<!--</ul>
+    <!--</ul>
 
 
 <div class="title" id="showtitle" style="left: -200px;"><div class="titleeck"></div>Mein Cooler Titel</div>
@@ -116,8 +154,8 @@
                 <li>files</li>
                 <li>settings</li>
             </ul>-->
-        
-       <!-- </div>
+
+    <!-- </div>
         <div class="newsBox" id="newsbox">
             <div class="news" id="news">News</div>
             <div class="newsline" id="newsline">pragm is cool</div>
@@ -231,6 +269,7 @@
 </div>
 
 <!--<div class="messagebox">Bad Login</div>-->
-    
+
 </body>
+
 </html>
