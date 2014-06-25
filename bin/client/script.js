@@ -1,4 +1,4 @@
-var clientversion = "0.2.2188";
+var clientversion = "0.2.2193";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
