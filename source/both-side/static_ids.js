@@ -53,6 +53,7 @@ var sID_typ = function sID_typ() {
     this.deleteInviteKey = "2001000011"; //Sends and Returns Account Information
     this.setUserActive = "2001000012"; //Sends and Returns Account Information
     this.createInviteKey = "2001000013";
+    this.chPassword = "2001000014";
 
 
     //GET_FROM_SERVER

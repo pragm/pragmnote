@@ -766,7 +766,7 @@
     list-style-type: none;
     border-bottom: 1px solid #eeeeee;
     font-family: Helvetica;
-    padding: 15px;
+    padding: 10px;
     color: black;
     max-height: 46px;
     opacity: 0.6;
@@ -802,7 +802,7 @@
     list-style-type: none;
     border-bottom: 1px solid #eeeeee;
     font-family: Helvetica;
-    padding: 15px;
+    padding: 10px;
     max-height: 46px;
     border-top: 1px solid transparent;
     /*-webkit-transition: ease-in-out 0.1s;*/
@@ -2165,6 +2165,7 @@ weis{
     font-family: Arial;
     top: 17px;
     background: transparent;
+    right: 110px;
 }
 
 .renameFile:hover {
@@ -2689,5 +2690,49 @@ to {background:#FFD600;}
 #pragmico1 {
     width: 81px;
     height: 24px;
+}
+
+.trashicon {
+    position: relative;
+    left: 4px;
+    top: -1px;
+}
+
+.addicon {
+    top: -4px;
+    left: 4px;
+    padding-right: 8px; 
+    position: relative;
+}
+
+.refreshicon {
+    position: relative;
+    left:	4px;
+    top: -1px;
+}
+
+.fileexplorericon {
+    padding-left: 10px;
+}
+
+
+.keynameDir {
+    padding: 0px;
+    outline: none;
+    margin: 0;
+    border: 0px;
+    background: transparent;
+}
+.keynameDir:hover {
+    /*color: #00f;
+    text-decoration:underline;*/
+    cursor: text;
+}
+
+.addFileIcon {
+    position: relative;
+    top: -4px;
+    padding-left: 10px; 
+    padding-right: 6px; 
 }
 

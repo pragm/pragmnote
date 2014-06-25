@@ -79,12 +79,12 @@
             <div class="infoline" id="infoline">or</div>
             <input class="fileexpinput cursorpointer" type="button" value="Donate" onclick="uiControl.alert('todo');"><br><br>
             <div class="infoline" id="infoline">Change Password</div>
-            <input class="fileexpinput" type="password" value="" placeholder="OLD">
-            <input class="fileexpinput" type="password" value="" placeholder="NEW">
-            <input class="fileexpinput" type="password" value="" placeholder="NEW AGAIN">
-            <input class="fileexpinput cursorpointer" type="button" value="Buy a washer!" onclick="uiControl.alert('tomorrow');">
+            <input class="fileexpinput" type="password" value="" placeholder="OLD" ng-model="chpw.old">
+            <input class="fileexpinput" type="password" value="" placeholder="NEW" ng-model="chpw.new">
+            <input class="fileexpinput" type="password" value="" placeholder="NEW AGAIN" ng-model="chpw.new2">
+            <input class="fileexpinput cursorpointer" type="button" value="Buy a washer!" ng-click="chpass();">
             <br><br>
-            <input class="infoline" type="button" value="System Manager" onclick="uiControl.view('manager');" ng-hide="mainDir != '5000000000'">
+            <input class="fileexpinput cursorpointer" type="button" value="System Manager" onclick="uiControl.view('manager');" ng-hide="mainDir != '5000000000'">
             <!--<ul class="datachoice">
                 <li>files</li>
                 <li>settings</li>
@@ -114,33 +114,35 @@ elmleft             = {{elmleft}}
             <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name || "..."}}</li>
         </ul>
         <ul class="dirButtons">
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection" ng-mouseover="mouseover('4DELETED00');"><img src="img/doc/loeschen.png" style="margin-top: -3px; opacity: 0.6; "></li>
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection" ng-mouseover="mouseover('4DELETED00');"><i class="fa fa-trash-o trashicon"></i></li>
             <li class="dirButtonsLi" id="AddFile" title="add file/folder" ng-mouseover="mouseout();">
                 <nobr>
-                    <img src="img/doc/addFile.png" style="margin-top: -3px; opacity: 0.6;">
+                    <i class="fa fa-plus addicon"></i>
                     <div class="AddFileOverlay" onclick="addFile.toggleAddFile();"></div>
-                    <img src="img/doc/file.png" style="position: relative; margin-top: -3px; bottom: 0px; opacity: 0.6; margin-left: 9px;" id="AddFileChoice" onclick="addFile.toggleAddFileChoice();">
+                    <i class="fa fa-file-text addFileIcon" onclick="addFile.toggleAddFileChoice();" id="awsomefilechoice"></i>
+                    <!--<img src="img/doc/file.png" style="position: relative; margin-top: -3px; bottom: 0px; opacity: 0.6; margin-left: 9px;" id="AddFileChoice" onclick="addFile.toggleAddFileChoice();">-->
                     <input type="text" class="AddFileInput" id="AddFileInput" onkeydown="addFile.checkEnter();">
                 </nobr>
             </li>
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDir();" title="refresh dir" ng-mouseover="mouseout();"><img src="img/doc/refresh.png" style="margin-top: -3px; opacity: 0.6;"></li>
+            <li class="dirButtonsLi" style="z-index: 2;" onclick="L3.refreshDir();" title="refresh dir" ng-mouseover="mouseout();"><i class="fa fa-refresh refreshicon"></i></li>
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
         <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();">
             <div class="selectcounter">{{activenum}}</div>
-            <font style="position: relative; left: 30px;">TITLE</font>
+            <font style="position: relative; left: 48px;">TITLE</font>
             <div class="ownerFile">OWNER</div>
             <div class="lastChange">LAST MODIFIED</div>
         </li>
         <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);" ng-mousedown="mousedown(key, $event);" ng-mouseover="mouseover(key);" ng-dblclick="configFile(key);">
-            <div class="ico{{key.substr(0,1);}}"></div>
+            <!--<div class="ico{{key.substr(0,1);}}"></div>-->
+            <i class="{{getIconClass(key.substr(0,1))}} fileexplorericon"></i>
             <font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}
                 <font class="privateFile">{{sharedinfo(key)}}
                 </font>
             </font>
-            <div class="ownerFile">{{resolveName(dirObject[key].owner);}}</div>
-            <div class="lastChange">{{dirObject[key].lastmodform}}</div>
+            <div class="ownerFile" style="top:10px;">{{resolveName(dirObject[key].owner);}}</div>
+            <div class="lastChange" style="top:10px;">{{dirObject[key].lastmodform}}</div>
             <!--<img src="img/gear.png" class="gearIcon">
             <img src="img/share.png" class="shareIcon"></li>-->
     </ul>

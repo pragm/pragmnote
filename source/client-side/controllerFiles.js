@@ -407,7 +407,35 @@ pragmApp.controller('filesController', function($scope, $location) {
             }
         };
     
+        $scope.getIconClass = function(suffix){
+            switch(suffix){
+                case "3":
+                    return "fa fa-file-text";
+                    break;
+                case "4":
+                    return "fa fa-folder";
+                    break;
+                case "5":
+                    return "fa fa-user";
+                    break;
+            };
+        };
         
+        // Change Password handler ===========================================
+        
+        
+        $scope.chpw = {};
+        $scope.chpw.old = "";
+        $scope.chpw.new = "";
+        $scope.chpw.new2 = "";
+        
+        $scope.chpass = function(){
+            console.log($scope.chpw);
+            L2.send(sID.chPassword, JSON.stringify($scope.chpw));
+            $scope.chpw.old = "";
+            $scope.chpw.new = "";
+            $scope.chpw.new2 = "";
+        };
         
         
         // Share Popup handler ------------------------------------------

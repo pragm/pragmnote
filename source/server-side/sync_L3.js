@@ -168,6 +168,9 @@ var L3_typ = function L3_typ(){
                     pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
                 }
                 break;      
+            case sID.chPassword:
+                manager.chPassword(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                break;      
             case sID.setUserActive:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){
                     var obj = JSON.parse(data);

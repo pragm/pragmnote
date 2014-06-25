@@ -1,4 +1,4 @@
-var clientversion = "0.2.2193";
+var clientversion = "0.2.2227";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -726,6 +726,7 @@ var sID_typ = function sID_typ() {
     this.deleteInviteKey = "2001000011"; //Sends and Returns Account Information
     this.setUserActive = "2001000012"; //Sends and Returns Account Information
     this.createInviteKey = "2001000013";
+    this.chPassword = "2001000014";
 
 
     //GET_FROM_SERVER
@@ -882,13 +883,15 @@ var addFile_typ = function addFile_typ(){
     
     this.toggleAddFileChoice = function(){
         if(this.AddFileChoice){
-            document.getElementById('AddFileChoice').src = 'img/doc/file.png';
-            document.getElementById('AddFileChoice').style.bottom = '0px';
+            /*document.getElementById('AddFileChoice').src = 'img/doc/file.png';
+            document.getElementById('AddFileChoice').style.bottom = '0px';*/
+            document.getElementById('awsomefilechoice').className = "fa fa-file-text addFileIcon";
             this.AddFileChoice = false;
             document.getElementById('AddFileInput').focus();
         } else {
-            document.getElementById('AddFileChoice').src = 'img/doc/folder.png';
-            document.getElementById('AddFileChoice').style.bottom = '3px';
+            /*document.getElementById('AddFileChoice').src = 'img/doc/folder.png';
+            document.getElementById('AddFileChoice').style.bottom = '3px';*/
+            document.getElementById('awsomefilechoice').className = "fa fa-folder addFileIcon";
             this.AddFileChoice = true;
             document.getElementById('AddFileInput').focus();
         }
@@ -2048,7 +2051,35 @@ pragmApp.controller('filesController', function($scope, $location) {
             }
         };
     
+        $scope.getIconClass = function(suffix){
+            switch(suffix){
+                case "3":
+                    return "fa fa-file-text";
+                    break;
+                case "4":
+                    return "fa fa-folder";
+                    break;
+                case "5":
+                    return "fa fa-user";
+                    break;
+            };
+        };
         
+        // Change Password handler ===========================================
+        
+        
+        $scope.chpw = {};
+        $scope.chpw.old = "";
+        $scope.chpw.new = "";
+        $scope.chpw.new2 = "";
+        
+        $scope.chpass = function(){
+            console.log($scope.chpw);
+            L2.send(sID.chPassword, JSON.stringify($scope.chpw));
+            $scope.chpw.old = "";
+            $scope.chpw.new = "";
+            $scope.chpw.new2 = "";
+        };
         
         
         // Share Popup handler ------------------------------------------
@@ -3806,7 +3837,7 @@ var textbox_typ = function textbox_typ(){
 	};
     
     this.addfield = function (){
-        if(!this.focusactive && !staticItems.focusactive && !data.readonly){
+        if(!this.focusactive && !staticItems.focusactive && data.fileRights.write){
            this.id = textbox.makeid('100');
            this.Ereignis = window.event;
            this.x = this.Ereignis.clientX-global.chX-global.textboxXdif+document.getElementById('notecon').scrollLeft;//changestartsize42 8
@@ -4150,6 +4181,7 @@ var rich_typ = function rich_typ (){
       var printContents = document.getElementById('notecon').innerHTML;
       var originalContents = document.body.innerHTML;        
       var popupWin = window.open('', '_blank', 'width='+(screen.width-60)+',height='+(screen.height-110)+'');
+      popupWin.document.title = document.title;
       popupWin.moveTo(0,0);
       popupWin.document.open()
       popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body>' + printContents + '<div class="printoverlay"></div></html>');

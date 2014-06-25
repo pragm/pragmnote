@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2193
-console.log("pragm-Websocket-Server => BUILD 0.2.2193 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2227
+console.log("pragm-Websocket-Server => BUILD 0.2.2227 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -726,6 +726,7 @@ var sID_typ = function sID_typ() {
     this.deleteInviteKey = "2001000011"; //Sends and Returns Account Information
     this.setUserActive = "2001000012"; //Sends and Returns Account Information
     this.createInviteKey = "2001000013";
+    this.chPassword = "2001000014";
 
 
     //GET_FROM_SERVER
@@ -2167,6 +2168,23 @@ function manager_typ() {
     this.setUserActive = function (userID, active) {
         pfile.dirObject[userID].active = active;
     };
+    
+    this.chPassword = function (clientID, userID, chpw) {
+        if(chpw.new == chpw.new2){
+            if(chpw.old == pfile.dirObject[userID].password){
+                if(userID!=pfile.guestUser){
+                    pfile.dirObject[userID].password = chpw.new;
+                    L2x1.send(clientID, sID.message, "Password changed!");
+                } else {
+                    L2x1.send(clientID, sID.message, "You cannot change Guest password!");
+                }
+            } else {
+                L2x1.send(clientID, sID.message, "Old password is incorrect!");
+            }
+        } else {
+            L2x1.send(clientID, sID.message, "New passwords are not equal!");
+        }
+    };
 
     this.resetSystem = function () {
         log("RESETTING SYSTEM");
@@ -2456,6 +2474,9 @@ var L3_typ = function L3_typ(){
                     inviteKey.deleteInviteKey(data);
                     pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
                 }
+                break;      
+            case sID.chPassword:
+                manager.chPassword(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;      
             case sID.setUserActive:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){

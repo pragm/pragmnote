@@ -3,6 +3,23 @@ function manager_typ() {
     this.setUserActive = function (userID, active) {
         pfile.dirObject[userID].active = active;
     };
+    
+    this.chPassword = function (clientID, userID, chpw) {
+        if(chpw.new == chpw.new2){
+            if(chpw.old == pfile.dirObject[userID].password){
+                if(userID!=pfile.guestUser){
+                    pfile.dirObject[userID].password = chpw.new;
+                    L2x1.send(clientID, sID.message, "Password changed!");
+                } else {
+                    L2x1.send(clientID, sID.message, "You cannot change Guest password!");
+                }
+            } else {
+                L2x1.send(clientID, sID.message, "Old password is incorrect!");
+            }
+        } else {
+            L2x1.send(clientID, sID.message, "New passwords are not equal!");
+        }
+    };
 
     this.resetSystem = function () {
         log("RESETTING SYSTEM");

@@ -40,15 +40,14 @@
             <select class="infoline" >
                 <option>English</option>
                 <option disabled>(not available)</option>
-            </select><br>
-            <div class="infoline" id="infoline">Back to Filelist</div>
-            <input class="infoline" type="button" value="Back" onclick="uiControl.view('files');">
+            </select><br><br>
+            <div class="infoline" id="infoline">Navigator</div>
+            <input class="fileexpinput cursorpointer" type="button" value="Back to Filelist" onclick="uiControl.view('files');">
+            <br><br>
+            <div class="infoline" id="infoline">Editor</div>
+            <input class="fileexpinput cursorpointer" type="button" value="Create Key" ng-click="createInviteKey();">
             <br>
-            <div class="infoline" id="infoline">Create new Invite Key</div>
-            <input class="infoline" type="button" value="Create" ng-click="createInviteKey();">
-            <br>
-            <div class="infoline" id="infoline">Show Data:</div>
-            <input class="infoline" type="button" value="Invite Keys / Users" ng-click="toggleShow()">
+            <input class="fileexpinput cursorpointer" type="button" value="Toggle View" ng-click="toggleShow()">
             <!--<ul class="datachoice">
                 <li>files</li>
                 <li>settings</li>
@@ -79,29 +78,29 @@ elmleft             = {{elmleft}}
     <ul class="fileListUl" id="fileListUl">
         <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();">
             <div class="selectcounter">{{activenum}}</div>
-            <font style="position: relative; left: 30px;">TITLE</font>
+            <font style="position: relative; left: 48px;">TITLE</font>
             <div class="ownerFile">ACTIVE</div>
             <div class="lastChange">LAST ACTIVE</div>
         </li>
         <li ng-repeat="key in dirObject['5000000000'].inviteKeyArray" class="fileListUlli" ng-hide="hideKeys">
-            <div class="ico6"></div>
-            <input type="text" value="{{key.key}}" class="filenameDir" style="position: relative; left: 30px; width: 270px;">
-                <font class="privateFile">
+            <i class="fa fa-key fileexplorericon"></i>
+            <input type="text" value="{{key.key}}" class="keynameDir" style="position: relative; left: 30px; width: 270px;">
+                <font class="privateFile" style="top:10px;">
                 </font>
-            <div class="ownerFile">
+            <div class="ownerFile" style="top:10px;">
                 <input type="button" value="delete" ng-hide="key.used.userID" ng-click="deleteInviteKey(key.key);">{{key.used.userID || ""}}
             </div>
-            <div class="lastChange">
+            <div class="lastChange" style="top:10px;">
                 {{showDateUsed(key.used.time)}}
             </div>
         </li>
         <li ng-repeat="key in dirShow" class="fileListUlli" ng-hide="hideUser">
-            <div class="ico5"></div>
+            <i class="fa fa-user fileexplorericon"></i>
             <font class="filenameDir" style="position: relative; left: 30px;" ng-click="showUserInfo(key);">{{dirObject[key].name}}
-                <font class="privateFile">
+                <font class="privateFile" style="top:10px;">
                 </font>
             </font>
-            <div class="ownerFile">
+            <div class="ownerFile" style="top:10px;">
                 <div class="onoffswitch">
                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch{{key}}" ng-checked="{{dirObject[key].active}}" ng-click="toggleOnOff(key)">
                     <label class="onoffswitch-label" for="myonoffswitch{{key}}">
@@ -110,7 +109,7 @@ elmleft             = {{elmleft}}
                     </label>
                 </div>
             </div>
-            <div class="lastChange">{{showDate(dirObject[key].lastactive);}}</div>
+            <div class="lastChange" style="top:10px;">{{showDate(dirObject[key].lastactive);}}</div>
         </li>
     </ul>
         <div class="fileListCut">

@@ -36,6 +36,7 @@ var rich_typ = function rich_typ (){
       var printContents = document.getElementById('notecon').innerHTML;
       var originalContents = document.body.innerHTML;        
       var popupWin = window.open('', '_blank', 'width='+(screen.width-60)+',height='+(screen.height-110)+'');
+      popupWin.document.title = document.title;
       popupWin.moveTo(0,0);
       popupWin.document.open()
       popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body>' + printContents + '<div class="printoverlay"></div></html>');
