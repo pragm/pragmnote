@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2227
-console.log("pragm-Websocket-Server => BUILD 0.2.2227 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2233
+console.log("pragm-Websocket-Server => BUILD 0.2.2233 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1498,13 +1498,17 @@ var pfile_typ = function pfile_typ(){
         if(userID == this.systemUsr){
             var first = id.substr(0,1);
             var copylist = [];
+            dlog("end1");
             if(first == '4' || first == '5'){
                 copylist = this.copyFolder(copylist, clientID, userID, id, this.deleteDir, 0);
+                dlog("end2");
             } 
             if(first == '3'){
                 copylist = this.copyFile(copylist, clientID, userID, id, this.deleteDir);
+                dlog("end3");
             }
             for(i in copylist){
+                dlog("loop1");
                 if(copylist[i].job == 'addfolder'){
                     var id = copylist[i].oldid;
                     //this.dirObject[id] = { };
@@ -1514,9 +1518,11 @@ var pfile_typ = function pfile_typ(){
                     //this.dirObject[id].content = [];
                     //this.dirObject[id].share = JSON.parse(JSON.stringify(copylist[i].share));
                     //this.dirObject[id].lastmod = copylist[i].lastmod;
+                    dlog("killfolder");
                     this.removeLink(this.dirObject[id].parent, id);
                     delete this.dirObject[id];
                     //this.deleteFileOnDisc(id);
+                    dlog("killfolderend");
                 }
                 if(copylist[i].job == 'addfile'){
                     var id = copylist[i].oldid;
@@ -1527,13 +1533,18 @@ var pfile_typ = function pfile_typ(){
                     //this.dirObject[id].share = JSON.parse(JSON.stringify(copylist[i].share));
                     //this.dirObject[id].lastmod = copylist[i].lastmod;
                     //this.copyFileOnDisc(copylist[i].oldid, id);
+                    dlog("killfile");
                     this.removeLink(this.dirObject[id].parent, id);
                     delete this.dirObject[id];
                     this.deleteFileOnDisc(id);
+                    dlog("killfileend");
                 }
             }
+            dlog("generateUserFilelist");
             this.generateUserFilelist(clientID, userID);
+            dlog("generateUserFilelistend");
             pfile.saveDirObject(false);
+            dlog("saved");
         } else {
             dlog("Deleteclient = "+clientID);
             dlog("DeleteuserID = "+userID);
@@ -1712,7 +1723,7 @@ var pfile_typ = function pfile_typ(){
         return copylist;
     };
     
-    this.copyFolder = function (copylist, clientID, userID, id, toid, deep){
+    this.copyFolder = function (copylist, clientID, userID, id, toid, deep){  // ==== RECURSIVE ==== !!!!!!!!!!!!!!!!!!!!!
         if(fRights.isUserAllowedTo(id, userID, 'read')){
             deep++;
             if(deep>990){
@@ -1849,6 +1860,7 @@ var pfile_typ = function pfile_typ(){
             id = this.dirObject[id].parent;
             idarr.push(id);
             i++;
+            dlog("isSubOrdered"+i);
         }
         log(JSON.stringify(idarr));
         if(idarr.indexOf(subID) != -1){
@@ -1922,6 +1934,7 @@ var pfile_typ = function pfile_typ(){
         var id = this.makeid(type);
         while(id in this.dirObject){
             id = this.makeid(type);
+            dlog("MakeID");
         }
         return id;
     };
@@ -1929,9 +1942,11 @@ var pfile_typ = function pfile_typ(){
     this.unescape = function(str){
         while(str[0]==" "){
             str = str.substr(1);
+            dlog("Unescape1");
         }
         while(str[str.length-1]==" "){
             str = str.substr(0,str.length-1);
+            dlog("Unescape2");
         }
         return str;
     };
