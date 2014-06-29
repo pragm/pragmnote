@@ -1,4 +1,4 @@
-var clientversion = "0.2.2259";
+var clientversion = "0.2.2260";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1625,6 +1625,22 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
               $scope.updateAlert();
                 if(!$scope.$$phase) {
                     $scope.$apply();
+                }
+            });
+            
+            // TAB catcher indent outdent -------------------------------
+            
+            globalEvent.ctrlbind('indent', function(){
+                if(uiControl.lastview == 'editor'){
+                    console.log("TAB");
+                    rich.fontEdit('indent');
+                }
+            });
+            
+            globalEvent.ctrlbind('outdent', function(){
+                if(uiControl.lastview == 'editor'){
+                    console.log("SHIFT+TAB");
+                    rich.fontEdit('outdent');
                 }
             });
 
@@ -3397,6 +3413,19 @@ var globalEvent_typ = function globalEvent_typ(){
                     if(global.ctrl){
                         if(globalEvent.ctrl.P){
                             globalEvent.ctrl.P();
+                            return false;
+                        }
+                    }
+                break;
+                case 9:
+                    if(global.shift){
+                        if(globalEvent.ctrl.outdent){
+                            globalEvent.ctrl.outdent();
+                            return false;
+                        }
+                    } else {
+                        if(globalEvent.ctrl.indent){
+                            globalEvent.ctrl.indent();
                             return false;
                         }
                     }

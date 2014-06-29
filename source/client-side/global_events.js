@@ -93,6 +93,19 @@ var globalEvent_typ = function globalEvent_typ(){
                         }
                     }
                 break;
+                case 9:
+                    if(global.shift){
+                        if(globalEvent.ctrl.outdent){
+                            globalEvent.ctrl.outdent();
+                            return false;
+                        }
+                    } else {
+                        if(globalEvent.ctrl.indent){
+                            globalEvent.ctrl.indent();
+                            return false;
+                        }
+                    }
+                break;
         }
     };
     

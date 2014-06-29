@@ -245,6 +245,22 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                     $scope.$apply();
                 }
             });
+            
+            // TAB catcher indent outdent -------------------------------
+            
+            globalEvent.ctrlbind('indent', function(){
+                if(uiControl.lastview == 'editor'){
+                    console.log("TAB");
+                    rich.fontEdit('indent');
+                }
+            });
+            
+            globalEvent.ctrlbind('outdent', function(){
+                if(uiControl.lastview == 'editor'){
+                    console.log("SHIFT+TAB");
+                    rich.fontEdit('outdent');
+                }
+            });
 
             // Something else -------------------------------------------
             uiControl.file = $scope.fileID;
