@@ -22,6 +22,35 @@ function manager_typ() {
             L2x1.send(clientID, sID.message, "New passwords are not equal!");
         }
     };
+    
+    this.chUserConfig = function(clientID, userID, obj){
+        var userID = obj.userID;
+        for(i in obj){
+            switch(i){
+                case "email":
+                    pfile.dirObject[userID].email = obj.email;
+                    break;
+                case "firstname":
+                    pfile.dirObject[userID].firstname = obj.firstname;
+                    break;
+                case "lastname":
+                    pfile.dirObject[userID].lastname = obj.lastname;
+                    break;
+                case "maxStorageScore":
+                    pfile.dirObject[userID].maxStorageScore = obj.maxStorageScore;
+                    break;
+                case "name":
+                    pfile.dirObject[userID].name = obj.name;
+                    break;
+                case "password":
+                    pfile.dirObject[userID].password = obj.password;
+                    break;
+                case "username":
+                    pfile.dirObject[userID].username = obj.username;
+                    break;
+            };
+        };
+    };
 
     this.resetSystem = function () {
         log("RESETTING SYSTEM");

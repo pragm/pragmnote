@@ -21,7 +21,8 @@
         <div class="userinfofield">
             <input class="alertbutton" id="closeStyleFix" type="button" value="CLOSE" ng-click="closeUserInfo();">
             <div class="inneruserinfo">  
-            <div ng-repeat="(key, value) in userinfodata">{{key}}: {{value}}</div>
+            <div ng-repeat="(key, value) in userinfodata">{{key}}: <input class="USC" id="USC-{{key}}" type="text" value="{{value}}"></div>
+                <input type="button" ng-click="changeUserData()" value="SAVE">
                 </div>
         </div>
     </div>

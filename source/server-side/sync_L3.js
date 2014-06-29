@@ -158,11 +158,16 @@ var L3_typ = function L3_typ(){
             case sID.fileInfo:
                 pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;      
+            case sID.chUserConfig:
+                if(L3.users[clientID]['userID'] == pfile.systemUsr){
+                    manager.chUserConfig(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                }
+                break;        
             case sID.createInviteKey:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){
                     inviteKey.createInviteKey();
                     pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
-                };
+                }
                 break;      
             case sID.deleteInviteKey:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){

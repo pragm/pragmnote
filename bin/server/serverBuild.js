@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2244
-console.log("pragm-Websocket-Server => BUILD 0.2.2244 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2259
+console.log("pragm-Websocket-Server => BUILD 0.2.2259 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -727,6 +727,7 @@ var sID_typ = function sID_typ() {
     this.setUserActive = "2001000012"; //Sends and Returns Account Information
     this.createInviteKey = "2001000013";
     this.chPassword = "2001000014";
+    this.chUserConfig = "2001000015";
 
 
     //GET_FROM_SERVER
@@ -1369,7 +1370,7 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.copyFileOnDisc = function (fromID, toID) {
-        fs.exists(global.config.dir + id + '.json', function (exists) {
+        fs.exists(global.config.dir + fromID + '.json', function (exists) {
             if (exists) {
                 fs.createReadStream(global.config.dir + fromID + '.json').pipe(fs.createWriteStream(global.config.dir + toID + '.json'));
             }
@@ -1670,6 +1671,7 @@ var pfile_typ = function pfile_typ() {
         }
         //log(JSON.stringify(copylist));
         var addlinklist = [];
+        var id = "";
         // BLOCK DirObject Save
         this.editDirObject = true;
         for (i in copylist) {
@@ -1677,7 +1679,7 @@ var pfile_typ = function pfile_typ() {
                 addlinklist.push(copylist[i]);
             }
             if (copylist[i].job == 'addfolder') {
-                var id = copylist[i].id;
+                id = copylist[i].id;
                 this.dirObject[id] = {};
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;
@@ -1687,7 +1689,7 @@ var pfile_typ = function pfile_typ() {
                 this.dirObject[id].lastmod = copylist[i].lastmod;
             }
             if (copylist[i].job == 'addfile') {
-                var id = copylist[i].id;
+                id = copylist[i].id;
                 this.dirObject[id] = {};
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;
@@ -2038,7 +2040,7 @@ var pfile_typ = function pfile_typ() {
 
     // Smart Saver =====================================
 
-    this.maxNotSavedTime = 20000; // 180000 = 3 Minutes
+    this.maxNotSavedTime = 180000; // 180000 = 3 Minutes
     this.maxIdleTime = 5000; // 5000 = 5 Seconds
     this.intervalTime = 5000;
 
@@ -2051,7 +2053,6 @@ var pfile_typ = function pfile_typ() {
     this.timeLastChange = 0;
 
     this.saveDirObject = function (force) {
-        console.log("PLEASE SAVE");
         if (force == true) {
             pfile.forceNextSave = true;
         }
@@ -2065,18 +2066,12 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.checkToSave = function () {
-        console.log("CHECK");
         if (!pfile.isSaved) {
             var toLongNotSaved = Date.now() - pfile.timeFirstNotSave > pfile.maxNotSavedTime;
             var toLongIdle = Date.now() - pfile.timeLastChange > pfile.maxIdleTime;
             var force = pfile.forceNextSave;
-
-            console.log("LAST Change");
-            console.log(pfile.timeLastChange);
             if (toLongNotSaved || toLongIdle || force) {
-                console.log("GO1");
                 if (pfile.editDirObject == false) {
-                    console.log("GO2");
                     pfile.writeStr(12, 'dir', 12);
                     pfile.isSaved = true;
                     pfile.forceNextSave = false;
@@ -2265,6 +2260,35 @@ function manager_typ() {
         } else {
             L2x1.send(clientID, sID.message, "New passwords are not equal!");
         }
+    };
+    
+    this.chUserConfig = function(clientID, userID, obj){
+        var userID = obj.userID;
+        for(i in obj){
+            switch(i){
+                case "email":
+                    pfile.dirObject[userID].email = obj.email;
+                    break;
+                case "firstname":
+                    pfile.dirObject[userID].firstname = obj.firstname;
+                    break;
+                case "lastname":
+                    pfile.dirObject[userID].lastname = obj.lastname;
+                    break;
+                case "maxStorageScore":
+                    pfile.dirObject[userID].maxStorageScore = obj.maxStorageScore;
+                    break;
+                case "name":
+                    pfile.dirObject[userID].name = obj.name;
+                    break;
+                case "password":
+                    pfile.dirObject[userID].password = obj.password;
+                    break;
+                case "username":
+                    pfile.dirObject[userID].username = obj.username;
+                    break;
+            };
+        };
     };
 
     this.resetSystem = function () {
@@ -2547,11 +2571,16 @@ var L3_typ = function L3_typ(){
             case sID.fileInfo:
                 pfile.setFileInfo(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;      
+            case sID.chUserConfig:
+                if(L3.users[clientID]['userID'] == pfile.systemUsr){
+                    manager.chUserConfig(clientID, L3.users[clientID]['userID'], JSON.parse(data));
+                }
+                break;        
             case sID.createInviteKey:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){
                     inviteKey.createInviteKey();
                     pfile.generateUserFilelistJSON(clientID, L3.users[clientID]['userID']);
-                };
+                }
                 break;      
             case sID.deleteInviteKey:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){

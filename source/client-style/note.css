@@ -1818,10 +1818,20 @@ to {background:#FFD600;}
 }
 
 .unselectinputColor {
-	position: relative;
-    top: -2px;
+	position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;    
 	z-index: 11;
 	outline: none;
+    outline: none;
+    border: 0px;
+    cursor: pointer;
+    background: transparent;
+}
+.unselectinputColor:hover {
+    background: #006cff;
+    color: #ffffff;
 }
 
 .toplinebackground {

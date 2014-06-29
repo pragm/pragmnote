@@ -177,8 +177,11 @@ pragmApp.controller('managerController', function($scope, $location) {
             console.log("Create Invite Key");
             L2.send(sID.createInviteKey, "");
         };
+        
+        $scope.userinfoid = "";
 
         $scope.showUserInfo = function(userID) {
+            $scope.userinfoid = userID;
             $scope.userinfodata = $scope.dirObject[userID];
             $scope.userinfo = true;
             if (!$scope.$$phase) {
@@ -191,6 +194,18 @@ pragmApp.controller('managerController', function($scope, $location) {
             if (!$scope.$$phase) {
                 $scope.$apply();
             }
+        };
+        
+        $scope.changeUserData = function(){
+            var p = document.getElementsByClassName('USC');
+            var obj = {};
+            for(var i = 0; i<p.length; i++){
+                var key = p[i].id.substr(4);
+                obj[key] = p[i].value;
+            }
+            obj.userID = $scope.userinfoid;
+            L2.send(sID.chUserConfig, JSON.stringify(obj));
+            console.log(obj);
         };
 
     }

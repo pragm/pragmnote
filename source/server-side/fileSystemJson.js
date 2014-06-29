@@ -149,7 +149,7 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.copyFileOnDisc = function (fromID, toID) {
-        fs.exists(global.config.dir + id + '.json', function (exists) {
+        fs.exists(global.config.dir + fromID + '.json', function (exists) {
             if (exists) {
                 fs.createReadStream(global.config.dir + fromID + '.json').pipe(fs.createWriteStream(global.config.dir + toID + '.json'));
             }
@@ -450,6 +450,7 @@ var pfile_typ = function pfile_typ() {
         }
         //log(JSON.stringify(copylist));
         var addlinklist = [];
+        var id = "";
         // BLOCK DirObject Save
         this.editDirObject = true;
         for (i in copylist) {
@@ -457,7 +458,7 @@ var pfile_typ = function pfile_typ() {
                 addlinklist.push(copylist[i]);
             }
             if (copylist[i].job == 'addfolder') {
-                var id = copylist[i].id;
+                id = copylist[i].id;
                 this.dirObject[id] = {};
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;
@@ -467,7 +468,7 @@ var pfile_typ = function pfile_typ() {
                 this.dirObject[id].lastmod = copylist[i].lastmod;
             }
             if (copylist[i].job == 'addfile') {
-                var id = copylist[i].id;
+                id = copylist[i].id;
                 this.dirObject[id] = {};
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;

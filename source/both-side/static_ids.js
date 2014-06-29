@@ -54,6 +54,7 @@ var sID_typ = function sID_typ() {
     this.setUserActive = "2001000012"; //Sends and Returns Account Information
     this.createInviteKey = "2001000013";
     this.chPassword = "2001000014";
+    this.chUserConfig = "2001000015";
 
 
     //GET_FROM_SERVER
