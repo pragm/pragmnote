@@ -133,7 +133,9 @@ var L2_typ = function L2_typ(){
 			error.report(0, "HASHES are nor equal! ID: "+this.id+" => Cache cleared!");
 		} else {
 			this.cache[clientID][this.id] = this.newcon;
-            L2x1.recieve(clientID, this.id, this.newcon); 
+            dlog("START recieve");
+            L2x1.recieve(clientID, this.id, this.newcon);
+            dlog("END   recieve"); 
             //newmsg(this.newcon);
 		}
 		dlog("CLIENT=>"+clientID+" ID=>"+this.id+" NEWCON=>"+this.newcon.substr(0,10)+"..."); // .substr(0,10)

@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2233
-console.log("pragm-Websocket-Server => BUILD 0.2.2233 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2244
+console.log("pragm-Websocket-Server => BUILD 0.2.2244 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1039,7 +1039,9 @@ var L2_typ = function L2_typ(){
 			error.report(0, "HASHES are nor equal! ID: "+this.id+" => Cache cleared!");
 		} else {
 			this.cache[clientID][this.id] = this.newcon;
-            L2x1.recieve(clientID, this.id, this.newcon); 
+            dlog("START recieve");
+            L2x1.recieve(clientID, this.id, this.newcon);
+            dlog("END   recieve"); 
             //newmsg(this.newcon);
 		}
 		dlog("CLIENT=>"+clientID+" ID=>"+this.id+" NEWCON=>"+this.newcon.substr(0,10)+"..."); // .substr(0,10)
@@ -1243,34 +1245,37 @@ var fileSystemControl = new fileSystemControl_typ();
 
 var fs = require('fs');
 
-var pfile_typ = function pfile_typ(){
-    
-    this.dirObject = { };
+var pfile_typ = function pfile_typ() {
+
+    this.dirObject = {};
     this.dir = "./data/";
     this.deleteDir = "4DELETED00";
     this.guestUser = "5GUESTUSER";
     this.systemUsr = "5000000000";
-    this.userDir   = "4000000000";
-    this.dirFile   = "DirIndexFile";
-    this.size = {"3": 1000, "4": 300};
-    
-    var searchArray = function(array, word){
-        if(array.indexOf(word) != -1) {	
-            return true;  
+    this.userDir = "4000000000";
+    this.dirFile = "DirIndexFile";
+    this.size = {
+        "3": 1000,
+        "4": 300
+    };
+
+    var searchArray = function (array, word) {
+        if (array.indexOf(word) != -1) {
+            return true;
         }
-        return false;						
+        return false;
     }
-    
-    this.checkFileSystem = function(fobj){
+
+    this.checkFileSystem = function (fobj) {
         console.log('    CHECKING FILESYSTEM ... ');
         var change = false;
-        for(i in fobj){
-            if(typeof fobj[i].share == 'array' || fobj[i].share instanceof Array){
+        for (i in fobj) {
+            if (typeof fobj[i].share == 'array' || fobj[i].share instanceof Array) {
                 //fobj[i].share = { };
                 //console.log('    SET SHARE TO OBJECT');
                 //change = true;
             }
-            if(i[0]=="5"){
+            if (i[0] == "5") {
                 //fobj[i].maxStorageScore = 200000;
                 //console.log('    SET maxStorageScore TO 1000');
                 //fobj[i].active = true;
@@ -1280,19 +1285,23 @@ var pfile_typ = function pfile_typ(){
         }
         console.log('    CHECKING DONE !');
         this.dirObject = fobj;
-        if(change){
-            pfile.writeStr('x', 'dir', 12);
+        if (change) {
+            pfile.saveDirObject();
+            //pfile.writeStr('x', 'dir', 12);
         }
+        pfile.init();
     };
-    
-    this.readStr = function (id, operation, clientID){
-        if(operation=='dir'){
+
+    this.readStr = function (id, operation, clientID) {
+        if (operation == 'dir') {
             id = this.dirFile;
         }
-        var file = global.config.dir+id+'.json';
-		fs.readFile(file, 'UTF8', function (err, fileData) {
-  			if (err) {console.log('tryed to read file: '+file);} else {
-  				if(operation=='dir'){
+        var file = global.config.dir + id + '.json';
+        fs.readFile(file, 'UTF8', function (err, fileData) {
+            if (err) {
+                console.log('tryed to read file: ' + file);
+            } else {
+                if (operation == 'dir') {
                     //pfile.dirObject = JSON.parse(fileData);
                     pfile.checkFileSystem(JSON.parse(fileData));
                     //console.log(pfile.dirObject);
@@ -1304,91 +1313,94 @@ var pfile_typ = function pfile_typ(){
                     //console.log(pfile.deleteFile(12, "5000000001", rid));
                     //pfile.writeStr(pfile.dirFile, 'dir', 12);
                     //console.log(pfile.dirObject);
-                    
+
                 }
-                if(operation=='file'){
-		            dlog("UPDATE OLD");
+                if (operation == 'file') {
+                    dlog("UPDATE OLD");
                     L3.files[id] = JSON.parse(fileData);
-		            //L3.oldFiles[id] = JSON.parse(fileData);
-		            L3.updateUser(clientID);
+                    //L3.oldFiles[id] = JSON.parse(fileData);
+                    L3.updateUser(clientID);
                 }
-  			}
-		});
-	};
-    
-    this.writeStr = function (id, operation, clientID){
-        if(operation=='dir'){
+            }
+        });
+    };
+
+    this.writeStr = function (id, operation, clientID) {
+        if (operation == 'dir') {
             var text = JSON.stringify(this.dirObject);
             id = this.dirFile;
         }
-        if(operation=='file'){
+        if (operation == 'file') {
             var text = JSON.stringify(L3.files[id]); // L3.files[id]
-            if(text){
+            if (text) {
                 this.dirObject[id].size = text.length;
             }
             //L3.killData(id);
         }
-        if(operation=='newfile'){
-            var tempNew = { };
+        if (operation == 'newfile') {
+            var tempNew = {};
             tempNew['1031111111'] = clientID;
             tempNew['1031111112'] = date.fileDate();
             var text = JSON.stringify(tempNew); // L3.files[id]
             // Todo: L3.killData(id); (clear RAM)
         }
-        if(id!=""){
-            fs.writeFile(global.config.dir+id+'.json', text, function (err) {
-                if (err) {error.report(3, 'tryed to write file: '+file);} else {
-                    log("Saved file "+pfile.dir+id+'.json');
-                    if(operation=='file'){
+        if (id != "") {
+            fs.writeFile(global.config.dir + id + '.json', text, function (err) {
+                if (err) {
+                    error.report(3, 'tryed to write file: ' + file);
+                } else {
+                    log("Saved file " + pfile.dir + id + '.json');
+                    if (operation == 'file') {
                         pfile.dirObject[id].lastmod = new Date().getTime();
-                        pfile.writeStr('x', 'dir', 12);
+                        pfile.saveDirObject();
+                        //pfile.writeStr('x', 'dir', 12);
                     }
-                    if(id != this.dirFile){
+                    if (id != this.dirFile) {
                         L3.killData(id);
                     }
-                    if(L3.exit == true && L3.lastkey == id){
-                    	cLog("exit websocket server");
+                    if (L3.exit == true && L3.lastkey == id) {
+                        cLog("exit websocket server");
                         wsServer.shutDown();
                         server.close();
                     }
                 }
             });
         }
-	};
-    
+    };
+
     this.copyFileOnDisc = function (fromID, toID) {
-        fs.exists(global.config.dir+id+'.json', function(exists) {
+        fs.exists(global.config.dir + id + '.json', function (exists) {
             if (exists) {
-                fs.createReadStream(global.config.dir+fromID+'.json').pipe(fs.createWriteStream(global.config.dir+toID+'.json'));
+                fs.createReadStream(global.config.dir + fromID + '.json').pipe(fs.createWriteStream(global.config.dir + toID + '.json'));
             }
         });
     };
-    
-    this.deleteFileOnDisc = function(id){
-        fs.exists(global.config.dir+id+'.json', function(exists) {
+
+    this.deleteFileOnDisc = function (id) {
+        fs.exists(global.config.dir + id + '.json', function (exists) {
             if (exists) {
-                fs.unlink(global.config.dir+id+'.json', function(){
-                    log("File "+id+".json deleted");
+                fs.unlink(global.config.dir + id + '.json', function () {
+                    log("File " + id + ".json deleted");
                 });
             }
         });
     }
-    
-    this.checkLogin = function (clientID, username, password){
-        dlog("LOGIN DATA => clientID '"+clientID+"' username '"+username+"' password '"+password+"'");
+
+    this.checkLogin = function (clientID, username, password) {
+        dlog("LOGIN DATA => clientID '" + clientID + "' username '" + username + "' password '" + password + "'");
         var userID = null;
-        var temp = { };
+        var temp = {};
         temp.userRight = global.mNoLogin;
         temp.username = "xxxxxxxxxx";
         temp.userID = "";
-        for(key in this.dirObject){
-            if(this.dirObject[key].username == username){
+        for (key in this.dirObject) {
+            if (this.dirObject[key].username == username) {
                 userID = key;
                 break;
             }
         }
-        if(userID != null && userID[0] == "5"){
-            if(this.dirObject[userID].active == true && this.dirObject[userID].password == password){
+        if (userID != null && userID[0] == "5") {
+            if (this.dirObject[userID].active == true && this.dirObject[userID].password == password) {
                 temp.userRight = this.dirObject[userID].userRight;
                 temp.username = username;
                 temp.userID = userID;
@@ -1396,20 +1408,20 @@ var pfile_typ = function pfile_typ(){
             }
         }
         secure.loginData(clientID, temp); // Todo: When mulible users cause problems copy temp object in another way
-	};
-    
-    this.addFile = function (clientID, userID, name, dir, type){
-        if(type=="f"){
-            if(this.dirObject[userID].storageScore+this.size["4"]<=this.dirObject[userID].maxStorageScore){
+    };
+
+    this.addFile = function (clientID, userID, name, dir, type) {
+        if (type == "f") {
+            if (this.dirObject[userID].storageScore + this.size["4"] <= this.dirObject[userID].maxStorageScore) {
                 var typ = "4";
                 var id = this.makeID(typ);
-                this.dirObject[id] = { };
+                this.dirObject[id] = {};
                 this.dirObject[id].owner = userID;
                 this.dirObject[id].parent = dir;
                 this.dirObject[id].name = name;
                 this.dirObject[id].content = [];
                 this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-                if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
+                if (this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)) {
                     this.dirObject[id].share[this.dirObject[dir].owner] = 2;
                 }
                 this.dirObject[id].lastmod = new Date().getTime();
@@ -1418,16 +1430,16 @@ var pfile_typ = function pfile_typ(){
                 L2x1.send(clientID, sID.message, "Adding folder abort! Your storage is full!");
             }
         }
-        if(type=="p"){
-            if(this.dirObject[userID].storageScore+this.size["3"]<=this.dirObject[userID].maxStorageScore){
+        if (type == "p") {
+            if (this.dirObject[userID].storageScore + this.size["3"] <= this.dirObject[userID].maxStorageScore) {
                 var typ = "3";
                 var id = this.makeID(typ);
-                this.dirObject[id] = { };
+                this.dirObject[id] = {};
                 this.dirObject[id].owner = userID;
                 this.dirObject[id].parent = dir;
                 this.dirObject[id].name = name;
                 this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-                if(this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)){
+                if (this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)) {
                     this.dirObject[id].share[this.dirObject[dir].owner] = 2;
                 }
                 this.dirObject[id].lastmod = new Date().getTime();
@@ -1437,11 +1449,11 @@ var pfile_typ = function pfile_typ(){
                 L2x1.send(clientID, sID.message, "Adding file abort! Your storage is full!");
             }
         }
-        if(type=="u"){
+        if (type == "u") {
             dir = this.userDir;
             var typ = "5";
             var id = this.makeID(typ);
-            this.dirObject[id] = { };
+            this.dirObject[id] = {};
             this.dirObject[id].owner = id;
             this.dirObject[id].parent = dir;
             this.dirObject[id].name = name;
@@ -1454,23 +1466,24 @@ var pfile_typ = function pfile_typ(){
         }
         //return id;
         this.generateUserFilelist(clientID, userID);
-        pfile.writeStr('x', 'dir', 12);
+        pfile.saveDirObject();
+        //pfile.writeStr('x', 'dir', 12);
     };
-    
-    this.addUser = function(clientID, y){
+
+    this.addUser = function (clientID, y) {
         var userNameUsed = false;
-        for(i in this.dirObject){
-            if(i[0] == "5"){
-                if(this.dirObject[i].username == y.username){
+        for (i in this.dirObject) {
+            if (i[0] == "5") {
+                if (this.dirObject[i].username == y.username) {
                     userNameUsed = true;
                 }
             }
         }
-        if(!userNameUsed){
+        if (!userNameUsed) {
             dir = this.userDir;
             var typ = "5";
             var id = this.makeID(typ);
-            this.dirObject[id] = { };
+            this.dirObject[id] = {};
             this.dirObject[id].owner = id;
             this.dirObject[id].parent = dir;
             this.dirObject[id].firstname = y.firstname;
@@ -1487,29 +1500,36 @@ var pfile_typ = function pfile_typ(){
             this.dirObject[id].maxStorageScore = 200000;
             this.addLink(dir, id);
             inviteKey.setKeyUsed(y.invitekey, id);
-            pfile.writeStr('x', 'dir', 12);
-            L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": true, "userID": id}));
+            pfile.saveDirObject();
+            //pfile.writeStr('x', 'dir', 12);
+            L2x1.send(clientID, sID.createAccount, JSON.stringify({
+                "value": true,
+                "userID": id
+            }));
         } else {
-            L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": false, "text": "Username already exists!"}));
+            L2x1.send(clientID, sID.createAccount, JSON.stringify({
+                "value": false,
+                "text": "Username already exists!"
+            }));
         }
     };
-    
-    this.deleteFile = function (clientID, userID, id){
-        if(userID == this.systemUsr){
-            var first = id.substr(0,1);
+
+    this.deleteFile = function (clientID, userID, id) {
+        if (userID == this.systemUsr) {
+            var first = id.substr(0, 1);
             var copylist = [];
             dlog("end1");
-            if(first == '4' || first == '5'){
+            if (first == '4' || first == '5') {
                 copylist = this.copyFolder(copylist, clientID, userID, id, this.deleteDir, 0);
                 dlog("end2");
-            } 
-            if(first == '3'){
+            }
+            if (first == '3') {
                 copylist = this.copyFile(copylist, clientID, userID, id, this.deleteDir);
                 dlog("end3");
             }
-            for(i in copylist){
+            for (i in copylist) {
                 dlog("loop1");
-                if(copylist[i].job == 'addfolder'){
+                if (copylist[i].job == 'addfolder') {
                     var id = copylist[i].oldid;
                     //this.dirObject[id] = { };
                     //this.dirObject[id].owner = copylist[i].owner;
@@ -1524,7 +1544,7 @@ var pfile_typ = function pfile_typ(){
                     //this.deleteFileOnDisc(id);
                     dlog("killfolderend");
                 }
-                if(copylist[i].job == 'addfile'){
+                if (copylist[i].job == 'addfile') {
                     var id = copylist[i].oldid;
                     //this.dirObject[id] = { };
                     //this.dirObject[id].owner = copylist[i].owner;
@@ -1546,62 +1566,69 @@ var pfile_typ = function pfile_typ(){
             pfile.saveDirObject(false);
             dlog("saved");
         } else {
-            dlog("Deleteclient = "+clientID);
-            dlog("DeleteuserID = "+userID);
-            dlog("Delete    ID = "+id);
-            dlog("Delete Owner = "+this.dirObject[id].owner);
-            if(fRights.isUserAllowedTo(id, userID, 'write')){
+            dlog("Deleteclient = " + clientID);
+            dlog("DeleteuserID = " + userID);
+            dlog("Delete    ID = " + id);
+            dlog("Delete Owner = " + this.dirObject[id].owner);
+            if (fRights.isUserAllowedTo(id, userID, 'write')) {
                 dlog("Delete TRUE");
                 this.removeLink(this.dirObject[id].parent, id);
                 this.dirObject[id].parent = this.deleteDir;
                 this.addLink(this.deleteDir, id);
-                this.generateUserFilelist(clientID, userID);
                 pfile.saveDirObject(false);
+                this.generateUserFilelist(clientID, userID);
             } else {
                 L2x1.send(clientID, sID.message, "Deleting file abort! Permission Denied!");
             }
         }
     };
-    
-    this.moveFileList = function (clientID, userID, moveObject){
+
+    this.moveFileList = function (clientID, userID, moveObject) {
         var k = 0;
-        for(i in moveObject.files){
-            if(!this.moveFilePosible(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid)){
+        for (i in moveObject.files) {
+            if (!this.moveFilePosible(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid)) {
                 k++;
             }
         }
-        if(k==0){
-            for(i in moveObject.files){
+        if (k == 0) {
+            // BLOCK DirObject Save
+            this.editDirObject = true;
+
+            for (i in moveObject.files) {
                 this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid);
             }
-            var infolist = this.joinArrays(this.getFileClients(moveObject.toid),this.getFileClients(moveObject.fromid));
+
+            // UNBLOCK DirObject Save
+            this.editDirObject = false;
+
+            var infolist = this.joinArrays(this.getFileClients(moveObject.toid), this.getFileClients(moveObject.fromid));
             infolist = this.joinArrays(infolist, [clientID]);
-            for(key in infolist){
-                if(infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]){
+            for (key in infolist) {
+                if (infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]) {
                     this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
-                } 
+                }
             }
             pfile.saveDirObject(false);
         } else {
-            if(k>1){
+            if (k > 1) {
                 //L2x1.send(clientID, sID.message, "Moving of "+k+" files abort!");
             }
         }
     };
-    
-    this.moveFile = function (clientID, userID, id, toid, fromid){
-        if(((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)){
-            
+
+    this.moveFile = function (clientID, userID, id, toid, fromid) {
+        if (((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)) {
+
             this.removeLink(fromid, id);
-            if(this.dirObject[id].parent == fromid){
+            if (this.dirObject[id].parent == fromid) {
                 this.dirObject[id].parent = toid;
             }
             this.addLink(toid, id);
         } else {
-            if(!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))){
+            if (!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) {
                 L2x1.send(clientID, sID.message, "Moving file abort! Permission Denied!");
             } else {
-                if(this.isSubOrdered(toid, id)){
+                if (this.isSubOrdered(toid, id)) {
                     L2x1.send(clientID, sID.message, "Moving file abort! Destination directory is subordinate to source directory!");
                 } else {
                     L2x1.send(clientID, sID.message, "Moving file abort! Unknown Error! Please contact your server administrator!");
@@ -1609,15 +1636,15 @@ var pfile_typ = function pfile_typ(){
             }
         }
     };
-    
-    this.moveFilePosible = function (clientID, userID, id, toid, fromid){
-        if(((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)){
+
+    this.moveFilePosible = function (clientID, userID, id, toid, fromid) {
+        if (((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)) {
             return true;
         } else {
-            if(!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))){
+            if (!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) {
                 L2x1.send(clientID, sID.message, "Moving file abort! Permission Denied!");
             } else {
-                if(this.isSubOrdered(toid, id)){
+                if (this.isSubOrdered(toid, id)) {
                     L2x1.send(clientID, sID.message, "Moving file abort! Destination directory is subordinate to source directory!");
                 } else {
                     L2x1.send(clientID, sID.message, "Moving file abort! Unknown Error! Please contact your server administrator!");
@@ -1626,30 +1653,32 @@ var pfile_typ = function pfile_typ(){
             return false;
         }
     };
-    
-    
-    
-    this.copyFileList = function (clientID, userID, copyObject){
+
+
+
+    this.copyFileList = function (clientID, userID, copyObject) {
         var copylist = [];
-        for(i in copyObject.files){
+        for (i in copyObject.files) {
             var cid = copyObject.files[i];
-            var first = cid.substr(0,1);
-            if(first == '4' || first == '5'){
+            var first = cid.substr(0, 1);
+            if (first == '4' || first == '5') {
                 copylist = this.copyFolder(copylist, clientID, userID, cid, copyObject.toid, 0);
-            } 
-            if(first == '3'){
+            }
+            if (first == '3') {
                 copylist = this.copyFile(copylist, clientID, userID, cid, copyObject.toid);
             }
         }
         //log(JSON.stringify(copylist));
         var addlinklist = [];
-        for(i in copylist){
-            if(copylist[i].job == 'addLink'){
+        // BLOCK DirObject Save
+        this.editDirObject = true;
+        for (i in copylist) {
+            if (copylist[i].job == 'addLink') {
                 addlinklist.push(copylist[i]);
             }
-            if(copylist[i].job == 'addfolder'){
+            if (copylist[i].job == 'addfolder') {
                 var id = copylist[i].id;
-                this.dirObject[id] = { };
+                this.dirObject[id] = {};
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;
                 this.dirObject[id].name = copylist[i].name;
@@ -1657,9 +1686,9 @@ var pfile_typ = function pfile_typ(){
                 this.dirObject[id].share = JSON.parse(JSON.stringify(copylist[i].share));
                 this.dirObject[id].lastmod = copylist[i].lastmod;
             }
-            if(copylist[i].job == 'addfile'){
+            if (copylist[i].job == 'addfile') {
                 var id = copylist[i].id;
-                this.dirObject[id] = { };
+                this.dirObject[id] = {};
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;
                 this.dirObject[id].name = copylist[i].name;
@@ -1669,42 +1698,46 @@ var pfile_typ = function pfile_typ(){
             }
         }
         //addlinklist.reverse();
-        for(i in addlinklist){
+        for (i in addlinklist) {
             this.addLink(addlinklist[i].toid, addlinklist[i].newID);
         }
+
+        // UNBLOCK DirObject Save
+        this.editDirObject = false;
+
         //this.generateUserFilelist(clientID, userID);
-        var infolist = this.joinArrays(this.getFileClients(copyObject.toid),this.getFileClients(copyObject.fromid));
+        var infolist = this.joinArrays(this.getFileClients(copyObject.toid), this.getFileClients(copyObject.fromid));
         infolist = this.joinArrays(infolist, [clientID]);
-        for(key in infolist){
-            if(infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]){
+        for (key in infolist) {
+            if (infolist[key] in L3.users && 'userID' in L3.users[infolist[key]]) {
                 this.generateUserFilelist(infolist[key], L3.users[infolist[key]].userID);
-            } 
+            }
         }
         pfile.saveDirObject(false);
     };
-    
-    this.copyFile = function (copylist, clientID, userID, id, toid){
-        if(fRights.isUserAllowedTo(id, userID, 'read')){
-            if(this.dirObject[userID].storageScore+this.size["3"]<=this.dirObject[userID].maxStorageScore){
+
+    this.copyFile = function (copylist, clientID, userID, id, toid) {
+        if (fRights.isUserAllowedTo(id, userID, 'read')) {
+            if (this.dirObject[userID].storageScore + this.size["3"] <= this.dirObject[userID].maxStorageScore) {
                 var typ = "3";
                 var newID = this.makeID(typ);
 
-                var x = { };
+                var x = {};
                 x.job = 'addfile';
                 //this.dirObject[newID] = { };
                 x.oldid = id;
                 x.id = newID;
                 x.owner = userID;
                 x.parent = toid;
-                if(this.dirObject[id].parent == toid){
-                    x.name = this.dirObject[id].name+' (copy)';
+                if (this.dirObject[id].parent == toid) {
+                    x.name = this.dirObject[id].name + ' (copy)';
                 } else {
                     x.name = this.dirObject[id].name;
                 }
                 x.share = JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
                 x.lastmod = new Date().getTime();
 
-                 var y = { };
+                var y = {};
                 y.job = 'addLink';
                 y.toid = toid;
                 y.newID = newID;
@@ -1722,24 +1755,24 @@ var pfile_typ = function pfile_typ(){
         }
         return copylist;
     };
-    
-    this.copyFolder = function (copylist, clientID, userID, id, toid, deep){  // ==== RECURSIVE ==== !!!!!!!!!!!!!!!!!!!!!
-        if(fRights.isUserAllowedTo(id, userID, 'read')){
+
+    this.copyFolder = function (copylist, clientID, userID, id, toid, deep) { // ==== RECURSIVE ==== !!!!!!!!!!!!!!!!!!!!!
+        if (fRights.isUserAllowedTo(id, userID, 'read')) {
             deep++;
-            if(deep>990){
-                log(" W A R N I N G  copy abort => looped to long! ID: "+id+" TOID: "+toid+" USERID: "+userID+" CLIENTID: "+clientID);
+            if (deep > 990) {
+                log(" W A R N I N G  copy abort => looped to long! ID: " + id + " TOID: " + toid + " USERID: " + userID + " CLIENTID: " + clientID);
             } else {
                 var typ = "4";
                 var newID = this.makeID(typ);
 
-                var x = { };
+                var x = {};
                 x.job = 'addfolder';
                 x.oldid = id;
                 x.id = newID;
                 x.owner = userID;
                 x.parent = toid;
-                if(this.dirObject[id].parent == toid){
-                    x.name = this.dirObject[id].name+' (copy)';
+                if (this.dirObject[id].parent == toid) {
+                    x.name = this.dirObject[id].name + ' (copy)';
                 } else {
                     x.name = this.dirObject[id].name;
                 }
@@ -1747,7 +1780,7 @@ var pfile_typ = function pfile_typ(){
                 x.share = JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
                 x.lastmod = new Date().getTime();
 
-                var y = { };
+                var y = {};
                 y.job = 'addLink';
                 y.toid = toid;
                 y.newID = newID;
@@ -1755,13 +1788,13 @@ var pfile_typ = function pfile_typ(){
                 copylist.push(x);
                 copylist.push(y);
                 //this.addLink(toid, newID);
-                for(i in this.dirObject[id].content){
-                    var cid= this.dirObject[id].content[i];
-                    var first = cid.substr(0,1);
-                    if(first == '4' || first == '5'){
+                for (i in this.dirObject[id].content) {
+                    var cid = this.dirObject[id].content[i];
+                    var first = cid.substr(0, 1);
+                    if (first == '4' || first == '5') {
                         copylist = this.copyFolder(copylist, clientID, userID, cid, newID, deep);
-                    } 
-                    if(first == '3'){
+                    }
+                    if (first == '3') {
                         copylist = this.copyFile(copylist, clientID, userID, cid, newID);
                     }
                 }
@@ -1769,31 +1802,31 @@ var pfile_typ = function pfile_typ(){
         } else {
             L2x1.send(clientID, sID.message, "Copying file abort! Permission Denied!");
         }
-        
+
         return copylist;
     };
-    
-    this.addLink = function (id, linkID){
-        if(this.dirObject[id]){
+
+    this.addLink = function (id, linkID) {
+        if (this.dirObject[id]) {
             var key = this.dirObject[id].content.indexOf(linkID);
-            if(key == -1){
+            if (key == -1) {
                 this.dirObject[id].content.push(linkID);
             }
         } else {
-            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:addLink]");
+            error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:addLink]");
         }
     };
-    
-    this.removeLink = function (id, linkID){
-        if(this.dirObject[id]){
+
+    this.removeLink = function (id, linkID) {
+        if (this.dirObject[id]) {
             var key = this.dirObject[id].content.indexOf(linkID);
             this.dirObject[id].content.splice(key, 1);
         } else {
-            error.report(6, "ID "+id+" does not exist in dirObject! [fileSystemJson:removeLink]");
+            error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:removeLink]");
         }
     };
-    
-    this.generateUserFilelist = function(clientID, userID){
+
+    this.generateUserFilelist = function (clientID, userID) {
         this.generateUserFilelistJSON(clientID, userID);
         /*output = [];
         counter = 0;
@@ -1817,8 +1850,8 @@ var pfile_typ = function pfile_typ(){
         //this.generateUserFilelistJSON(clientID, userID);*/
         //console.log(output.join(":"));
     }
-    
-    this.generateUserFilelistJSON = function(clientID, userID){
+
+    this.generateUserFilelistJSON = function (clientID, userID) {
         output = {};
         counter = 0;
         //output[counter] = userID+''+this.dirObject[userID].name+';'+this.dirObject[userID].content;
@@ -1826,19 +1859,19 @@ var pfile_typ = function pfile_typ(){
         counter++;
         var score = 0;
         var temp = "";
-        for(key in this.dirObject){
-            if(fRights.isUserAllowedTo(key, userID, 'read')){
+        for (key in this.dirObject) {
+            if (fRights.isUserAllowedTo(key, userID, 'read')) {
                 temp = JSON.stringify(this.dirObject[key]);
                 output[key] = JSON.parse(temp); // Makes a Copy of the Object
-                if(this.dirObject[key].parent != this.deleteDir){
-                    switch(key[0]){
-                        case "4":
-                            score += temp.length;
-                            break;
-                        case "3":
-                            var size = this.dirObject[key].size || this.size["3"];
-                            score += temp.length+size;
-                            break;
+                if (this.dirObject[key].parent != this.deleteDir) {
+                    switch (key[0]) {
+                    case "4":
+                        score += temp.length;
+                        break;
+                    case "3":
+                        var size = this.dirObject[key].size || this.size["3"];
+                        score += temp.length + size;
+                        break;
                     }
                 }
             }
@@ -1849,45 +1882,45 @@ var pfile_typ = function pfile_typ(){
         L2x1.send(clientID, sID.fileList, JSON.stringify(output));
         //console.log(JSON.stringify(output));
     };
-    
-    this.isSubOrdered = function(superID, subID){
-        log("isSubordered('"+superID+"', '"+subID+"');");
+
+    this.isSubOrdered = function (superID, subID) {
+        log("isSubordered('" + superID + "', '" + subID + "');");
         var id = superID;
         var i = 0;
         var idarr = [];
         idarr.push(id);
-        while(id != subID && id!='5000000000' && i<10){
+        while (id != subID && id != '5000000000' && i < 10) {
             id = this.dirObject[id].parent;
             idarr.push(id);
             i++;
-            dlog("isSubOrdered"+i);
+            dlog("isSubOrdered" + i);
         }
         log(JSON.stringify(idarr));
-        if(idarr.indexOf(subID) != -1){
+        if (idarr.indexOf(subID) != -1) {
             return true;
         }
-        if(i>990){
+        if (i > 990) {
             log(" W A R N I N G  fileSystemJson.js looped to long!");
             return true;
         }
         return false;
     };
-    
-    this.setFileInfo = function(clientID, userID, fileInfo){
-        if('name' in fileInfo){
-            if(fRights.isUserAllowedTo(fileInfo.id, userID, 'write')){
+
+    this.setFileInfo = function (clientID, userID, fileInfo) {
+        if ('name' in fileInfo) {
+            if (fRights.isUserAllowedTo(fileInfo.id, userID, 'write')) {
                 this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
-                log("NAME  => "+JSON.stringify(fileInfo));
+                log("NAME  => " + JSON.stringify(fileInfo));
                 var list = pfile.getFileClients(fileInfo.id);
-                log("Client "+clientID);
-                log("LIST After "+JSON.stringify(list));
-                for(key in list){
-                    if(list[key] != clientID){
-                        if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
+                log("Client " + clientID);
+                log("LIST After " + JSON.stringify(list));
+                for (key in list) {
+                    if (list[key] != clientID) {
+                        if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
                             this.generateUserFilelist(list[key], L3.users[list[key]].userID);
-                            log("LIST FOR HIM => "+list[key]);
+                            log("LIST FOR HIM => " + list[key]);
                         } else {
-                            log("Cannot find Client "+list[key]);
+                            log("Cannot find Client " + list[key]);
                         }
                     }
                 }
@@ -1897,22 +1930,22 @@ var pfile_typ = function pfile_typ(){
                 L2x1.send(clientID, sID.message, "Rename file abort! Permission Denied!");
             }
         }
-        if('share' in fileInfo){
-            if(fRights.isUserAllowedTo(fileInfo.id, userID, 'perm')){
+        if ('share' in fileInfo) {
+            if (fRights.isUserAllowedTo(fileInfo.id, userID, 'perm')) {
                 var list1 = pfile.getFileClients(fileInfo.id);
                 this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
                 this.dirObject[fileInfo.id].share = fileInfo.share;
                 //log("SHARE => "+JSON.stringify(fileInfo));
                 var list2 = pfile.getFileClients(fileInfo.id);
-                
+
                 //log("Client "+clientID);
                 var list = this.joinArrays(list1, list2);
                 //log("LIST After "+JSON.stringify(list));
-                for(key in list){
-                    if(list[key] != clientID){
-                        if(list[key] in L3.users && 'userID' in L3.users[list[key]]){
+                for (key in list) {
+                    if (list[key] != clientID) {
+                        if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
                             this.generateUserFilelist(list[key], L3.users[list[key]].userID);
-                        } 
+                        }
                     }
                 }
                 L3.updateFileRightsOfFile(fileInfo.id);
@@ -1924,109 +1957,137 @@ var pfile_typ = function pfile_typ(){
         }
         //this.generateUserFilelist(clientID, userID);
     };
-    
-    this.makeid = function (type){
-	   var id = Math.random().toString(36).substring(2,11);
-	   return type+""+id;
-	   };
-    
-    this.makeID = function (type){
+
+    this.makeid = function (type) {
+        var id = Math.random().toString(36).substring(2, 11);
+        return type + "" + id;
+    };
+
+    this.makeID = function (type) {
         var id = this.makeid(type);
-        while(id in this.dirObject){
+        while (id in this.dirObject) {
             id = this.makeid(type);
             dlog("MakeID");
         }
         return id;
     };
-        
-    this.unescape = function(str){
-        while(str[0]==" "){
+
+    this.unescape = function (str) {
+        while (str[0] == " ") {
             str = str.substr(1);
             dlog("Unescape1");
         }
-        while(str[str.length-1]==" "){
-            str = str.substr(0,str.length-1);
+        while (str[str.length - 1] == " ") {
+            str = str.substr(0, str.length - 1);
             dlog("Unescape2");
         }
         return str;
     };
-    
-    this.joinArrays = function(l1,l2){
-        for(i in l1){
-            if(l2.indexOf(l1[i]) == -1){
+
+    this.joinArrays = function (l1, l2) {
+        for (i in l1) {
+            if (l2.indexOf(l1[i]) == -1) {
                 l2.push(l1[i]);
             }
         }
         return l2;
     }
-    
-    this.getFileClients = function(id){
+
+    this.getFileClients = function (id) {
         var userList = [];
         var clientList = [];
         userList.push(this.dirObject[id].owner);
-        for(key in this.dirObject[id].share){
+        for (key in this.dirObject[id].share) {
             userList.push(key);
         }
-        for(key in userList){
-            for(data in L3.users){
-                if(L3.users[data].userID == userList[key]){
+        for (key in userList) {
+            for (data in L3.users) {
+                if (L3.users[data].userID == userList[key]) {
                     clientList.push(data);
                 }
             }
         }
         return clientList;
     };
-    
-    this.checkLinkExists = function(o, n, id){
+
+    this.checkLinkExists = function (o, n, id) {
         var l = [];
-        for(i in n){
-            if(!(i in o)){
+        for (i in n) {
+            if (!(i in o)) {
                 l.push(i);
             }
         }
         var found = false;
-        for(i in l){
+        for (i in l) {
             found = false;
-            for(k in this.dirObject){
-                if(this.dirObject[k].owner == l[i] && 'content' in this.dirObject[k] && this.dirObject[k].content.indexOf(id) != -1){
+            for (k in this.dirObject) {
+                if (this.dirObject[k].owner == l[i] && 'content' in this.dirObject[k] && this.dirObject[k].content.indexOf(id) != -1) {
                     found = true;
                     break;
                 }
             }
-            if(!found){
+            if (!found) {
                 this.addLink(l[i], id);
             }
         }
     };
-    
-    this.getUserStorageScore = function(clientID, userID){
-        
+
+    this.getUserStorageScore = function (clientID, userID) {
+
     };
-    
-    // Smart Saver 
-    
-    this.minSaveTime = 180000; // 3 Minutes
-    this.waitSaveTime = 1000; // 1 Second
-    
-    this.minSaveTimer;
-    this.waitSaveTimer;
+
+    // Smart Saver =====================================
+
+    this.maxNotSavedTime = 20000; // 180000 = 3 Minutes
+    this.maxIdleTime = 5000; // 5000 = 5 Seconds
+    this.intervalTime = 5000;
+
     this.isSaved = true;
     this.editDirObject = false;
-    
-    this.forceSave = function(){
-        clearTimeout(this.waitSaveTimer);
-        if(this.editDirObject == false){
-            pfile.writeStr(12, 'dir', 12);
-            this.isSaved = true;
-        } else {
-            this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
+    this.forceNextSave = false;
+
+    this.timeFirstNotSave = 0;
+    this.timeLastSave = 0;
+    this.timeLastChange = 0;
+
+    this.saveDirObject = function (force) {
+        console.log("PLEASE SAVE");
+        if (force == true) {
+            pfile.forceNextSave = true;
+        }
+        if (pfile.isSaved == true) {
+            pfile.timeFirstNotSave = Date.now();
+        }
+        pfile.timeLastChange = Date.now();
+        pfile.isSaved = false;
+        //clearTimeout(this.waitSaveTimer);
+        //this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
+    };
+
+    this.checkToSave = function () {
+        console.log("CHECK");
+        if (!pfile.isSaved) {
+            var toLongNotSaved = Date.now() - pfile.timeFirstNotSave > pfile.maxNotSavedTime;
+            var toLongIdle = Date.now() - pfile.timeLastChange > pfile.maxIdleTime;
+            var force = pfile.forceNextSave;
+
+            console.log("LAST Change");
+            console.log(pfile.timeLastChange);
+            if (toLongNotSaved || toLongIdle || force) {
+                console.log("GO1");
+                if (pfile.editDirObject == false) {
+                    console.log("GO2");
+                    pfile.writeStr(12, 'dir', 12);
+                    pfile.isSaved = true;
+                    pfile.forceNextSave = false;
+                    pfile.timeLastSave = Date.now();
+                }
+            }
         }
     };
-    
-    this.saveDirObject = function(force){
-        this.isSaved = false;
-        clearTimeout(this.waitSaveTimer);
-        this.waitSaveTimer = setTimeout(pfile.forceSave, this.waitSaveTime);
+
+    this.init = function () {
+        setInterval(pfile.checkToSave, pfile.intervalTime);
     };
 };
 
@@ -2132,6 +2193,7 @@ function inviteKey_typ(){
         for(i in pfile.dirObject['5000000000'].inviteKeyArray){
             if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
                 pfile.dirObject['5000000000'].inviteKeyArray[i].used = {"userID": userID, "time": Date.now()};
+                pfile.saveDirObject();
                 break;
             }
         }
@@ -2148,6 +2210,7 @@ function inviteKey_typ(){
         }
         if(kill){
             pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+            pfile.saveDirObject();
         }
     };
     
@@ -2164,6 +2227,7 @@ function inviteKey_typ(){
             }
         }
         pfile.dirObject['5000000000'].inviteKeyArray.push({"key":newKey,"used":false});
+        pfile.saveDirObject();
     };
     
     this.generateKey = function(){
@@ -2182,6 +2246,7 @@ function manager_typ() {
 
     this.setUserActive = function (userID, active) {
         pfile.dirObject[userID].active = active;
+        pfile.saveDirObject();
     };
     
     this.chPassword = function (clientID, userID, chpw) {
@@ -2189,6 +2254,7 @@ function manager_typ() {
             if(chpw.old == pfile.dirObject[userID].password){
                 if(userID!=pfile.guestUser){
                     pfile.dirObject[userID].password = chpw.new;
+                    pfile.saveDirObject();
                     L2x1.send(clientID, sID.message, "Password changed!");
                 } else {
                     L2x1.send(clientID, sID.message, "You cannot change Guest password!");
@@ -2212,7 +2278,8 @@ function manager_typ() {
             }
         }
         pfile.checkFileSystem(JSON.parse(JSON.stringify(defaultData.dirObject)));
-        pfile.writeStr('x', 'dir', 12);
+        pfile.writeStr('x', 'dir', 12);   // THE ONLY PART OF THE SCRIPT WHICH IS ALLOWED TO DO THIS WITHOUT pfile.saveDirObject();
+        //pfile.saveDirObject(true);
     };
 }
 
@@ -2464,7 +2531,9 @@ var L3_typ = function L3_typ(){
                 pfile.addFile(clientID, L3.users[clientID]['userID'], temp.name, temp.dir, temp.type);
                 break;     
             case sID.deleteFile:
+                dlog("START Delete");
                 pfile.deleteFile(clientID, L3.users[clientID]['userID'], data);
+                dlog("END   Delete");
                 break;   
             case sID.moveFile:
                 pfile.moveFileList(clientID, L3.users[clientID]['userID'], JSON.parse(data));

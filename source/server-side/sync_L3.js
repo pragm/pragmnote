@@ -142,7 +142,9 @@ var L3_typ = function L3_typ(){
                 pfile.addFile(clientID, L3.users[clientID]['userID'], temp.name, temp.dir, temp.type);
                 break;     
             case sID.deleteFile:
+                dlog("START Delete");
                 pfile.deleteFile(clientID, L3.users[clientID]['userID'], data);
+                dlog("END   Delete");
                 break;   
             case sID.moveFile:
                 pfile.moveFileList(clientID, L3.users[clientID]['userID'], JSON.parse(data));

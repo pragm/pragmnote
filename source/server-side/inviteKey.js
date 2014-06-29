@@ -18,6 +18,7 @@ function inviteKey_typ(){
         for(i in pfile.dirObject['5000000000'].inviteKeyArray){
             if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
                 pfile.dirObject['5000000000'].inviteKeyArray[i].used = {"userID": userID, "time": Date.now()};
+                pfile.saveDirObject();
                 break;
             }
         }
@@ -34,6 +35,7 @@ function inviteKey_typ(){
         }
         if(kill){
             pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+            pfile.saveDirObject();
         }
     };
     
@@ -50,6 +52,7 @@ function inviteKey_typ(){
             }
         }
         pfile.dirObject['5000000000'].inviteKeyArray.push({"key":newKey,"used":false});
+        pfile.saveDirObject();
     };
     
     this.generateKey = function(){

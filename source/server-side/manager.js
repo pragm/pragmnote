@@ -2,6 +2,7 @@ function manager_typ() {
 
     this.setUserActive = function (userID, active) {
         pfile.dirObject[userID].active = active;
+        pfile.saveDirObject();
     };
     
     this.chPassword = function (clientID, userID, chpw) {
@@ -9,6 +10,7 @@ function manager_typ() {
             if(chpw.old == pfile.dirObject[userID].password){
                 if(userID!=pfile.guestUser){
                     pfile.dirObject[userID].password = chpw.new;
+                    pfile.saveDirObject();
                     L2x1.send(clientID, sID.message, "Password changed!");
                 } else {
                     L2x1.send(clientID, sID.message, "You cannot change Guest password!");
@@ -32,7 +34,8 @@ function manager_typ() {
             }
         }
         pfile.checkFileSystem(JSON.parse(JSON.stringify(defaultData.dirObject)));
-        pfile.writeStr('x', 'dir', 12);
+        pfile.writeStr('x', 'dir', 12);   // THE ONLY PART OF THE SCRIPT WHICH IS ALLOWED TO DO THIS WITHOUT pfile.saveDirObject();
+        //pfile.saveDirObject(true);
     };
 }
 
