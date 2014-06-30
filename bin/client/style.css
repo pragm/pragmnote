@@ -60,6 +60,7 @@
     width: 120px; 
     height: 120px; 
     background: url("img/doc/solo.png");
+    background-size: 120px 120px;
 }
 
 .centerPicStart{
@@ -71,6 +72,7 @@
     width: 120px; 
     height: 120px; 
     background: url("img/doc/solo.png");
+    background-size: 120px 120px;
     -webkit-animation:spin 15s linear infinite;
     -moz-animation:spin 15s linear infinite;
     animation:spin 15s linear infinite;
@@ -550,6 +552,7 @@
 .colorshemer li{
 	position: relative;
 	float: left;
+    bottom: 0px;
 	width: 12px;
 	height: 12px;
 	margin-top: 4px;
@@ -2287,8 +2290,8 @@ weis{
 
 .serverdata {
     position: absolute;
-    top: 6px;
-    left: 5px;
+    top: 8px;
+    left: 14px;
 }
 
 .versiondata {

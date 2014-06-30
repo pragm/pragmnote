@@ -262,40 +262,44 @@ var textbox_typ = function textbox_typ(){
         id = id.split("editing")[1];
         var force = force || false;
         if(data.ecoMode == false || force == true){
-            textbox.content		=	document.getElementById('editing'+id).innerHTML;
-            textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0
-            textbox.posY 		=	document.getElementById('editarea'+id).style.top;  // 4^1
-            textbox.width 		=	document.getElementById('editarea'+id).style.width;// 4^2
+            if(document.getElementById('editing'+id) && document.getElementById('editarea'+id)){
+                textbox.content		=	document.getElementById('editing'+id).innerHTML;
+                textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0
+                textbox.posY 		=	document.getElementById('editarea'+id).style.top;  // 4^1
+                textbox.width 		=	document.getElementById('editarea'+id).style.width;// 4^2
 
-            textbox.posX = textbox.posX.replace(/px/g, "");
-            textbox.posY = textbox.posY.replace(/px/g, "");
-            textbox.width = textbox.width.replace(/px/g, ""); //parseInt()
+                textbox.posX = textbox.posX.replace(/px/g, "");
+                textbox.posY = textbox.posY.replace(/px/g, "");
+                textbox.width = textbox.width.replace(/px/g, ""); //parseInt()
 
-            textbox.posXL = textbox.posX.length;
-            while(textbox.posXL<3){
-                textbox.posX = '0'+textbox.posX;
                 textbox.posXL = textbox.posX.length;
-            }
+                while(textbox.posXL<3){
+                    textbox.posX = '0'+textbox.posX;
+                    textbox.posXL = textbox.posX.length;
+                }
 
-            textbox.posYL = textbox.posY.length;
-            while(textbox.posYL<3){
-                textbox.posY = '0'+textbox.posY;
                 textbox.posYL = textbox.posY.length;
-            }
+                while(textbox.posYL<3){
+                    textbox.posY = '0'+textbox.posY;
+                    textbox.posYL = textbox.posY.length;
+                }
 
-            textbox.widthL = textbox.width.length;
-            while(textbox.widthL<3){
-                textbox.width = '0'+textbox.width;
                 textbox.widthL = textbox.width.length;
+                while(textbox.widthL<3){
+                    textbox.width = '0'+textbox.width;
+                    textbox.widthL = textbox.width.length;
+                }
+
+                textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
+
+                var tempContent = textbox.content;        
+
+                textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
+
+                data.edited_UI(id, textbox.value);
+            } else {
+                console.error("Some DOM Object does not exists!");
             }
-
-            textbox.init = convert.int_to_string(parseInt((textbox.posXL-3)+(textbox.posYL-3)*4+(textbox.widthL-3)*16));
-
-            var tempContent = textbox.content;        
-
-            textbox.value = textbox.init+''+textbox.posX+''+textbox.posY+''+textbox.width+''+tempContent;
-
-            data.edited_UI(id, textbox.value);
         } else {
             if(textbox.catchNoSave.indexOf(id) < 0){
                 textbox.catchNoSave.push(id);

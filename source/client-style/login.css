@@ -48,6 +48,7 @@
     width: 120px; 
     height: 120px; 
     background: url("img/doc/solo.png");
+    background-size: 120px 120px;
 }
 
 .centerPicStart{
@@ -59,6 +60,7 @@
     width: 120px; 
     height: 120px; 
     background: url("img/doc/solo.png");
+    background-size: 120px 120px;
     -webkit-animation:spin 15s linear infinite;
     -moz-animation:spin 15s linear infinite;
     animation:spin 15s linear infinite;

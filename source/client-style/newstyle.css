@@ -376,6 +376,7 @@
 .colorshemer li{
 	position: relative;
 	float: left;
+    bottom: 0px;
 	width: 12px;
 	height: 12px;
 	margin-top: 4px;
