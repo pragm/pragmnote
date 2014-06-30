@@ -316,20 +316,20 @@ var L3_typ = function L3_typ(){
         if('lastFileRights' in this.users[clientID]){
             if(this.users[clientID].lastFileRights != temp){
                 this.users[clientID].lastFileRights = temp;
-                console.log("     > Change > "+clientID)
+                //console.log("     > Change > "+clientID)
                 L2x1.send(clientID, sID.fileRigths, temp);
             }    
         } else {
             this.users[clientID].lastFileRights = temp;
-            console.log("     > Change > "+clientID)
+            //console.log("     > Change > "+clientID)
             L2x1.send(clientID, sID.fileRigths, temp);
         }
     };
     
     this.updateFileRightsOfFile = function(fileID){
-        console.log(" > updateFileRightsOfFile > "+fileID);
+        //console.log(" > updateFileRightsOfFile > "+fileID);
         for(i in this.usersAtFile[fileID]){
-            console.log("   > Client "+this.usersAtFile[fileID][i][0]);
+            //console.log("   > Client "+this.usersAtFile[fileID][i][0]);
             this.updateFileRights(this.usersAtFile[fileID][i][0]); //Possible Security Bug
         }
     };

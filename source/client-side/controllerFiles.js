@@ -475,7 +475,8 @@ pragmApp.controller('filesController', function($scope, $location) {
                 tab.position("slideOut");
                 console.log("deactivate bboo");
             } else {
-		      $scope.shareshow = 'block';
+                $scope.getProposals();
+		        $scope.shareshow = 'block';
                 tab.position("fastIn");
                 $scope.loadfileshare();
             }
@@ -521,6 +522,7 @@ pragmApp.controller('filesController', function($scope, $location) {
                     uiControl.alert("Guest can not be admin!");
                 }
                 $scope.filedata.share[$scope.addname] = $scope.addvalue;
+                $scope.getProposals();
                 $scope.loadfileshare();
                 L3.setFileInfo('share', $scope.fileinfoid, $scope.filedata.share);
             } else {
@@ -570,6 +572,31 @@ pragmApp.controller('filesController', function($scope, $location) {
             }
         });
         
+        $scope.proposals = ["5GUESTUSER"];
+        
+        $scope.getProposals = function(){
+            var obj = {"5GUESTUSER":true};
+            for(i in $scope.dirObject){
+                for(j in $scope.dirObject[i].share){
+                    obj[j] = true;
+                }
+                obj[$scope.dirObject[i].owner] = true;
+            }
+            for(i in $scope.filedata.share){
+                obj[i] = true;
+            }
+            var arr = [];
+            for(i in obj){
+                if(i!="undefined"){
+                    arr.push(i);
+                }
+            }
+            $scope.proposals = arr;
+            /*if(!$scope.$$phase) {
+                $scope.$apply();
+            }*/
+        };
+        
         data.databind('dirObject', function(x){
           //console.log("Data: "+JSON.stringify(x));
 		  $scope.dirObject = x;
@@ -577,10 +604,13 @@ pragmApp.controller('filesController', function($scope, $location) {
           $scope.update();
           $scope.filedata = data.dirObject[$scope.fileinfoid];
           $scope.updateShare();
+            //$scope.getProposals();
             if(!$scope.$$phase) {
                 $scope.$apply();
             }
         });
+        
+        
         tab.position("slideOut");
     }
 });

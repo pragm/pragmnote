@@ -750,7 +750,7 @@
     right: 200px;
     left: 190px;
     top: 60px;
-    bottom: 0px;
+    /*bottom: 0px;*/
     list-style-type: none;
     border-top: 1px solid #a7a7a7;
     margin: 0;
@@ -841,7 +841,7 @@
     background: #f8f8f8;
     border-radius: 4px;
     overflow: auto;
-    
+    overflow-x: hidden;
     
     /*
     position: absolute;
@@ -1833,10 +1833,9 @@ weis{
     
 
 .infoBox {
-    position:fixed;
-    top: 50px;
+    position:absolute;
+    top: 0px;
     left: 0px;
-    bottom: 0px;
     width: 190px;
     padding-top: 90px;
 }
@@ -1871,8 +1870,8 @@ weis{
 }
 
 .newsBox {
-    position:fixed;
-    top: 60px;
+    position:absolute;
+    top: 10px;
     right: 10px;
     width: 180px;;
     bottom: 10px;
@@ -2168,7 +2167,7 @@ weis{
     font-family: Arial;
     top: 17px;
     background: transparent;
-    right: 110px;
+    width: 475px;
 }
 
 .renameFile:hover {
@@ -2748,4 +2747,19 @@ to {background:#FFD600;}
     padding-left: 10px; 
     padding-right: 6px; 
 }
+@media (max-width: 900px) {
+    .fileListUl{
+        right: 10px;
+    }
+    .fileOperationsBar{
+        right: 10px;
+    }
+    .newsBox{
+        display: none;
+    }
+    .ownerFile{
+        right: 165px;
+    }
+}
+
 

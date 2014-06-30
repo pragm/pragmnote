@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2266
-console.log("pragm-Websocket-Server => BUILD 0.2.2266 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2279
+console.log("pragm-Websocket-Server => BUILD 0.2.2279 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -2729,20 +2729,20 @@ var L3_typ = function L3_typ(){
         if('lastFileRights' in this.users[clientID]){
             if(this.users[clientID].lastFileRights != temp){
                 this.users[clientID].lastFileRights = temp;
-                console.log("     > Change > "+clientID)
+                //console.log("     > Change > "+clientID)
                 L2x1.send(clientID, sID.fileRigths, temp);
             }    
         } else {
             this.users[clientID].lastFileRights = temp;
-            console.log("     > Change > "+clientID)
+            //console.log("     > Change > "+clientID)
             L2x1.send(clientID, sID.fileRigths, temp);
         }
     };
     
     this.updateFileRightsOfFile = function(fileID){
-        console.log(" > updateFileRightsOfFile > "+fileID);
+        //console.log(" > updateFileRightsOfFile > "+fileID);
         for(i in this.usersAtFile[fileID]){
-            console.log("   > Client "+this.usersAtFile[fileID][i][0]);
+            //console.log("   > Client "+this.usersAtFile[fileID][i][0]);
             this.updateFileRights(this.usersAtFile[fileID][i][0]); //Possible Security Bug
         }
     };
