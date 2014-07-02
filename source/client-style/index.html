@@ -48,7 +48,7 @@
 </head>
 <!--ng-view-->
 
-<body class="body" name="body" id="body" onload="globalEvent.onload();" onmouseup="globalEvent.drop();" onclick="globalEvent.onclick();" onmousemove="globalEvent.mousemove();" ng-controller="loginController">
+<body class="body" name="body" id="body" onload="globalEvent.onload();" onmouseup="globalEvent.drop();" onclick="globalEvent.onclick();" onmousemove="globalEvent.mousemove();" ng-controller="globalController">
 
     <!--<div class="loading" id="pleasewait">
     <div class="loadicon"></div>
@@ -75,13 +75,17 @@
         <br>
         <small><small>Will be supported in near future when I find some time!</small></small>
         <br>
+        <br>Opera:
+        <br>
+        <small><small>Should work, but not enough tested! However testing Opera is less important than testing IE.</small></small>
+        <br>
         <br>Mozilla Firefox:
         <br>
         <small><small>NOT Supportet! Not planed to support in near future!</small></small>
         <br>
-        <br>Opera+Others:
+        <br>Note:
         <br>
-        <small><small>Don't even think about supporting them!</small></small>
+        <small><small>If you want to use a not supported browser for pragm you need either a very very good argument or some time and skill to support the GitHub project!</small></small>
         <br>
         <br>
 
@@ -95,6 +99,7 @@
         </div>
         <nobr>
             <ul class="Tabs" id="tabsUL">
+                <li ng-repeat="(key, value) in showTabs" class="{{value}}" ng-click="openFile(key)">{{getFileName(key)}}</li>
             </ul>
         </nobr>
         <div class="TabsIn1" onclick="uiControl.unloadFile(); tab.deactivateTab();"></div>
@@ -109,7 +114,7 @@
      </ul>-->
     </div>
 
-    <div class="angularView" ng-view></div>
+    <div class="angularView" ng-controller="loginController" ng-view></div>
     <!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'Print');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="rich.fontEdit('Print')"><img src="img/doc/print.png" unselectable="on"></li>

@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2279
-console.log("pragm-Websocket-Server => BUILD 0.2.2279 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2355
+console.log("pragm-Websocket-Server => BUILD 0.2.2355 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -848,17 +848,17 @@ var commander = new commander_typ();
 var defaultData_typ = function () {
 
     this.dirObject = {
-        "5000000000": {
+        "5SYSTEMUSR": {
             "name": "System",
             "username": "System",
             "firstname": "System",
             "lastname": "Boss",
             "email": "system@pragm.de",
             "password": "boss",
-            "parent": "4000000000",
-            "owner": "5000000000",
+            "parent": "4ROOTFOLDR",
+            "owner": "5SYSTEMUSR",
             "userRight": "0",
-            "content": ["4000000000", "4DELETED00"],
+            "content": ["4ROOTFOLDR", "4DELETED00", "4DEADOBJEC","4SHARENOBO"],
             "share": {},
             "maxStorageScore": 5368709120,
             "inviteKeyArray": [],
@@ -868,7 +868,7 @@ var defaultData_typ = function () {
         },
         "5GUESTUSER": {
             "owner": "5GUESTUSER",
-            "parent": "4000000000",
+            "parent": "4ROOTFOLDR",
             "name": "Guest",
             "username": "Guest",
             "firstname": "Max",
@@ -883,18 +883,34 @@ var defaultData_typ = function () {
             "active": true,
             "lastactive": 0
         },
-        "4000000000": {
+        "4ROOTFOLDR": {
             "name": "root",
-            "parent": "5000000000",
-            "owner": "5000000000",
-            "content": ["5000000000", "5GUESTUSER"],
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
+            "content": ["5SYSTEMUSR", "5GUESTUSER"],
+            "share": {},
+            "lastmod": 0
+        },
+        "4DEADOBJEC": {
+            "name": "dead objects",
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
+            "content": [],
+            "share": {},
+            "lastmod": 0
+        },
+        "4SHARENOBO": {
+            "name": "Unknown Shares",
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
+            "content": [],
             "share": {},
             "lastmod": 0
         },
         "4DELETED00": {
             "name": "DELETED",
-            "parent": "5000000000",
-            "owner": "5000000000",
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
             "content": [],
             "share": {},
             "lastmod": 0
@@ -1216,6 +1232,52 @@ var fileSystemControl_typ = function fileSystemControl(){
         }
     };
     
+    this.checkFileSystem = function(fobj){
+        console.log('    CHECKING FILESYSTEM ... ');
+        var change = false;
+        var c = true;
+        var deadObjects = [];
+        for (i in fobj) {
+            if (typeof fobj[i].share == 'array' || fobj[i].share instanceof Array) {
+                //fobj[i].share = { };
+                //console.log('    SET SHARE TO OBJECT');
+                //change = true;
+            }
+            if (i[0] == "5") {
+                //fobj[i].maxStorageScore = 200000;
+                //console.log('    SET maxStorageScore TO 1000');
+                //fobj[i].active = true;
+                //fobj[i].lastactive = Date.now();
+                //console.log('    SET active True');
+            }
+            c = false;
+            if(fobj[[fobj[i].parent]]){
+                if(fobj[[fobj[i].parent]].content.indexOf(i) > -1){
+                    c = true;
+                }
+            }
+            if(c==false){
+                console.log('     Object '+i+' has no valid parent!'); 
+                deadObjects.push(i);
+            }
+        }
+        for(i in deadObjects){
+            var i = deadObjects[i];
+            fobj[i].parent = pfile.deadObj;
+            if(fobj[pfile.deadObj].content.indexOf(i) < 0){
+                fobj[pfile.deadObj].content.push(i);
+            }
+            console.log('      Moved '+i+' to '+pfile.deadObj+'!'); 
+        }
+        console.log('    CHECKING DONE !');
+        pfile.dirObject = fobj;
+        if (change) {
+            pfile.saveDirObject();
+            //pfile.writeStr('x', 'dir', 12);
+        }
+        pfile.init();
+    };
+    
 };
 
 var fileSystemControl = new fileSystemControl_typ();
@@ -1252,8 +1314,10 @@ var pfile_typ = function pfile_typ() {
     this.dir = "./data/";
     this.deleteDir = "4DELETED00";
     this.guestUser = "5GUESTUSER";
-    this.systemUsr = "5000000000";
-    this.userDir = "4000000000";
+    this.systemUsr = "5SYSTEMUSR";
+    this.userDir = "4ROOTFOLDR";
+    this.deadObj = "4DEADOBJEC";
+    this.shareNobo = "4SHARENOBO";
     this.dirFile = "DirIndexFile";
     this.size = {
         "3": 1000,
@@ -1268,29 +1332,7 @@ var pfile_typ = function pfile_typ() {
     }
 
     this.checkFileSystem = function (fobj) {
-        console.log('    CHECKING FILESYSTEM ... ');
-        var change = false;
-        for (i in fobj) {
-            if (typeof fobj[i].share == 'array' || fobj[i].share instanceof Array) {
-                //fobj[i].share = { };
-                //console.log('    SET SHARE TO OBJECT');
-                //change = true;
-            }
-            if (i[0] == "5") {
-                //fobj[i].maxStorageScore = 200000;
-                //console.log('    SET maxStorageScore TO 1000');
-                //fobj[i].active = true;
-                //fobj[i].lastactive = Date.now();
-                //console.log('    SET active True');
-            }
-        }
-        console.log('    CHECKING DONE !');
-        this.dirObject = fobj;
-        if (change) {
-            pfile.saveDirObject();
-            //pfile.writeStr('x', 'dir', 12);
-        }
-        pfile.init();
+        fileSystemControl.checkFileSystem(fobj);
     };
 
     this.readStr = function (id, operation, clientID) {
@@ -1571,7 +1613,7 @@ var pfile_typ = function pfile_typ() {
             dlog("DeleteuserID = " + userID);
             dlog("Delete    ID = " + id);
             dlog("Delete Owner = " + this.dirObject[id].owner);
-            if (fRights.isUserAllowedTo(id, userID, 'write')) {
+            /*if (fRights.isUserAllowedTo(id, userID, 'write')) {
                 dlog("Delete TRUE");
                 this.removeLink(this.dirObject[id].parent, id);
                 this.dirObject[id].parent = this.deleteDir;
@@ -1581,6 +1623,8 @@ var pfile_typ = function pfile_typ() {
             } else {
                 L2x1.send(clientID, sID.message, "Deleting file abort! Permission Denied!");
             }
+            */
+            L2x1.send(clientID, sID.message, "This function has been removed! Please contact an administrator with code #DEdel. You can delete files by moving them to trash!");
         }
     };
 
@@ -1618,13 +1662,37 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.moveFile = function (clientID, userID, id, toid, fromid) {
-        if (((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)) {
+        var w = fRights.isUserAllowedTo(id, userID, 'write');
+        var p = this.dirObject[id].parent != fromid;
+        var r = fRights.isUserAllowedTo(id, userID, 'read');
+        var s = this.isSubOrdered(toid, id);
+        var d = userID == pfile.systemUsr && fromid == toid && toid == pfile.deleteDir;
+        log("D:"+d);
+        
+        if ((((w || (p && r))) && !s) || d) {
 
             this.removeLink(fromid, id);
-            if (this.dirObject[id].parent == fromid) {
+            if (this.dirObject[id].parent == fromid && !d && toid != pfile.deleteDir) {
                 this.dirObject[id].parent = toid;
+                this.addLink(toid, id);
+            } else {
+                if (toid == pfile.deleteDir) {
+                    if (!d) {
+                        if (this.dirObject[id].share.length == 0) {
+                            this.addLink(toid, id);
+                        } else {
+                            this.addLink(pfile.shareNobo, id);
+                        }
+                    } else {
+                        delete this.dirObject[id];
+                        if(id[0] == "3"){
+                            this.deleteFileOnDisc(id);
+                        }
+                    }
+                } else {
+                    this.addLink(toid, id);
+                }
             }
-            this.addLink(toid, id);
         } else {
             if (!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) {
                 L2x1.send(clientID, sID.message, "Moving file abort! Permission Denied!");
@@ -1891,7 +1959,7 @@ var pfile_typ = function pfile_typ() {
         var i = 0;
         var idarr = [];
         idarr.push(id);
-        while (id != subID && id != '5000000000' && i < 10) {
+        while (id != subID && id != pfile.systemUsr && i < 10) {
             id = this.dirObject[id].parent;
             idarr.push(id);
             i++;
@@ -1912,15 +1980,11 @@ var pfile_typ = function pfile_typ() {
         if ('name' in fileInfo) {
             if (fRights.isUserAllowedTo(fileInfo.id, userID, 'write')) {
                 this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
-                log("NAME  => " + JSON.stringify(fileInfo));
                 var list = pfile.getFileClients(fileInfo.id);
-                log("Client " + clientID);
-                log("LIST After " + JSON.stringify(list));
                 for (key in list) {
                     if (list[key] != clientID) {
                         if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
                             this.generateUserFilelist(list[key], L3.users[list[key]].userID);
-                            log("LIST FOR HIM => " + list[key]);
                         } else {
                             log("Cannot find Client " + list[key]);
                         }
@@ -2172,9 +2236,9 @@ var L2x1 = new L2x1_typ();
 function inviteKey_typ(){
     
     this.isKeyFree = function(key){
-        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
-                if(!pfile.dirObject['5000000000'].inviteKeyArray[i].used){
+        for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+            if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == key){
+                if(!pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].used){
                     return true
                 } else {
                     return false;
@@ -2185,9 +2249,9 @@ function inviteKey_typ(){
     };
     
     this.setKeyUsed = function(key, userID){
-        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
-                pfile.dirObject['5000000000'].inviteKeyArray[i].used = {"userID": userID, "time": Date.now()};
+        for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+            if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == key){
+                pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].used = {"userID": userID, "time": Date.now()};
                 pfile.saveDirObject();
                 break;
             }
@@ -2196,15 +2260,15 @@ function inviteKey_typ(){
     
     this.deleteInviteKey = function(key){
         var kill = false;
-        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
-                if(!pfile.dirObject['5000000000'].inviteKeyArray[i].used){
+        for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+            if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == key){
+                if(!pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].used){
                     kill = i;
                 }
             }
         }
         if(kill){
-            pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+            pfile.dirObject[pfile.systemUsr].inviteKeyArray.splice(kill,1);
             pfile.saveDirObject();
         }
     };
@@ -2215,13 +2279,13 @@ function inviteKey_typ(){
         while(found){
             newKey = this.generateKey();
             found = false;
-            for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-                if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == newKey){
+            for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+                if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == newKey){
                     found = true;
                 }
             }
         }
-        pfile.dirObject['5000000000'].inviteKeyArray.push({"key":newKey,"used":false});
+        pfile.dirObject[pfile.systemUsr].inviteKeyArray.push({"key":newKey,"used":false});
         pfile.saveDirObject();
     };
     

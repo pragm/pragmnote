@@ -2,9 +2,9 @@
 function inviteKey_typ(){
     
     this.isKeyFree = function(key){
-        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
-                if(!pfile.dirObject['5000000000'].inviteKeyArray[i].used){
+        for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+            if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == key){
+                if(!pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].used){
                     return true
                 } else {
                     return false;
@@ -15,9 +15,9 @@ function inviteKey_typ(){
     };
     
     this.setKeyUsed = function(key, userID){
-        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
-                pfile.dirObject['5000000000'].inviteKeyArray[i].used = {"userID": userID, "time": Date.now()};
+        for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+            if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == key){
+                pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].used = {"userID": userID, "time": Date.now()};
                 pfile.saveDirObject();
                 break;
             }
@@ -26,15 +26,15 @@ function inviteKey_typ(){
     
     this.deleteInviteKey = function(key){
         var kill = false;
-        for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-            if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == key){
-                if(!pfile.dirObject['5000000000'].inviteKeyArray[i].used){
+        for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+            if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == key){
+                if(!pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].used){
                     kill = i;
                 }
             }
         }
         if(kill){
-            pfile.dirObject['5000000000'].inviteKeyArray.splice(kill,1);
+            pfile.dirObject[pfile.systemUsr].inviteKeyArray.splice(kill,1);
             pfile.saveDirObject();
         }
     };
@@ -45,13 +45,13 @@ function inviteKey_typ(){
         while(found){
             newKey = this.generateKey();
             found = false;
-            for(i in pfile.dirObject['5000000000'].inviteKeyArray){
-                if(pfile.dirObject['5000000000'].inviteKeyArray[i].key == newKey){
+            for(i in pfile.dirObject[pfile.systemUsr].inviteKeyArray){
+                if(pfile.dirObject[pfile.systemUsr].inviteKeyArray[i].key == newKey){
                     found = true;
                 }
             }
         }
-        pfile.dirObject['5000000000'].inviteKeyArray.push({"key":newKey,"used":false});
+        pfile.dirObject[pfile.systemUsr].inviteKeyArray.push({"key":newKey,"used":false});
         pfile.saveDirObject();
     };
     

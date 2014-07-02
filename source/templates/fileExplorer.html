@@ -4,7 +4,7 @@
         <div class="sharefield">
             <div class="sharefieldline">
                 <div class="icon3"></div>
-                <input ng-model="filedata.name" type="text" class="renameFile" title="rename" onclick="this.select();" ng-value="filedata.name" ng-change="changeName();">
+                <input ng-model="dirObject[fileinfoid].name" type="text" class="renameFile" title="rename" onclick="this.select();" ng-value="dirObject[fileinfoid].name" ng-change="changeName();">
                 <input type="text" class="linkFile" title="guestlink" onclick="this.select();" ng-value="getLink()" disabled>
                 <input class="alertbutton" id="closeStyle" type="button" value="CLOSE" ng-click="shareclose();">
                 <!--<input class="alertbutton" id="saveStyle" type="button" value="Save" onclick="data.set('shareshow', 'none');">-->
@@ -84,7 +84,7 @@
             <input class="fileexpinput" type="password" value="" placeholder="NEW AGAIN" ng-model="chpw.new2">
             <input class="fileexpinput cursorpointer" type="button" value="Buy a washer!" ng-click="chpass();">
             <br><br>
-            <input class="fileexpinput cursorpointer" type="button" value="System Manager" onclick="uiControl.view('manager');" ng-hide="mainDir != '5000000000'"><br><br>
+            <input class="fileexpinput cursorpointer" type="button" value="System Manager" onclick="uiControl.view('manager');" ng-hide="mainDir != '5SYSTEMUSR'"><br><br>
             <!--<ul class="datachoice">
                 <li>files</li>
                 <li>settings</li>
@@ -98,6 +98,8 @@
             <br>
             Found a bug?<br>Please let us know:<br><a href="mailto:bug@pragm.de">bug@pragm.de</a><br>
             Thanks!
+                <br><br>
+                {{JSON.stringify(showTabs)}}
             </div>
             <!--<pre>
 draganddropactive   = {{draganddropactive}}
@@ -114,7 +116,7 @@ elmleft             = {{elmleft}}
             <li ng-repeat="(key, id) in superFolder" ng-click="openFileAngu(id);" class="{{key}}" ng-mouseover="mouseover(id);">{{dirObject[id].name || "..."}}</li>
         </ul>
         <ul class="dirButtons">
-            <li class="dirButtonsLi" style="z-index: 2;" onclick="uiControl.deleteButton();" title="delete selection" ng-mouseover="mouseover('4DELETED00');"><i class="fa fa-trash-o trashicon"></i></li>
+            <li class="dirButtonsLi" style="z-index: 2;" ng-click="deleteSelection();" title="delete selection" ng-mouseover="mouseover('4DELETED00');"><i class="fa fa-trash-o trashicon"></i></li>
             <li class="dirButtonsLi" id="AddFile" title="add file/folder" ng-mouseover="mouseout();">
                 <nobr>
                     <i class="fa fa-plus addicon"></i>

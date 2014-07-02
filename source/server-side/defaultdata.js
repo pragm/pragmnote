@@ -1,17 +1,17 @@
 var defaultData_typ = function () {
 
     this.dirObject = {
-        "5000000000": {
+        "5SYSTEMUSR": {
             "name": "System",
             "username": "System",
             "firstname": "System",
             "lastname": "Boss",
             "email": "system@pragm.de",
             "password": "boss",
-            "parent": "4000000000",
-            "owner": "5000000000",
+            "parent": "4ROOTFOLDR",
+            "owner": "5SYSTEMUSR",
             "userRight": "0",
-            "content": ["4000000000", "4DELETED00"],
+            "content": ["4ROOTFOLDR", "4DELETED00", "4DEADOBJEC","4SHARENOBO"],
             "share": {},
             "maxStorageScore": 5368709120,
             "inviteKeyArray": [],
@@ -21,7 +21,7 @@ var defaultData_typ = function () {
         },
         "5GUESTUSER": {
             "owner": "5GUESTUSER",
-            "parent": "4000000000",
+            "parent": "4ROOTFOLDR",
             "name": "Guest",
             "username": "Guest",
             "firstname": "Max",
@@ -36,18 +36,34 @@ var defaultData_typ = function () {
             "active": true,
             "lastactive": 0
         },
-        "4000000000": {
+        "4ROOTFOLDR": {
             "name": "root",
-            "parent": "5000000000",
-            "owner": "5000000000",
-            "content": ["5000000000", "5GUESTUSER"],
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
+            "content": ["5SYSTEMUSR", "5GUESTUSER"],
+            "share": {},
+            "lastmod": 0
+        },
+        "4DEADOBJEC": {
+            "name": "dead objects",
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
+            "content": [],
+            "share": {},
+            "lastmod": 0
+        },
+        "4SHARENOBO": {
+            "name": "Unknown Shares",
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
+            "content": [],
             "share": {},
             "lastmod": 0
         },
         "4DELETED00": {
             "name": "DELETED",
-            "parent": "5000000000",
-            "owner": "5000000000",
+            "parent": "5SYSTEMUSR",
+            "owner": "5SYSTEMUSR",
             "content": [],
             "share": {},
             "lastmod": 0

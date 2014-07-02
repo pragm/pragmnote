@@ -33,15 +33,16 @@ var data_typ = function data_typ(){
     this.userDir = "";
     this.acutalDir = "";
     this.callbacks = { };
+    this.callbacksHard = { };
     this.loadinginfo = "";
     this.alertinfo = "";
-    this.crashinfo = "unknown crash";
+    this.crashinfo = "";
     this.selectionarray = [ ];
     this.shareshow = false;
     this.deleteDir = "4DELETED00";
     this.guestUser = "5GUESTUSER";
-    this.systemUsr = "5000000000";
-    this.userDir   = "4000000000";
+    this.systemUsr = "5SYSTEMUSR";
+    this.userDir   = "4ROOTFOLDR";
     this.dirFile   = "DirIndexFile";
     this.nameCache = {"5GUESTUSER": "Guest"};
     this.readonlycb = false;
@@ -57,6 +58,7 @@ var data_typ = function data_typ(){
     this.ecoModeLastContent = false;
     this.ecoModeTimer = false;
     this.ecoModeLongTimer = false;
+    this.showTabs = {}; //"3m2oijsq1e":true,"35ragxwaz9":false
     
     this.unbindCallbacks = function(){
         this.callbacks = null;
@@ -66,6 +68,11 @@ var data_typ = function data_typ(){
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.databindHard = function(object, callback){
+        this.callbacksHard[object] = callback;
         callback(this[object]);
     };
     
@@ -79,11 +86,17 @@ var data_typ = function data_typ(){
         if(this.callbacks[object]){
             this.callbacks[object](value);
         }
+        if(this.callbacksHard[object]){
+            this.callbacksHard[object](value);
+        }
     };
     
     this.update = function(object){
         if(this.callbacks[object]){
             this.callbacks[object](data[object]);
+        }
+        if(this.callbacksHard[object]){
+            this.callbacksHard[object](data[object]);
         }
     };
     

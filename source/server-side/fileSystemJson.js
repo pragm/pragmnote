@@ -31,8 +31,10 @@ var pfile_typ = function pfile_typ() {
     this.dir = "./data/";
     this.deleteDir = "4DELETED00";
     this.guestUser = "5GUESTUSER";
-    this.systemUsr = "5000000000";
-    this.userDir = "4000000000";
+    this.systemUsr = "5SYSTEMUSR";
+    this.userDir = "4ROOTFOLDR";
+    this.deadObj = "4DEADOBJEC";
+    this.shareNobo = "4SHARENOBO";
     this.dirFile = "DirIndexFile";
     this.size = {
         "3": 1000,
@@ -47,29 +49,7 @@ var pfile_typ = function pfile_typ() {
     }
 
     this.checkFileSystem = function (fobj) {
-        console.log('    CHECKING FILESYSTEM ... ');
-        var change = false;
-        for (i in fobj) {
-            if (typeof fobj[i].share == 'array' || fobj[i].share instanceof Array) {
-                //fobj[i].share = { };
-                //console.log('    SET SHARE TO OBJECT');
-                //change = true;
-            }
-            if (i[0] == "5") {
-                //fobj[i].maxStorageScore = 200000;
-                //console.log('    SET maxStorageScore TO 1000');
-                //fobj[i].active = true;
-                //fobj[i].lastactive = Date.now();
-                //console.log('    SET active True');
-            }
-        }
-        console.log('    CHECKING DONE !');
-        this.dirObject = fobj;
-        if (change) {
-            pfile.saveDirObject();
-            //pfile.writeStr('x', 'dir', 12);
-        }
-        pfile.init();
+        fileSystemControl.checkFileSystem(fobj);
     };
 
     this.readStr = function (id, operation, clientID) {
@@ -350,7 +330,7 @@ var pfile_typ = function pfile_typ() {
             dlog("DeleteuserID = " + userID);
             dlog("Delete    ID = " + id);
             dlog("Delete Owner = " + this.dirObject[id].owner);
-            if (fRights.isUserAllowedTo(id, userID, 'write')) {
+            /*if (fRights.isUserAllowedTo(id, userID, 'write')) {
                 dlog("Delete TRUE");
                 this.removeLink(this.dirObject[id].parent, id);
                 this.dirObject[id].parent = this.deleteDir;
@@ -360,6 +340,8 @@ var pfile_typ = function pfile_typ() {
             } else {
                 L2x1.send(clientID, sID.message, "Deleting file abort! Permission Denied!");
             }
+            */
+            L2x1.send(clientID, sID.message, "This function has been removed! Please contact an administrator with code #DEdel. You can delete files by moving them to trash!");
         }
     };
 
@@ -397,13 +379,37 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.moveFile = function (clientID, userID, id, toid, fromid) {
-        if (((fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) && !this.isSubOrdered(toid, id)) {
+        var w = fRights.isUserAllowedTo(id, userID, 'write');
+        var p = this.dirObject[id].parent != fromid;
+        var r = fRights.isUserAllowedTo(id, userID, 'read');
+        var s = this.isSubOrdered(toid, id);
+        var d = userID == pfile.systemUsr && fromid == toid && toid == pfile.deleteDir;
+        log("D:"+d);
+        
+        if ((((w || (p && r))) && !s) || d) {
 
             this.removeLink(fromid, id);
-            if (this.dirObject[id].parent == fromid) {
+            if (this.dirObject[id].parent == fromid && !d && toid != pfile.deleteDir) {
                 this.dirObject[id].parent = toid;
+                this.addLink(toid, id);
+            } else {
+                if (toid == pfile.deleteDir) {
+                    if (!d) {
+                        if (this.dirObject[id].share.length == 0) {
+                            this.addLink(toid, id);
+                        } else {
+                            this.addLink(pfile.shareNobo, id);
+                        }
+                    } else {
+                        delete this.dirObject[id];
+                        if(id[0] == "3"){
+                            this.deleteFileOnDisc(id);
+                        }
+                    }
+                } else {
+                    this.addLink(toid, id);
+                }
             }
-            this.addLink(toid, id);
         } else {
             if (!(fRights.isUserAllowedTo(id, userID, 'write') || (this.dirObject[id].parent != fromid && fRights.isUserAllowedTo(id, userID, 'read')))) {
                 L2x1.send(clientID, sID.message, "Moving file abort! Permission Denied!");
@@ -670,7 +676,7 @@ var pfile_typ = function pfile_typ() {
         var i = 0;
         var idarr = [];
         idarr.push(id);
-        while (id != subID && id != '5000000000' && i < 10) {
+        while (id != subID && id != pfile.systemUsr && i < 10) {
             id = this.dirObject[id].parent;
             idarr.push(id);
             i++;
@@ -691,15 +697,11 @@ var pfile_typ = function pfile_typ() {
         if ('name' in fileInfo) {
             if (fRights.isUserAllowedTo(fileInfo.id, userID, 'write')) {
                 this.dirObject[fileInfo.id].name = this.unescape(fileInfo.name);
-                log("NAME  => " + JSON.stringify(fileInfo));
                 var list = pfile.getFileClients(fileInfo.id);
-                log("Client " + clientID);
-                log("LIST After " + JSON.stringify(list));
                 for (key in list) {
                     if (list[key] != clientID) {
                         if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
                             this.generateUserFilelist(list[key], L3.users[list[key]].userID);
-                            log("LIST FOR HIM => " + list[key]);
                         } else {
                             log("Cannot find Client " + list[key]);
                         }

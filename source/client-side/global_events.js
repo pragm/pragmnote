@@ -186,7 +186,7 @@ var globalEvent_typ = function globalEvent_typ(){
     };
     
     this.checkBrowser = function(){
-        if(navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1)){
+        if(navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1) && navigator.userAgent.search("OPR") == -1){
             // true
             document.getElementById("browserfail").style.display = "none";
         } else {

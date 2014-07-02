@@ -274,6 +274,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             //console.log("ANGU => L3: "+L3.file);
             //console.log("ANGU => UI: "+uiControl.file);
             data.showCache();
+            tab.openFile($scope.fileID);
             tab.position("slide10In");
         }
 	});

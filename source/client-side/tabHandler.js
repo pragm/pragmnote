@@ -32,7 +32,7 @@ var tab_typ = function tab_typ(){
     this.showElemNum = 7;
     
     this.fileOpened = function(oFile){
-        var oFile = oFile.toString();
+        /*var oFile = oFile.toString();
         var temp = this.tabArray.indexOf(oFile);
         this.active = oFile;
         //console.log("=> "+oFile+" <=> "+temp);
@@ -40,8 +40,23 @@ var tab_typ = function tab_typ(){
             this.tabArray.unshift(oFile);
         }
         if(this.tabArray[this.showElemNum]){this.tabArray.splice(this.showElemNum,1);}
-        this.generate();
+        this.generate();*/
     }
+    
+    this.openFile = function(id){
+        for(i in data.showTabs){
+            data.showTabs[i] = false;
+        }
+        data.showTabs[id] = true;        
+        data.update('showTabs');
+    };
+    
+    this.deactivateAll = function(){
+        for(i in data.showTabs){
+            data.showTabs[i] = false;
+        }
+        data.update('showTabs');
+    };
     
     this.add = function(temp){
         this.tabArray.unshift(temp);
@@ -82,11 +97,11 @@ var tab_typ = function tab_typ(){
     }
     
     this.deactivateTab = function(){
-        if(data.login.userID != "5GUESTUSER"){
+        /*if(data.login.userID != "5GUESTUSER"){
             if(document.getElementById('TabActive')){
                 document.getElementById('TabActive').id = "";
             }
-        }
+        }*/
     }
     
     this.position = function(key){

@@ -1,4 +1,4 @@
-var clientversion = "0.2.2279";
+var clientversion = "0.2.2355";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1367,19 +1367,24 @@ pragmApp.controller('accountController', function($scope, $location) {
             }
         }
 	});
-pragmApp.controller('crashController', function($scope) {
-		data.unbindCallbacks();
-        $scope.lan = 'cool';
-		$scope.crashinfo = 'unknown crash';
-        uiControl.finishRoedel();
-        
-        data.databind('crashinfo', function(x){
-		  $scope.crashinfo = x;
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
-	});
+pragmApp.controller('crashController', function ($scope) {
+    data.unbindCallbacks();
+    $scope.lan = 'cool';
+    if (data.crashinfo != "") {
+        $scope.crashinfo = data.crashinfo;
+    } else {
+        $scope.crashinfo = 'unknown crash';
+        setTimeout("uiControl.view('start');", 1000);
+    }
+    uiControl.finishRoedel();
+
+    /*data.databind('crashinfo', function (x) {
+        $scope.crashinfo = x;
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });*/
+});
 pragmApp.controller('editorController', function($scope, $location, dataService) {
         data.unbindCallbacks();
         $scope.fileID = dataService.data.id;
@@ -1656,6 +1661,7 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
             //console.log("ANGU => L3: "+L3.file);
             //console.log("ANGU => UI: "+uiControl.file);
             data.showCache();
+            tab.openFile($scope.fileID);
             tab.position("slide10In");
         }
 	});
@@ -1981,6 +1987,10 @@ pragmApp.controller('filesController', function($scope, $location) {
             }
         });
         
+        $scope.deleteSelection = function(){
+            L3.moveFileList(data.selectionarray, data.deleteDir, $scope.actualDir);
+        };
+        
         
         // Filelist creation --------------------------------------------
         $scope.update = function () {
@@ -2119,9 +2129,9 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.loadfileshare = function(){
             $scope.sharedata = null;
             $scope.sharedata = [];
-            if($scope.filedata){
-                for(key in $scope.filedata.share){
-                    $scope.sharedata.push({"id": key, "value": $scope.filedata.share[key]});
+            if($scope.dirObject[$scope.fileinfoid]){
+                for(key in $scope.dirObject[$scope.fileinfoid].share){
+                    $scope.sharedata.push({"id": key, "value": $scope.dirObject[$scope.fileinfoid].share[key]});
                 }
                 console.log(JSON.stringify($scope.sharedata));
             } else {
@@ -2172,7 +2182,7 @@ pragmApp.controller('filesController', function($scope, $location) {
             };
             console.log(JSON.stringify($scope.sharedata));
             console.log(JSON.stringify(out));
-            $scope.filedata.share = out;
+            $scope.dirObject[$scope.fileinfoid].share = out;
             L3.setFileInfo('share', $scope.fileinfoid, out);
         };
     
@@ -2182,17 +2192,17 @@ pragmApp.controller('filesController', function($scope, $location) {
                     $scope.addvalue = 1;
                     uiControl.alert("Guest can not be admin!");
                 }
-                $scope.filedata.share[$scope.addname] = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[$scope.addname] = $scope.addvalue;
                 $scope.getProposals();
                 $scope.loadfileshare();
-                L3.setFileInfo('share', $scope.fileinfoid, $scope.filedata.share);
+                L3.setFileInfo('share', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].share);
             } else {
                 uiControl.alert("ID '"+$scope.addname+"' is invalid!");
             }
         };
         
         $scope.changeName = function(){
-            L3.setFileInfo('name', $scope.fileinfoid, $scope.filedata.name);
+            L3.setFileInfo('name', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].name);
         };
         
         $scope.deleteshare = function(index){
@@ -2236,26 +2246,31 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.proposals = ["5GUESTUSER"];
         
         $scope.getProposals = function(){
-            var obj = {"5GUESTUSER":true};
-            for(i in $scope.dirObject){
-                for(j in $scope.dirObject[i].share){
-                    obj[j] = true;
+            if($scope.dirObject[$scope.fileinfoid]){
+                var obj = {"5GUESTUSER":true};
+                for(i in $scope.dirObject){
+                    for(j in $scope.dirObject[i].share){
+                        obj[j] = true;
+                    }
+                    obj[$scope.dirObject[i].owner] = true;
                 }
-                obj[$scope.dirObject[i].owner] = true;
-            }
-            for(i in $scope.filedata.share){
-                obj[i] = true;
-            }
-            var arr = [];
-            for(i in obj){
-                if(i!="undefined"){
-                    arr.push(i);
+                for(i in $scope.dirObject[$scope.fileinfoid].share){
+                    obj[i] = true;
                 }
+                var arr = [];
+                for(i in obj){
+                    if(i!="undefined"){
+                        arr.push(i);
+                    }
+                }
+                $scope.proposals = arr;
+                /*if(!$scope.$$phase) {
+                    $scope.$apply();
+                }*/
+            } else {
+                $scope.shareclose();
+                uiControl.alert("You are kicked!");
             }
-            $scope.proposals = arr;
-            /*if(!$scope.$$phase) {
-                $scope.$apply();
-            }*/
         };
         
         data.databind('dirObject', function(x){
@@ -2271,95 +2286,126 @@ pragmApp.controller('filesController', function($scope, $location) {
             }
         });
         
+        // Tab Handler
+        tab.deactivateAll();
         
         tab.position("slideOut");
     }
+});
+pragmApp.controller('globalController', function ($scope) {
+    $scope.showTabs = [];
+    data.databindHard('showTabs', function (x) {
+        console.log(x);
+        var y = {};
+        for (i in x) {
+            if (x[i]) {
+                y[i] = "TabActive";
+            } else {
+                y[i] = "";
+            }
+        }
+        console.log(y);
+        $scope.showTabs = y;
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });
+
+    $scope.getFileName = function (key) {
+        if ('dirObject' in data && key in data.dirObject) {
+            return data.dirObject[key].name;
+        }
+    };
+
+    $scope.openFile = function (key) {
+        uiControl.loadFile(key);
+    };
 });
 pragmApp.controller('loadingController', function($scope) {
 		data.unbindCallbacks();
         $scope.lan = 'cool';
 		$scope.message = 'Please wait us! JK. This is just a demo.';
 	});
-pragmApp.controller('loginController', function($scope, $location) {
-        data.unbindCallbacks();
-         if($location.search().login == "guest"){
-             console.info("autologin guest"); 
-             uiControl.autologinguest = true;
-         }
-		// create a message to display in our view
-		$scope.clientversion = clientversion;
-		$scope.lan = 'cool';
-		//$scope.loadslide = '';
-        
-        $scope.serverAddress = "searching...";
-        data.databind('serveraddress', function(x){
-		  $scope.serverAddress = x;
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
-        
-        global.onSchange(function(){
+pragmApp.controller('loginController', function ($scope, $location) {
+    data.unbindCallbacks();
+    if ($location.search().login == "guest") {
+        console.info("autologin guest");
+        uiControl.autologinguest = true;
+    }
+    // create a message to display in our view
+    $scope.clientversion = clientversion;
+    $scope.lan = 'cool';
+    //$scope.loadslide = '';
+
+    $scope.serverAddress = "searching...";
+    data.databind('serveraddress', function (x) {
+        $scope.serverAddress = x;
+        if (!$scope.$$phase) {
             $scope.$apply();
-        });
-        
-		
-        // Wait handler  ------------------------------------------------------
-		$scope.loadinginfo = "";
-		$scope.loadshow = 'none';
-        $scope.updateLoad = function(){
-            //console.log("Update Angular "+$scope.loadinginfo);
-            if($scope.loadinginfo==""){
-		      $scope.loadshow = 'none';
+        }
+    });
+
+    global.onSchange(function () {
+        $scope.$apply();
+    });
+
+
+    // Wait handler  ------------------------------------------------------
+    $scope.loadinginfo = "";
+    $scope.loadshow = 'none';
+    $scope.updateLoad = function () {
+        //console.log("Update Angular "+$scope.loadinginfo);
+        if ($scope.loadinginfo == "") {
+            $scope.loadshow = 'none';
+        } else {
+            $scope.loadshow = 'block';
+            //$scope.loadslide = 'width: 100%;';
+            if (document.getElementById('loadingslide')) {
+                document.getElementById('loadingslide').className = 'loadingslideIN';
+                setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
             } else {
-		      $scope.loadshow = 'block';
-              //$scope.loadslide = 'width: 100%;';
-                if(document.getElementById('loadingslide')){
-                    document.getElementById('loadingslide').className = 'loadingslideIN';
-                    setTimeout("document.getElementById('loadingslide').className = 'loadingslideOUT';", 100);
-                } else {
-                    console.error("Cannot find document.getElementById('loadingslide')!");
-                }
+                console.error("Cannot find document.getElementById('loadingslide')!");
             }
         }
-        data.databind('loadinginfo', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.loadinginfo = x;
-          $scope.updateLoad();
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
-        
-        // Alert handler   ---------------------------------------------------------
-		$scope.alertinfo = "";
-		$scope.alertshow = 'none';
-        $scope.updateAlert = function(){
-            //console.log("Update Angular "+$scope.alertinfo);
-            if($scope.alertinfo==""){
-		      $scope.alertshow = 'none';
-            } else {
-		      $scope.alertshow = 'block';
-            }
+    }
+    data.databind('loadinginfo', function (x) {
+        //console.log("Data: "+JSON.stringify(x));
+        $scope.loadinginfo = x;
+        $scope.updateLoad();
+        if (!$scope.$$phase) {
+            $scope.$apply();
         }
-        data.databind('alertinfo', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.alertinfo = x;
-          $scope.updateAlert();
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
-        });
-        
-        $scope.unalert = function(){
-            data.alertinfo = "";                    
-            $scope.alertinfo = "";
-            $scope.updateAlert();
-            if(!$scope.$$phase) {
-                $scope.$apply();
-            }
+    });
+
+    // Alert handler   ---------------------------------------------------------
+    $scope.alertinfo = "";
+    $scope.alertshow = 'none';
+    $scope.updateAlert = function () {
+        //console.log("Update Angular "+$scope.alertinfo);
+        if ($scope.alertinfo == "") {
+            $scope.alertshow = 'none';
+        } else {
+            $scope.alertshow = 'block';
         }
-        /*$scope.lol = 'bla';
+    }
+    data.databind('alertinfo', function (x) {
+        //console.log("Data: "+JSON.stringify(x));
+        $scope.alertinfo = x;
+        $scope.updateAlert();
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });
+
+    $scope.unalert = function () {
+        data.alertinfo = "";
+        $scope.alertinfo = "";
+        $scope.updateAlert();
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    }
+    /*$scope.lol = 'bla';
         data.databind('messages', function(x){
           console.log("Data: "+JSON.stringify(x));
 		  $scope.messages = x;
@@ -2367,13 +2413,44 @@ pragmApp.controller('loginController', function($scope, $location) {
                 $scope.$apply();
             }
         });*/
-        
-        if(uiControl.autologinguest){
-            setTimeout(uiControl.autologinGuest, 2000);
-        } else {
-            setTimeout(uiControl.finishRoedel, 100);
+
+    if (uiControl.autologinguest) {
+        setTimeout(uiControl.autologinGuest, 2000);
+    } else {
+        setTimeout(uiControl.finishRoedel, 100);
+    }
+
+    // Tab Handler ===================================
+
+    /*$scope.showTabs = [];
+    data.databindHard('showTabs', function (x) {
+        console.log(x);
+        var y = {};
+        for (i in x) {
+            if (x[i]) {
+                y[i] = "TabActive";
+            } else {
+                y[i] = "";
+            }
         }
-	});
+        console.log(y);
+        $scope.showTabs = y;
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });
+
+    $scope.getFileName = function (key) {
+        if ('dirObject' in data && key in data.dirObject) {
+            return data.dirObject[key].name;
+        }
+    };
+
+    $scope.openFile = function (key) {
+        uiControl.loadFile(key);
+    };*/
+
+});
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2622,15 +2699,16 @@ var data_typ = function data_typ(){
     this.userDir = "";
     this.acutalDir = "";
     this.callbacks = { };
+    this.callbacksHard = { };
     this.loadinginfo = "";
     this.alertinfo = "";
-    this.crashinfo = "unknown crash";
+    this.crashinfo = "";
     this.selectionarray = [ ];
     this.shareshow = false;
     this.deleteDir = "4DELETED00";
     this.guestUser = "5GUESTUSER";
-    this.systemUsr = "5000000000";
-    this.userDir   = "4000000000";
+    this.systemUsr = "5SYSTEMUSR";
+    this.userDir   = "4ROOTFOLDR";
     this.dirFile   = "DirIndexFile";
     this.nameCache = {"5GUESTUSER": "Guest"};
     this.readonlycb = false;
@@ -2646,6 +2724,7 @@ var data_typ = function data_typ(){
     this.ecoModeLastContent = false;
     this.ecoModeTimer = false;
     this.ecoModeLongTimer = false;
+    this.showTabs = {}; //"3m2oijsq1e":true,"35ragxwaz9":false
     
     this.unbindCallbacks = function(){
         this.callbacks = null;
@@ -2655,6 +2734,11 @@ var data_typ = function data_typ(){
     
     this.databind = function(object, callback){
         this.callbacks[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.databindHard = function(object, callback){
+        this.callbacksHard[object] = callback;
         callback(this[object]);
     };
     
@@ -2668,11 +2752,17 @@ var data_typ = function data_typ(){
         if(this.callbacks[object]){
             this.callbacks[object](value);
         }
+        if(this.callbacksHard[object]){
+            this.callbacksHard[object](value);
+        }
     };
     
     this.update = function(object){
         if(this.callbacks[object]){
             this.callbacks[object](data[object]);
+        }
+        if(this.callbacksHard[object]){
+            this.callbacksHard[object](data[object]);
         }
     };
     
@@ -3540,7 +3630,7 @@ var globalEvent_typ = function globalEvent_typ(){
     };
     
     this.checkBrowser = function(){
-        if(navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1)){
+        if(navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1) && navigator.userAgent.search("OPR") == -1){
             // true
             document.getElementById("browserfail").style.display = "none";
         } else {
@@ -5270,7 +5360,7 @@ var tab_typ = function tab_typ(){
     this.showElemNum = 7;
     
     this.fileOpened = function(oFile){
-        var oFile = oFile.toString();
+        /*var oFile = oFile.toString();
         var temp = this.tabArray.indexOf(oFile);
         this.active = oFile;
         //console.log("=> "+oFile+" <=> "+temp);
@@ -5278,8 +5368,23 @@ var tab_typ = function tab_typ(){
             this.tabArray.unshift(oFile);
         }
         if(this.tabArray[this.showElemNum]){this.tabArray.splice(this.showElemNum,1);}
-        this.generate();
+        this.generate();*/
     }
+    
+    this.openFile = function(id){
+        for(i in data.showTabs){
+            data.showTabs[i] = false;
+        }
+        data.showTabs[id] = true;        
+        data.update('showTabs');
+    };
+    
+    this.deactivateAll = function(){
+        for(i in data.showTabs){
+            data.showTabs[i] = false;
+        }
+        data.update('showTabs');
+    };
     
     this.add = function(temp){
         this.tabArray.unshift(temp);
@@ -5320,11 +5425,11 @@ var tab_typ = function tab_typ(){
     }
     
     this.deactivateTab = function(){
-        if(data.login.userID != "5GUESTUSER"){
+        /*if(data.login.userID != "5GUESTUSER"){
             if(document.getElementById('TabActive')){
                 document.getElementById('TabActive').id = "";
             }
-        }
+        }*/
     }
     
     this.position = function(key){
