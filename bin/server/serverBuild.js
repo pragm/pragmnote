@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2355
-console.log("pragm-Websocket-Server => BUILD 0.2.2355 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2360
+console.log("pragm-Websocket-Server => BUILD 0.2.2360 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -1678,9 +1678,17 @@ var pfile_typ = function pfile_typ() {
             } else {
                 if (toid == pfile.deleteDir) {
                     if (!d) {
-                        if (this.dirObject[id].share.length == 0) {
+                        var k = 0;
+                        for(i in this.dirObject[id].share){
+                            k++;
+                            break;
+                        }
+                        log("Sharelenght = "+k);
+                        if (k == 0) {
+                            this.dirObject[id].parent = pfile.toid;
                             this.addLink(toid, id);
                         } else {
+                            this.dirObject[id].parent = pfile.shareNobo;
                             this.addLink(pfile.shareNobo, id);
                         }
                     } else {

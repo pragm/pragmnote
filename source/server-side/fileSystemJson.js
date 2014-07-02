@@ -395,9 +395,17 @@ var pfile_typ = function pfile_typ() {
             } else {
                 if (toid == pfile.deleteDir) {
                     if (!d) {
-                        if (this.dirObject[id].share.length == 0) {
+                        var k = 0;
+                        for(i in this.dirObject[id].share){
+                            k++;
+                            break;
+                        }
+                        log("Sharelenght = "+k);
+                        if (k == 0) {
+                            this.dirObject[id].parent = pfile.toid;
                             this.addLink(toid, id);
                         } else {
+                            this.dirObject[id].parent = pfile.shareNobo;
                             this.addLink(pfile.shareNobo, id);
                         }
                     } else {
