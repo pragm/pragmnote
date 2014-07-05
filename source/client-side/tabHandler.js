@@ -32,7 +32,7 @@ var tab_typ = function tab_typ(){
     this.showElemNum = 7;
     
     this.fileOpened = function(oFile){
-        var oFile = oFile.toString();
+        /*var oFile = oFile.toString();
         var temp = this.tabArray.indexOf(oFile);
         this.active = oFile;
         //console.log("=> "+oFile+" <=> "+temp);
@@ -40,8 +40,23 @@ var tab_typ = function tab_typ(){
             this.tabArray.unshift(oFile);
         }
         if(this.tabArray[this.showElemNum]){this.tabArray.splice(this.showElemNum,1);}
-        this.generate();
+        this.generate();*/
     }
+    
+    this.openFile = function(id){
+        for(i in data.showTabs){
+            data.showTabs[i] = false;
+        }
+        data.showTabs[id] = true;        
+        data.update('showTabs');
+    };
+    
+    this.deactivateAll = function(){
+        for(i in data.showTabs){
+            data.showTabs[i] = false;
+        }
+        data.update('showTabs');
+    };
     
     this.add = function(temp){
         this.tabArray.unshift(temp);
@@ -58,9 +73,14 @@ var tab_typ = function tab_typ(){
                 if(this.active == this.tabArray[numb]){add = 'id="TabActive" ';}
                 var temp = "'TabActive'";
                 var tempId = "'"+this.tabArray[numb]+"'";
-                var fullDirArray = testDir.split(":");
-                var tempName = getFileName(fullDirArray, this.tabArray[numb]);
-                out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
+                //var fullDirArray = testDir.split(":");
+                //var tempName = getFileName(fullDirArray, this.tabArray[numb]);
+                try{
+                    var tempName = data.dirObject[this.tabArray[numb]].name;
+                    out += '<li '+add+'onclick="tab.deactivateTab(); uiControl.loadOtherFile('+tempId+'); this.id = '+temp+';">'+tempName+'</li>';
+                } catch(e){
+                    var tempName = "ERROR";
+                }
             }
             numb++;
         }
@@ -77,10 +97,32 @@ var tab_typ = function tab_typ(){
     }
     
     this.deactivateTab = function(){
-        if(document.getElementById('TabActive')){
-            document.getElementById('TabActive').id = "";
-        }
+        /*if(data.login.userID != "5GUESTUSER"){
+            if(document.getElementById('TabActive')){
+                document.getElementById('TabActive').id = "";
+            }
+        }*/
     }
+    
+    this.position = function(key){
+        switch(key){
+            case "slideOut":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "50px";
+                break;
+            case "slideIn":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "0px";
+                break;
+            case "slide10In":
+                document.getElementById('fileTabs').style.display = "block";
+                document.getElementById('fileTabs').style.height = "";
+                break;
+            case "fastIn":
+                document.getElementById('fileTabs').style.display = "none";
+                break;
+        }
+    };
 }
     
 var tab = new tab_typ();

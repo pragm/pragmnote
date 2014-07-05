@@ -22,7 +22,7 @@
 #
 ******************************************************************************************/
 
-
+/*
 var testDir = "33e1d210cfDatei1:39f6168622Datei2:3aaaaaaaaaDatei3:4000000000root;4000000001;3aaaaaaaaa:4000000001Ordner1;45909c4fcf;39f6168622:45909c4fcfOrdner2;33e1d210cf";
 var lastDir = '5000000001';
 var mainDir = '5000000001';
@@ -192,4 +192,135 @@ function refreshShow(){
 
 function createFile(folder, name, type){
     
+}*/
+
+//var testtext = '{"5vdfud2o7a":{"owner":"5vdfud2o7a","parent":"4000000000","name":"Bob","username":"Bob","password":"123","userRight":3,"content":"3ngcnefa8u;3z203p3kmo;40twtrl7qw;3aqcmdb59o;3v096j7i0d;3wr7bw9diw;38f7mn71rp","share":""},"40twtrl7qw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs Folder","content":"3emqfb6uw2","share":""},"3emqfb6uw2":{"owner":"5vdfud2o7a","parent":"40twtrl7qw","name":"Lorem ipsum dolor","share":""},"3z203p3kmo":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Bobs file","share":""},"3ngcnefa8u":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"Click Me","share":""},"3phyg3emyk":{"owner":"5vdfud2o7a","parent":"4DELETED00","name":"My sad deleted file","share":""},"3aqcmdb59o":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"debug","share":""},"3v096j7i0d":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"test","share":""},"3wr7bw9diw":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"NewTest","share":""},"38f7mn71rp":{"owner":"5vdfud2o7a","parent":"5vdfud2o7a","name":"LALA","share":""}}';
+
+var dirCreator_typ = function dirCreator_typ(){
+    
+    this.dirObject = {};
+    this.lastDir = "";
+    this.mainDir = "";
+    
+    this.searchParent = function(id){
+        for(key in data.dirObject){
+            var first = key.substr(0,1);
+            if(first == "4" || first == "5"){
+                if(data.dirObject[key].content.indexOf(id) != -1){
+                    return key;
+                }
+            }
+        }
+        return false;
+    };
+    
+    this.setDir = function(jsontext){
+        this.dirObject = JSON.parse(jsontext);
+    };
+    
+    this.getName = function(id){
+        if(this.dirObject[id]){
+            return this.dirObject[id].name;
+        } else {
+            return "unnamed file";
+        }
+    };
+    
+    this.showDir = function(id){
+        uiControl.view('files');
+        if(this.dirObject[id]){
+            var content = this.dirObject[id].content;
+            var contentArray = content.split(';');
+            var html = "";
+            for(i in contentArray){
+                if(this.dirObject[contentArray[i]]){
+                    name = this.getName(contentArray[i]);
+                    html = html+this.createElement(contentArray[i], name);
+                }
+            }
+            if(document.getElementById('fileListUl')){
+                //document.getElementById('fileListUl').innerHTML = html;
+            } else {
+                console.log('Error: Can not load filelist to DOM');
+            }
+        } else {
+            console.log("Error: Unknown Concept Bug [1] Issue #56");
+        }
+    };
+    
+    this.generateFileSuperPath = function(id){
+        if(this.dirObject[id]){
+            var name = this.dirObject[id].name;
+            var html = this.createFolderElement(id, name);
+            while(id != this.mainDir){
+                id = this.dirObject[id].parent;
+                name = this.dirObject[id].name;
+                html = this.createFolderElement(id, name)+html;
+            }
+            if(document.getElementById('fileListUl')){
+                //document.getElementById('dirShow').innerHTML = html;
+            }
+        } else {
+            console.log("Error: Unknown Concept Bug [2] Issue #56");
+        }
+    };
+    
+    this.refreshShow = function(){
+        this.showDir(this.lastDir);
+        this.generateFileSuperPath(this.lastDir);
+    };
+    
+    this.openFile = function(id){
+        switch(id.substr(0,1)){
+            case "3":
+                //Datei Oeffnen
+                uiControl.loadFile(id);
+                break;
+            case "4":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+            case "5":
+                this.showDir(id);
+                this.generateFileSuperPath(id);
+                this.lastDir = id;
+                break;
+        }
+    };
+    
+    this.createElement = function(id, name){
+        var t = new Array("fileIcon", "file");
+        switch(id.substr(0,1)){
+                case "3":
+                t[0] = "fileIcon";
+                t[1] = "file";
+                break;
+                case "4":
+                t[0] = "folderIcon";
+                t[1] = "folder";
+                break;
+                case "5":
+                t[0] = "fileIcon";
+                t[1] = "user";
+                break;
+        }
+        id = "'"+id+"'";
+        var e = '<li><img src="img/doc/'+t[1]+'.png" class="'+t[0]+'"><font class="filenameDir" style="position: relative; left: 30px;" onclick="dirCreator.openFile('+id+');">'+name+'</font><img src="img/gear.png" class="gearIcon"><img src="img/share.png" class="shareIcon"></li>';
+        return e;
+    };
+    
+    this.createFolderElement = function(id, name){
+        id = "'"+id+"'";
+        var e = '<li onclick="dirCreator.openFile('+id+');">'+name+'</li>';
+        return e;
+    };
+}
+
+var dirCreator = new dirCreator_typ();
+//dirCreator.setDir(testtext);
+
+function OpenInNewTab(){
+  var win=window.open("https://github.com/pragm/pragmnote", '_blank');
+  win.focus();
 }

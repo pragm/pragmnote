@@ -30,16 +30,19 @@ var error_typ = function error_typ(){
 			this.text = "Fatalerror";
 			break;
 		case 1:
-			this.text = "Sonstige";
+			this.text = "ELSE";
 			break;
 		case 2:
-			this.text = "Unbekannte Package ID";
+			this.text = "unknown package ID";
+			break;
+		case 3:
+			this.text = "Tried to set/get not existing element.";
 			break;
 		default:
 			this.text = "Fatalerror";
 			break;
 		}
-		console.log("Error: ["+number+"] => "+this.text+"; "+info+";");
+		console.error("Error: ["+number+"] => "+this.text+"; "+info+";");
 	};
 };
 

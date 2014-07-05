@@ -37,7 +37,7 @@ var color_typ = function color_typ(){
         switch (type) {
 			    case "100":
 				    //unfocusline();
-				    if(color.switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";}
+				    if(color.switchbox==0){document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontcolor'></input>";}else{document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontbackground'></input>";}
 				    break;
 			    case "101":
 				    //unfocusline();
@@ -63,9 +63,9 @@ var color_typ = function color_typ(){
 				    //unfocusline();
 					if(color.switchbox==0){color.switchbox=1;}else{color.switchbox=0;}
 				    if(color.switchbox==0){
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontcolor";
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontcolor'></input>";
 				    }else{
-				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinput'></input>fontbackground";
+				    	document.getElementById('colornote').innerHTML = "<input type='button' unselectable='on' class='unselectinputColor' value='fontbackground'></input>";
 				    }
 				    break;
 			    case "101":
@@ -91,6 +91,8 @@ var color_typ = function color_typ(){
 			    default:
 				    break;
 		}
+        document.STOP_EXEC_COMMAND = true; 
+        return false;
 	};
 
 	this.setcolor = function(mycolor){

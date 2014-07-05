@@ -1,0 +1,64 @@
+<div class="accountbody">
+    <a style="z-index:100;" href="https://github.com/pragm/note"><img style="position: fixed; top: 0; right: 0; border: 0; z-index:101;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+    <div class="loginoverlay" style="display:{{loadshow}};">
+        <div class="loginwait">{{loadinginfo}}<div class="loadicon"></div>
+        <div class="loadingslideIN" id="loadingslide"></div>
+        </div>
+    </div>
+    <div class="loginoverlay" style="display:{{alertshow}};">
+        <div class="loginwait">{{alertinfo}}<br><br><input class="alertbutton" type="button" value="OK" ng-click="unalert();">
+        </div>
+    </div>
+    <div class="loginTop">
+        <div class="loginLogo"></div>
+    </div>
+    <div class="accountMain">
+        <div class="accountCenter">
+            <!--<div class="centerPic"></div>-->
+            <form class="loginForm" ng-submit="sendform()" onsubmit="return false;" action="?" method="post" name="myform" >
+                <div class="signup">Sign Up!</div>
+                <div class="itsfree">It's free but (at the moment) invite only!</div><br><br>
+                Username (fix)<br>
+                <input class="alertinput" type="text" id="formusername" placeholder="Username (Alias)"><br><br>
+                Name<br>
+                <input class="alertinput" type="text" id="formfirstname" placeholder="First Name">
+                <input class="alertinput" type="text" id="formlastname" placeholder="Last Name"><br><br>
+                Email<br>
+                <input class="alertinput" type="email" id="formemailA" placeholder="Your Email">
+                <input class="alertinput" type="email" id="formemailB" placeholder="Your Email Again"><br>
+                NOTE: We will not check your E-Mail yet! However if you don't answer until 3 weeks after we sent you an E-Mail we reserve the right to delete your account!
+                <br><br>
+                Password<br>
+                <input class="alertinput" type="password" id="formpasswordA" placeholder="Password">
+                <input class="alertinput" type="password" id="formpasswordB" placeholder="Password Again"><br><br>
+                Invite Key<br>
+                <input class="alertinput" type="text" id="forminvitekey" maxlength="32" placeholder="Invite Key" style="width: 357px;"><br><br>
+                <input class="loginSubmit" type="submit" value="Sign Up!"><br>
+                <div class="accountMainBigger"></div>
+            </form>
+        </div>
+        <div class="accountInfo">
+       <div class="signup"> What is Pragm?!</div>
+
+    Pragm is an Open Source multiuser notetaking application. This beta version is only availiable for inveted users! You can ask for a Invite-Key at <a href="mailto:support@pragm.de">support@pragm.de</a> in english or german. Please inform us about any Bugs you may find. Thanks! <a href="mailto:bug@pragm.de">bug@pragm.de</a>
+<br><br>
+    GitHub Pull Requests are appreciated and welcomed.
+            <br><br>
+            Pragm was once a small idea of creating a multiuser note taking application.
+<br><br>
+Now it's became quite big. So... we need your help. If you are comfortable using HTML, CSS and JavaScript feel free to contact us. bug@pragm.de
+            <br><br>
+            <i>SECURITY WARNING:<br>
+            At the moment, there is NO SSL connection and NO encryption anywhere. Your data as well as your password will be saved in clear text!</i>
+            <br><br>
+            <b><big>HAVE FUN!</big></b>
+        </div>
+        <br><br>
+        <div class="accountMainBigger"></div>
+    </div>
+    
+    <div class="loginLine" id="madebyinfo">
+        <div class="serverdata"><input type="button" value="Change Server" onclick="global.setServerAddress()"> Server: {{getServerAddress()}}</div>
+        <div class="versiondata">Version: {{clientversion}} | created 2014 by Dustin Hoffner | powered by Johannes Valouch</div>
+        </div>
+</div>

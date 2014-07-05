@@ -24,6 +24,7 @@
 
 
 var global_typ = function global_typ(){
+    this.config = globalconfig;
     this.websocket_server_address_online = 'ws://pragm.dyndns-work.com:9343';
     this.websocket_server_address_local  = 'ws://localhost:9343';
 	this.websocket_server_address = 'ws://91.89.70.45:9343'; 
@@ -32,13 +33,33 @@ var global_typ = function global_typ(){
     this.websocket_server_address_array[0] = 'ws://localhost:9343'; //ws://pragm.dyndns-work.com:9300 
 	this.websocket_server_address_array[3] = 'ws://localhost:9342'; 
 	this.websocket_server_address_array[2] = 'ws://demo.pragm.de:9342'; 
-	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343'; 
+	this.websocket_server_address_array[1] = 'ws://demo.pragm.de:9343';
     this.actualServer = -1;
     this.pServer = this.websocket_server_address_array[3];
     this.firstConnect = true;
     this.firstTry = true;
+    this.ctrl = false;
+    this.shift = false;
+    this.mousedown = false;
+    this.Schange = false;
+    
+    this.setServerAddress = function(){
+        this.config.serveraddress = prompt("WebSocket Server:", this.config.serveraddress);
+        if(this.Schange){
+            this.Schange();
+        }
+    };
+    
+    this.onSchange = function(x){
+        this.Schange = x;
+    };
     
     this.get_websocket_server_address = function(){
+        if(this.config.addressalert){
+            return prompt("WebSocket Server:", this.pServer);
+        } else {
+            return this.config.serveraddress;
+        }
         if(this.firstTry){
             this.firstTry = false;
             //return prompt("WebSocket Server:", this.pServer);
@@ -67,7 +88,9 @@ var global_typ = function global_typ(){
     this.websocket_slow_time = 500; // nach 20 Sekunden Reconnect
     this.draganddroprealtime = false;
     this.difcut = 457;
-    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);" id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
+    this.notecon = '<div class="noteheadline" contenteditable="true" oninput="staticItems.saveid(this.id);" onfocus="staticItems.focus();" onblur="staticItems.blur();" id="1031111111">My Headline</div><div class="notedateline" contenteditable="true" oninput="staticItems.saveid(this.id);"  onfocus="staticItems.focus();" onblur="staticItems.blur();"id="1031111112">Mittwoch 7.November 2012<br>12:42</div>';
+    
+    this.userColors = ["#ff0000", "#009999", "#c062d3", "#64de89", "#ffb970", "#63afd0", "#bc008d", "#00ca01", "#a149ff", "#0090ff", "#ff8200", "#6800d5", "#009801", "#ca0000", "#ffca00", "#006abc"];
     
     this.setTime = function(time){
         this.time = time;

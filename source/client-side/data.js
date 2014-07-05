@@ -26,40 +26,162 @@
 var data_typ = function data_typ(){
     
 	this.fileList;
-	this.files = new Array(); //Struktur: files[fileID][contentID] = content;
+	this.files = { }; //Struktur: files[fileID][contentID] = content;
 	this.users;
+    this.legitimationID = "";
+    this.dirObject;
+    this.userDir = "";
+    this.acutalDir = "";
+    this.callbacks = { };
+    this.callbacksHard = { };
+    this.loadinginfo = "";
+    this.alertinfo = "";
+    this.crashinfo = "";
+    this.selectionarray = [ ];
+    this.shareshow = false;
+    this.deleteDir = "4DELETED00";
+    this.guestUser = "5GUESTUSER";
+    this.systemUsr = "5SYSTEMUSR";
+    this.userDir   = "4ROOTFOLDR";
+    this.dirFile   = "DirIndexFile";
+    this.nameCache = {"5GUESTUSER": "Guest"};
+    this.readonlycb = false;
+    this.fileUserList = [];
+    this.readonly = true;
+    this.fileRights = {"read": false,"write": false,"perm": false};
+    this.serveraddress = "No Server Found!";
+    this.serverfound = false;
+    this.userEdit = "";
+    this.ownclientID;
+    this.ecoMode = false;
+    this.ecoModeLastId = false;
+    this.ecoModeLastContent = false;
+    this.ecoModeTimer = false;
+    this.ecoModeLongTimer = false;
+    this.showTabs = {}; //"3m2oijsq1e":true,"35ragxwaz9":false
     
-    this.edited_sync = function(fileID, contentID){
-        var type = contentID.substr(0,3);
-        switch(type){
-            case '100':
-                textbox.setid(contentID, data.files[fileID][contentID]);
-                break;
-            case '103':
-                staticItems.setid(contentID, data.files[fileID][contentID]);
-                break;
+    this.unbindCallbacks = function(){
+        this.callbacks = null;
+        this.callbacks = { };
+        globalEvent.unbindAll();
+    }
+    
+    this.databind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.databindHard = function(object, callback){
+        this.callbacksHard[object] = callback;
+        callback(this[object]);
+    };
+    
+    this.updatebind = function(object, callback){
+        this.callbacks[object] = callback;
+        callback();
+    };
+    
+    this.set = function(object, value){
+        this[object] = value;
+        if(this.callbacks[object]){
+            this.callbacks[object](value);
+        }
+        if(this.callbacksHard[object]){
+            this.callbacksHard[object](value);
         }
     };
     
-    this.edited_UI = function(contentID){
-        L3.send(contentID);
+    this.update = function(object){
+        if(this.callbacks[object]){
+            this.callbacks[object](data[object]);
+        }
+        if(this.callbacksHard[object]){
+            this.callbacksHard[object](data[object]);
+        }
+    };
+    
+    this.readonlyinfo = function(cb){
+        this.readonlycb = cb;
+    };
+    
+    this.edited_sync = function(fileID, contentID){
+        if(fileID == uiControl.file){
+            var type = contentID.substr(0,3);
+            switch(type){
+                case '100':
+                    textbox.setid(contentID, data.files[fileID][contentID]);
+                    break;
+                case '103':
+                    staticItems.setid(contentID, data.files[fileID][contentID]);
+                    break;
+            }
+        } else {
+            console.log("Error: UI is not in sync with L3");
+        }
+    };
+    
+    this.edited_UI = function(contentID, data){
+        //L3.send(contentID);
+        var tempfile = L3.file;
+        if(this.fileRights.write){
+            this.files[tempfile][contentID] = data;
+            L3.uiEdit(uiControl.file, contentID);
+        } else {
+            this.edited_sync(tempfile, contentID);
+            if(this.readonlycb){
+                this.readonlycb();
+            }
+        }
     };
     
     this.reset = function(){
         this.fileList = "";
-	    this.files = new Array();
+	    this.files = { };
 	    this.users = "";
+        this.legitimationID = "";
+        this.shareshow = false;
     }
         
     this.delete_UI = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         L3.delete(id);
     }
         
     this.delete_sync = function(id){
-        data.files[L3.file].splice(id, 1);
+        delete data.files[L3.file][id];
         textbox.removeElement("editarea"+id);
     }
+    
+    this.showCache = function(){
+        if(uiControl.file){
+            if(!data.files[uiControl.file]) {
+                data.files[uiControl.file] =  { };
+            } else {
+                for(key in data.files[uiControl.file]){
+                    data.edited_sync(uiControl.file, key);
+                }
+            }
+        } else {
+            console.log("Error: uiControl.file needs to be prepared before switching UI!");
+        }
+    };
+    
+    this.getUserName = function(id){
+        if(id.length != 10 || id[0] != "5"){
+            return "-";
+        } else {
+            if(id in this.nameCache){
+            } else {
+                if(id in this.dirObject){
+                    this.nameCache[id] = this.dirObject[id].name;       
+                } else {
+                    L3.loadUserName(id);
+                    this.nameCache[id] = "resolving name...";
+                }
+            }
+            return this.nameCache[id];
+        }
+    };
     
 };
 var data = new data_typ();

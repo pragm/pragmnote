@@ -47,6 +47,7 @@ var secure_typ = function secure_typ(){
 		this.userRights[clientID] = loginObject.userRight;
 		if(this.userRights[clientID] == global.mNoLogin){
 			this.legitimationSet(clientID);
+			log("LOGIN FAILED => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
 		} else {
 			this.legitimationSetX(clientID);
 			log("LOGIN => User '"+loginObject.username+"' ID '"+loginObject.userID+"' Mandant '"+loginObject.userRight+"'");
@@ -64,6 +65,21 @@ var secure_typ = function secure_typ(){
 	this.legitimationSetX = function (clientID){
 		this.userLegitimationIDs[clientID] = this.makeid();
 		//L2.send(clientID, sID.legitimationID, this.userLegitimationIDs[clientID]);
+	};
+
+	this.createAccount = function(clientID, accObject){
+		if(this.userRights[clientID] == global.mNoLogin){
+			if(this.userLegitimationIDs[clientID] == accObject.legitimationID){
+                if(inviteKey.isKeyFree(accObject.invitekey)){
+				    pfile.addUser(clientID, accObject);
+                } else {
+                    L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": false, "text": "InviteKey incorrect!"}));
+                }
+			} else {
+				L2x1.send(clientID, sID.createAccount, JSON.stringify({"value": false, "text": "LegitimationID incorrect!"}));
+				this.legitimationSet(clientID);
+			}
+		}
 	};
 
 	this.reset = function(clientID){

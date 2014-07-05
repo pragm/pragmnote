@@ -22,7 +22,14 @@
 #
 ******************************************************************************************/
 
-.loginTop{position: absolute; top: 0px; left: 0px; right: 0px; height: 50px; background: #222;}
+.loginTop{
+    position: absolute;
+    top: 0px; 
+    left: 0px; 
+    right: 0px; 
+    height: 50px; 
+    background: #222;
+}
 .loginLogo{
     position: absolute; 
     top: 13px; 
@@ -30,7 +37,8 @@
     height: 24px; 
     width: 81px; 
     margin-left: -40px;
-    background: url("img/doc/pragm_1_white.png");
+    background-image: url("img/doc/pragm_1_white_retina.png");
+    background-size: 81px 24px;
 }
 	.welcome{position: absolute; top: 0px; left: 245px; font-family: 'Open Sans'; font-size: 36px; color: #E9E9E9;}
 .centerPic{
@@ -40,6 +48,22 @@
     width: 120px; 
     height: 120px; 
     background: url("img/doc/solo.png");
+    background-size: 120px 120px;
+}
+
+.centerPicStart{
+    position: fixed;  
+    left: 50%; 
+    top: 50%;
+    margin-left: -60px;
+    margin-top: -60px;
+    width: 120px; 
+    height: 120px; 
+    background: url("img/doc/solo.png");
+    background-size: 120px 120px;
+    -webkit-animation:spin 15s linear infinite;
+    -moz-animation:spin 15s linear infinite;
+    animation:spin 15s linear infinite;
 }
 .loginLine{
     position: absolute; 
@@ -57,6 +81,7 @@
     padding-right: 10px; 
     padding-top: 8px; 
     text-align: right;
+    z-index: 1;
 }
 	.loginContent{position: absolute; background: url("img/doc/bg.png"); top: 0px; left: 0px; right: 0px; bottom: 50px; z-index: 10;}
 	.loginText{position: absolute; top: 60px; left: 250px; width: 500px; font-family: 'Open Sans'; font-size: 14px; color: #707070; font-weight: lighter;}
@@ -74,7 +99,7 @@
 	.alertinput{
 		outline:none;
 		border-radius:3px;
-    	-webkit-border-radius:3px;
+    	border-radius:3px;
     	-moz-border-radius:3px;
 		padding: 6px;
 		background-color: #f3f3f3;
@@ -84,16 +109,16 @@
 		cursor: text;
 		font-size: 14px;
 		font-weight: bold;
-		-webkit-transition: all 0.03s ease-in-out;
+		transition: all 0.03s ease-in-out;
 		}
 	.alertinput:hover{
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 		}
 	.alertinput:focus{
 		background-color: #FFFFFF;
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 	}
 	.loginSubmit{
 		outline:none;
@@ -106,11 +131,11 @@
 		cursor: pointer;
 		font-size: 14px;
 		font-weight: bold;
-		-webkit-transition: all 0.03s ease-in-out;
+		transition: all 0.03s ease-in-out;
 		}
 	.loginSubmit:hover{
 		color: #333333;
-		-webkit-box-shadow: 0 0 3px #808080;
+		box-shadow: 0 0 3px #808080;
 		}
 	.loginSubmit:focus{
 		background-color: #FFFFFF;
@@ -123,6 +148,7 @@
 		box-shadow: inset 0 0 3px #808080;
 	}
 	h1{ font-family: 'Open Sans'; font-size: 38px; color: #000; font-weight: lighter; margin-left: -5px;}
+    
 	h2{ font-family: 'Open Sans'; font-size: 24px; color: #333; font-weight: bold; margin-left: -5px;}
 	.loginbody{
 		position: absolute;
@@ -130,6 +156,9 @@
 		bottom: 0px;
 		left: 0px;
 		right: 0px;
-		background: #e5e5e5;
+		background: url('img/wal.jpg');
+		/* background-repeat:no-repeat;
+  background-position:100px 50%;*/
+        background-size:100% auto;
 		z-index: 99;
 	}

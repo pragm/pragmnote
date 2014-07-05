@@ -42,7 +42,7 @@
     right: 0px;
     background: #333;
     z-index: 10;
-    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
     /*overflow: hidden;*/
 }
 .fileTabs:hover{
@@ -52,9 +52,10 @@
     position: absolute;
     left: 12px;
     bottom: 13px;
-    background-image: url('img/doc/pragm_1_white.png');
+    background-image: url('img/doc/pragm_1_white_retina.png');
     width: 81px;
     height: 24px;
+    background-size: 81px 24px;
 }
 .fileTabButton{
     position: absolute;
@@ -62,7 +63,7 @@
     top: 0px;
     left: 0px;
     width: 108px;
-    -webkit-transition: all 0.1s ease-in-out;
+    transition: all 0.1s ease-in-out;
     z-index:13;
     cursor: pointer;
 }
@@ -97,7 +98,7 @@
 	height: 25px;
 	border: 1px solid black;
 	background: #f5f5f5;
-	-webkit-border-radius: 5px;
+	border-radius: 5px;
 	outline:none;
 	padding-left: 25px;
 	background-image: url("img/search.png");
@@ -162,7 +163,7 @@
 	left: 14px;
 	right: 0px;
 	-webkit-user-select: none;
-	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	cursor: pointer;
 }
 .listul li{
@@ -195,7 +196,7 @@
 	/*background-image: url("img/shower.png");
 	background-repeat: no-repeat;
 	background-position: 207px 0px;*/
-	-webkit-transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
     /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2));*/
 }
 .shower{
@@ -221,7 +222,7 @@
 	z-index: 9;
 	/*border-bottom: 1px solid #D4D4D4;*/
 	/*box-shadow: 0 0 2px #d4d4d4;*/
-	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	/*background: #f9f8f8;*/
     /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#f2f2f2));*/
     background: #f5f5f5;
@@ -320,7 +321,7 @@
 	right: 8px;
 	-webkit-user-select: none;
 	z-index: 28;
-	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	}
 .draweditli{
 	opacity: 0.5;
@@ -331,7 +332,7 @@
 	/*min-width: 31px;*/ /* F7F4F4 */
 	cursor: pointer;
 	text-align: center;
-	-webkit-transition: all 0.1s ease-in-out;
+	transition: all 0.1s ease-in-out;
 	-webkit-user-select: none;
 	}
 .draweditli:hover{
@@ -352,7 +353,7 @@
 	height: 21px;
 	/*border-top: 1px solid #D4D4D4;
 	/*box-shadow: 0 0 2px #d4d4d4;*/
-	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	background: #f5f5f5;
 	/*z-index: 11;*/
 	font-family: Helvetica;
@@ -363,25 +364,26 @@
 	}
 .colorshemer{
 	position:absolute;
-	left: 150px;
+	left: 103px;
 	bottom: 0px;
 	height: 21px;
 	list-style-type:none;
 	margin: 0;
 	padding: 0;
 	z-index: 14;
-	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 	}
 .colorshemer li{
 	position: relative;
 	float: left;
+    bottom: 0px;
 	width: 12px;
 	height: 12px;
 	margin-top: 4px;
 	/*margin-left: 2px;*/
 	border: 1px solid #f9f8f8;
 	left: 0px;
-	-webkit-transition: all 0.1s ease-in-out;
+	transition: all 0.1s ease-in-out;
 	}
 .colorshemer li:hover{
 	position: relative;
@@ -400,8 +402,8 @@
 	position: absolute;
 	top: 0px;
 	left: 0px;
-	width: 140px;
-	height: 21px;
+	width: 91px;
+	height: 19px;
 	margin: 0;
 	font-family: Helvetica;
 	font-size: 13px;
@@ -411,6 +413,7 @@
 	padding-top: 2px;
 	color: #333333;
 	cursor: pointer;
+    overflow: hidden;
 	}
 
 ::-webkit-scrollbar {
@@ -418,11 +421,11 @@
     height: 7px;
 }
 ::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
 }
 ::-webkit-scrollbar-thumb {
     background: #999999; 
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+    box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
 
@@ -434,4 +437,44 @@
     width: 200px;
     background: #fff111;
     z-index: 999;
+}
+
+.shareconfigul {
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: absolute;
+    right: 20px;
+    left: 20px;
+    top: 39px;
+    bottom: 0px;
+    list-style-type: none;
+    /*border-top: 1px solid #a7a7a7;*/
+    margin: 0;
+}
+.shareconfigulli{
+    text-align: left;
+    /*cursor: pointer;*/
+    font-size: 12px;
+    position: relative;
+    margin-left: -40px;
+    list-style-type: none;
+    border-bottom: 1px solid #eeeeee;
+    font-family: Helvetica;
+    padding: 5px;
+    color: black;
+    max-height: 46px;
+    opacity: 0.6;
+    border-top: 1px solid transparent;
+    /*-webkit-transition: ease-in-out 0.1s;*/
+}
+
+.accountMain {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    right: 0px;
+    bottom: 36px;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
 }

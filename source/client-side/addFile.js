@@ -50,13 +50,15 @@ var addFile_typ = function addFile_typ(){
     
     this.toggleAddFileChoice = function(){
         if(this.AddFileChoice){
-            document.getElementById('AddFileChoice').src = 'img/doc/file.png';
-            document.getElementById('AddFileChoice').style.bottom = '0px';
+            /*document.getElementById('AddFileChoice').src = 'img/doc/file.png';
+            document.getElementById('AddFileChoice').style.bottom = '0px';*/
+            document.getElementById('awsomefilechoice').className = "fa fa-file-text addFileIcon";
             this.AddFileChoice = false;
             document.getElementById('AddFileInput').focus();
         } else {
-            document.getElementById('AddFileChoice').src = 'img/doc/folder.png';
-            document.getElementById('AddFileChoice').style.bottom = '3px';
+            /*document.getElementById('AddFileChoice').src = 'img/doc/folder.png';
+            document.getElementById('AddFileChoice').style.bottom = '3px';*/
+            document.getElementById('awsomefilechoice').className = "fa fa-folder addFileIcon";
             this.AddFileChoice = true;
             document.getElementById('AddFileInput').focus();
         }

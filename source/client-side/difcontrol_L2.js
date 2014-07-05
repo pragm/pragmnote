@@ -38,12 +38,14 @@ var L2_typ = function L2_typ(){
 		if(!this.cache[id]){
 			this.cache[id] = "";
 		}
-
-		this.newdif = dif.generateOpt(text, this.cache[id]);
+        var oldText = this.cache[id];
+        this.cache[id] = text;
+        
+		this.newdif = dif.generateOpt(text, oldText);
 
 		this.newmd5 = net.hashCode(text);
 		
-		this.cache[id] = text;
+		//this.cache[id] = text;
 		
 		this.pos1 = convert.int_to_string(this.newdif.pos1);
 		this.pos2 = convert.int_to_string(this.newdif.pos2);
@@ -62,7 +64,6 @@ var L2_typ = function L2_typ(){
 		};
 	
 	this.recieve = function(text) {
-		
         if(text[0] == '='){
             this.id = text.substr(1,10);
             console.log("Clearing Cache of ID "+this.id+"");
@@ -76,7 +77,6 @@ var L2_typ = function L2_typ(){
         
 		this.id = text.substr(0, 10);
 		text =  text.substr(10);
-        
         
         this.lastReceiveID = this.id;
 		
@@ -110,9 +110,9 @@ var L2_typ = function L2_typ(){
 		this.newmd5 = net.hashCode(this.newcon);
 		
 		if(this.newmd5 != this.md5){
+			error.report(0, "HASHES are not equal! ID:"+this.id);
             this.cache[this.id] = "";
             L1.send("="+this.id);
-			error.report(0, "HASHES are not equal! ID:"+this.id);
 		} else {
 			this.cache[this.id] = this.newcon;
             L3.recieve(this.id, this.newcon); 

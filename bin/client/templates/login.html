@@ -1,0 +1,29 @@
+<div class="loginbody" id="loginHTML">
+    <div class="loginoverlay" style="display:{{loadshow}};">
+        <div class="loginwait">{{loadinginfo}}<div class="loadicon"></div>
+        <div class="loadingslideIN" id="loadingslide"></div>
+        </div>
+    </div>
+    <div class="loginoverlay" style="display:{{alertshow}};">
+        <div class="loginwait">{{alertinfo}}<br><br><input class="alertbutton" type="button" value="OK" ng-click="unalert();">
+        </div>
+    </div>
+    <div class="loginTop">
+        <div class="loginLogo"></div>
+    </div>
+    <div class="loginLine" id="madebyinfo">
+        <div class="serverdata"><!--<input type="button" value="Change Server" onclick="global.setServerAddress()">-->
+            Server: {{serverAddress}}
+        </div>
+        <div class="versiondata">Version: {{clientversion}} | created 2014 by Dustin Hoffner | powered by Johannes Valouch</div>
+        </div>
+    <div class="loginCenter">
+    <div class="centerPic"></div>
+    <form class="loginForm" action="" onsubmit="uiControl.login(); return false;">
+    <h1>Welcome</h1>
+    <input class="alertinput" type="text" name="username" id="loginUsername" value="" placeholder="Username"><br><br>
+    <input class="alertinput" type="password" name="password" id="loginPassword" value="" placeholder="Password"><br><br>
+    <input class="loginSubmit" type="submit" name="login" value="login"><br>
+    </form>
+        </div>
+</div>

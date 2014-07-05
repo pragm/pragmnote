@@ -25,17 +25,17 @@
 
 var L2_typ = function L2_typ(){
 
-	this.cache = new Array();
+	this.cache = [];
     
-    this.old = new Object();
+    this.old = {};
     this.old.Stext;
     this.old.Scache;
     this.old.dif = new Object();
     this.old.dif.pos1 = 0;
     this.old.dif.pos2 = 0;
     this.old.dif.edit = "";
-    this.lastSendID = new Array();
-    this.lastReceiveID = new Array();
+    this.lastSendID = [];
+    this.lastReceiveID = [];
 	
 	this.send = function(clientID, id, text) {
         //global.setTime(new Date().getTime());
@@ -44,12 +44,15 @@ var L2_typ = function L2_typ(){
 		if(typeof this.cache[clientID][id] == 'undefined'){
 			this.cache[clientID][id] = "";
 		}
-        if(this.cache[clientID][id] === this.old.Scache && text === this.old.Stext){
+        var oldText = this.cache[clientID][id];
+        this.cache[clientID][id] = text;
+        
+        if(oldText == this.old.Scache && text == this.old.Stext){
             this.newdif.pos1 = this.old.dif.pos1;
             this.newdif.pos2 = this.old.dif.pos2;
             this.newdif.edit = this.old.dif.edit;
         } else {
-            this.newdif = dif.generateOpt(text, this.cache[clientID][id]);
+            this.newdif = dif.generateOpt(text, oldText);
             this.old.dif.pos1 = this.newdif.pos1;
             this.old.dif.pos2 = this.newdif.pos2;
             this.old.dif.edit = this.newdif.edit;
@@ -57,7 +60,7 @@ var L2_typ = function L2_typ(){
 
 		this.newmd5 = net.hashCode(text);
 
-		this.cache[clientID][id] = text;
+		//this.cache[clientID][id] = text;
 		
 		this.pos1 = convert.int_to_string(this.newdif.pos1);
 		this.pos2 = convert.int_to_string(this.newdif.pos2);
@@ -130,7 +133,9 @@ var L2_typ = function L2_typ(){
 			error.report(0, "HASHES are nor equal! ID: "+this.id+" => Cache cleared!");
 		} else {
 			this.cache[clientID][this.id] = this.newcon;
-            L2x1.recieve(clientID, this.id, this.newcon); 
+            dlog("START recieve");
+            L2x1.recieve(clientID, this.id, this.newcon);
+            dlog("END   recieve"); 
             //newmsg(this.newcon);
 		}
 		dlog("CLIENT=>"+clientID+" ID=>"+this.id+" NEWCON=>"+this.newcon.substr(0,10)+"..."); // .substr(0,10)
@@ -139,9 +144,10 @@ var L2_typ = function L2_typ(){
 		};
 		
 	this.reset = function(clientID) {
-		this.cache[clientID] = new Array();
-        L3.reset(clientID);
+		this.cache[clientID] = null;
+		this.cache[clientID] = [];
         secure.reset(clientID);
+        L3.reset(clientID);
 		};	
 };
 
