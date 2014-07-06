@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2404
-console.log("pragm-Websocket-Server => BUILD 0.2.2404 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2405
+console.log("pragm-Websocket-Server => BUILD 0.2.2405 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -2693,7 +2693,7 @@ var L3_typ = function L3_typ(){
                 x.name = data;
                 x.id = "cannot resolve id!";  
                 for(i in pfile.dirObject){
-                    if(pfile.dirObject[i].name == data){
+                    if(pfile.dirObject[i].name == data && i[0] == "5"){
                        x.id = i;
                         break;
                     }

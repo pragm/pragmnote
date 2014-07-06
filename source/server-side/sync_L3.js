@@ -200,7 +200,7 @@ var L3_typ = function L3_typ(){
                 x.name = data;
                 x.id = "cannot resolve id!";  
                 for(i in pfile.dirObject){
-                    if(pfile.dirObject[i].name == data){
+                    if(pfile.dirObject[i].name == data && i[0] == "5"){
                        x.id = i;
                         break;
                     }
