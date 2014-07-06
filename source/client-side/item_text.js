@@ -314,7 +314,7 @@ var textbox_typ = function textbox_typ(){
             if(this.ecoModeIntervall){
                 clearInterval(this.ecoModeIntervall);
             }
-            this.ecoModeIntervall = setInterval(this.deactivateEcoMode, 15000);
+            this.ecoModeIntervall = setInterval(this.deactivateEcoMode, 1000);
         } else {
             clearInterval(this.ecoModeIntervall);
             this.deactivateEcoMode();
