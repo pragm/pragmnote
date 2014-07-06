@@ -183,5 +183,9 @@ var data_typ = function data_typ(){
         }
     };
     
+    this.getUrl = function(){
+        return location.href.split("#")[0];
+    };
+    
 };
 var data = new data_typ();

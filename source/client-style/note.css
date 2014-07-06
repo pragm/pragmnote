@@ -1627,7 +1627,7 @@ weis {
     /*background: #FFC200;*/
     /* background-repeat:no-repeat;
 background-position:100px 50%;*/
-    background-size: 100% auto;
+    background-size: 100% 100%;
     z-index: 99;
 }
 .accountCenter {
