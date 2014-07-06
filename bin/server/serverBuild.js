@@ -1,5 +1,7 @@
-//Server-Build Version: BETA => 0.2.2406
-console.log("pragm-Websocket-Server => BUILD 0.2.2406 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2410
+console.log("pragm-Websocket-Server => BUILD 0.2.2410 BETA");
+ var pragmbuildversion = "Welcome to Pragm! Version: 0.2.2410";
+/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #

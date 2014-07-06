@@ -78,7 +78,7 @@ function buildSoftware(){
     
     version = versionfirst+"."+version;
 
-    var server ='//Server-Build Version: BETA => '+version+'\nconsole.log("pragm-Websocket-Server => BUILD '+version+' BETA");'+globalJS+''+serverJS;
+    var server ='//Server-Build Version: BETA => '+version+'\nconsole.log("pragm-Websocket-Server => BUILD '+version+' BETA");\n var pragmbuildversion = "Welcome to Pragm! Version: '+version+'";\n'+globalJS+''+serverJS;
 
     var client = clientHTML.split("<!-- #buildSoftwareCut# -->");
     
