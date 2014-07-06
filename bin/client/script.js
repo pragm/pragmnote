@@ -1,4 +1,4 @@
-var clientversion = "0.2.2404";
+var clientversion = "0.2.2405";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -2885,7 +2885,7 @@ var data_typ = function data_typ(){
             } else {
                 var id = "";
                 for(i in this.dirObject){
-                    if(name == this.dirObject[i].name){
+                    if(name == this.dirObject[i].name &&  && i[0] == "5"){
                         id = i;
                         break;
                     }
