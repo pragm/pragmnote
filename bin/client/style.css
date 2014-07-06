@@ -2729,3 +2729,9 @@ background-position:100px 50%;*/
     color: #94CEFF;
 }
 
+.flatterButton {
+    margin-left: 20px;
+    position: relative;
+    top: 5px;
+}
+
