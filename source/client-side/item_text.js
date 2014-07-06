@@ -307,6 +307,20 @@ var textbox_typ = function textbox_typ(){
         }
     };
     
+    this.ecoModeIntervall;
+    
+    this.ecoMode = function(b){
+        if(b){
+            if(this.ecoModeIntervall){
+                clearInterval(this.ecoModeIntervall);
+            }
+            this.ecoModeIntervall = setInterval(this.deactivateEcoMode, 15000);
+        } else {
+            clearInterval(this.ecoModeIntervall);
+            this.deactivateEcoMode();
+        }    
+    }
+    
     this.deactivateEcoMode = function(){
         for(i in this.catchNoSave){
             this.saveid(this.catchNoSave[i], true);

@@ -550,7 +550,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         }
         
         $scope.getLink = function(){
-            return location.origin+"/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
+            return location.href.split("#")[0]+"#/editor/"+$scope.fileinfoid+"/?login=guest";
         }
         
         //$scope.loadfileshare();
@@ -618,6 +618,14 @@ pragmApp.controller('filesController', function($scope, $location) {
                 $scope.$apply();
             }
         });
+        
+        $scope.showGuestLink = function(){
+            if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
+                return false;
+            } else {
+                return true;
+            }
+        };
         
         // Tab Handler
         tab.deactivateAll();

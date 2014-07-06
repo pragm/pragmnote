@@ -50,10 +50,16 @@ var global_typ = function global_typ(){
     this.firewall[this.mGuest] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, '1');
     this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, sID.createAccount, sID.ownclientID);
     
-    //this.config = { };
+    this.config = { };
     //log(fs.readFileSync('config.json', 'UTF8'));
-    this.config = JSON.parse(fs.readFileSync('config.json', 'UTF8'));
-    log("CONFIG: "+JSON.stringify(this.config));
+    this.loadConfigFile = function(file){
+        try{
+            this.config = JSON.parse(fs.readFileSync(file, 'UTF8'));
+            log("CONFIG: "+JSON.stringify(this.config));
+        } catch(e) {
+            log("ERROR: Cannot Load Config file "+this.config);
+        }
+    }
     //this = 9343;
     //this.config.dir = "./data/";
 

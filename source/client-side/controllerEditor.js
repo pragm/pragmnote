@@ -181,11 +181,13 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                 if(x.length <=1){
                     $scope.ecomode = true;
                     data.ecoMode = true;
+                    textbox.ecoMode(true);
                 } else {
                     if($scope.ecoMode == true || data.ecoMode == true){
                         $scope.ecomode = false;
                         data.ecoMode = false;
-                        textbox.deactivateEcoMode();
+                        textbox.ecoMode(false);
+                        //textbox.deactivateEcoMode();
                     }
                 }
               $scope.fileUserList = x;

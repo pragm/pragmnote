@@ -39,8 +39,8 @@ pragmApp.controller('accountController', function($scope, $location) {
                 uiControl.alert("Lastname needs to have 2-32 chars!");
                 return;
             }
-            if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 20)){
-                uiControl.alert("Passwords needs to have 8-20 chars!");
+            if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 32)){
+                uiControl.alert("Passwords needs to have 8-32 chars!");
                 return;
             }
             if(!(y.invitekey.length == 32)){

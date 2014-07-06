@@ -1623,8 +1623,8 @@ weis {
     bottom: 0px;
     left: 0px;
     right: 0px;
-    /*background: url('img/wal.jpg');*/
-    background: #FFC200;
+    background: url('img/wal2.jpg');
+    /*background: #FFC200;*/
     /* background-repeat:no-repeat;
 background-position:100px 50%;*/
     background-size: 100% auto;
@@ -1641,14 +1641,14 @@ background-position:100px 50%;*/
 .itsfree {
     font-family: 'Open Sans';
     font-size: 23px;
-    color: #000;
+    color: #fff;
     font-weight: lighter;
     margin-left: 0px;
 }
 .signup {
     font-family: 'Open Sans';
     font-size: 36px;
-    color: #000;
+    color: #fff;
     font-weight: lighter;
     margin-left: 0px;
 }
@@ -1661,7 +1661,7 @@ background-position:100px 50%;*/
     text-align: right;
     font-family: 'Open Sans';
     font-size: 14px;
-    color: #000;
+    color: #fff;
 }
 .accountMainBigger {
     position: relative;
@@ -1707,7 +1707,7 @@ background-position:100px 50%;*/
 .userlist li {
     position: relative;
     float: right;
-    color: #333333;
+    color: #000;
     font-family: 'Open Sans';
     font-size: 14px;
     padding: 1px;
@@ -2040,7 +2040,7 @@ background-position:100px 50%;*/
 .addFileIcon {
     position: relative;
     top: -4px;
-    padding-left: 10px;
+    padding-left: 11px;
     padding-right: 6px;
 }
 @media (max-width: 900px) {
@@ -2061,4 +2061,14 @@ background-position:100px 50%;*/
         padding-top: 13px;
         padding-bottom: 13px;
     }*/
+}
+.fa{
+    font-size: 14px;
+}
+.registerbutton {
+    color: #fff;
+    text-decoration: underline;
+}
+.registerbutton:hover {
+    color: #94CEFF;
 }
