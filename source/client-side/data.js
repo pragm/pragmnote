@@ -45,6 +45,7 @@ var data_typ = function data_typ(){
     this.userDir   = "4ROOTFOLDR";
     this.dirFile   = "DirIndexFile";
     this.nameCache = {"5GUESTUSER": "Guest"};
+    this.idCache = {"Guest": "5GUESTUSER"};
     this.readonlycb = false;
     this.fileUserList = [];
     this.readonly = true;
@@ -180,6 +181,30 @@ var data_typ = function data_typ(){
                 }
             }
             return this.nameCache[id];
+        }
+    };
+    
+    this.getUserId = function(name){
+        if(name.length < 3){
+            return "-";
+        } else {
+            if(name in this.idCache){
+            } else {
+                var id = "";
+                for(i in this.dirObject){
+                    if(name == this.dirObject[i].name){
+                        id = i;
+                        break;
+                    }
+                }
+                if(id != ""){
+                    this.idCache[name] = id;       
+                } else {
+                    L2.send(sID.getUserId, name);
+                    this.idCache[name] = "resolving name...";
+                }
+            }
+            return this.idCache[name];
         }
     };
     

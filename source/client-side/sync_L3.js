@@ -287,6 +287,12 @@ var L3_typ = function L3_typ(){
                 data.update('nameCache');
                 break;
                 
+            case sID.returnUserId:
+                var dataobject = JSON.parse(daten);
+                data.idCache[dataobject.name] = dataobject.id;
+                data.update('idCache');
+                break;
+                
             default:
                 error.report(2, id);
                 return false;

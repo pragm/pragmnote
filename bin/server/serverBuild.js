@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2394
-console.log("pragm-Websocket-Server => BUILD 0.2.2394 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2404
+console.log("pragm-Websocket-Server => BUILD 0.2.2404 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -728,6 +728,7 @@ var sID_typ = function sID_typ() {
     this.createInviteKey = "2001000013";
     this.chPassword = "2001000014";
     this.chUserConfig = "2001000015";
+    this.getUserId = "2001000016";
 
 
     //GET_FROM_SERVER
@@ -742,6 +743,7 @@ var sID_typ = function sID_typ() {
     this.returnUserName = "2000000014";
     this.fileRigths = "2000000015"; //Server sends userlist of a file to client
     this.ownclientID = "2000000017";
+    this.returnUserId = "2000000018";
 
     /*
     	LEGITIMATION ID: Idee: 
@@ -2685,6 +2687,18 @@ var L3_typ = function L3_typ(){
                     x.name = "cannot resolve name!";   
                     }
                 L2x1.send(clientID, sID.returnUserName, JSON.stringify(x));
+                break;       
+            case sID.getUserId:
+                var x = {};
+                x.name = data;
+                x.id = "cannot resolve id!";  
+                for(i in pfile.dirObject){
+                    if(pfile.dirObject[i].name == data){
+                       x.id = i;
+                        break;
+                    }
+                }
+                L2x1.send(clientID, sID.returnUserId, JSON.stringify(x));
                 break;          
             default: 
                 error.report(2,"static id $id not given or wrong");

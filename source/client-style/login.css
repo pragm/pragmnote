@@ -91,6 +91,7 @@
     font-size: 12px; 
     color: #fff; 
     font-weight: lighter; 
+    -webkit-user-select: initial;
 }
 	.uName{outline: none;}
 	.uPass{outline: none;}
