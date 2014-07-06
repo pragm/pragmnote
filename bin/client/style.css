@@ -103,6 +103,7 @@
     font-size: 12px; 
     color: #fff; 
     font-weight: lighter; 
+    -webkit-user-select: initial;
 }
 	.uName{outline: none;}
 	.uPass{outline: none;}
@@ -652,6 +653,7 @@
     width: 100%;
     overflow-x: hidden;
     overflow-y: auto;
+    -webkit-user-select: initial;
 }
 
 /******************************************************************************************
@@ -700,7 +702,7 @@
     top: 0px;
     left: 0px;
     margin: 0;
-    /*-webkit-user-select: none;*/
+    -webkit-user-select: none;
 }
 .Tabs {
     position: absolute;
@@ -1851,6 +1853,7 @@ weis {
     font-size: 20px;
     border-bottom: 1px solid #a7a7a7;
     padding-bottom: 20px;
+    -webkit-user-select: initial;
 }
 .datachoice {
     position: absolute;
@@ -1888,6 +1891,7 @@ weis {
     font-size: 20px;
     border-bottom: 1px solid #a7a7a7;
     padding-bottom: 15px;
+    -webkit-user-select: initial;
 }
 .userstate {
     position: relative;
@@ -1903,6 +1907,7 @@ weis {
     font-family: Open Sans, Arial;
     font-size: 13px;
     left: 20px;
+    -webkit-user-select: initial;
 }
 .userstorage {
     position: absolute;
@@ -2245,11 +2250,13 @@ weis {
     position: absolute;
     top: 8px;
     left: 14px;
+    -webkit-user-select: initial;
 }
 .versiondata {
     /*position: absolute;
     top: 5px;
     right: 5px;*/
+    -webkit-user-select: initial;
 }
 .startshow {
     position: fixed;
@@ -2318,6 +2325,7 @@ background-position:100px 50%;*/
     font-family: 'Open Sans';
     font-size: 14px;
     color: #fff;
+    -webkit-user-select: initial;
 }
 .accountMainBigger {
     position: relative;
@@ -2621,6 +2629,7 @@ background-position:100px 50%;*/
     z-index: 1010;
     display: none;
     overflow: auto;
+    -webkit-user-select: initial;
 }
 .fileexpinput {
     outline: none;
@@ -2733,5 +2742,17 @@ background-position:100px 50%;*/
     margin-left: 20px;
     position: relative;
     top: 5px;
+}
+
+.shareopen:hover {
+    color: #ff6200;
+}
+
+.shareopendiv {
+    position: absolute;
+    top: 0px;
+    right: -30px;
+    height: 20px;
+    width: 20px;
 }
 

@@ -194,6 +194,18 @@ var L3_typ = function L3_typ(){
                     x.name = "cannot resolve name!";   
                     }
                 L2x1.send(clientID, sID.returnUserName, JSON.stringify(x));
+                break;       
+            case sID.getUserId:
+                var x = {};
+                x.name = data;
+                x.id = "cannot resolve id!";  
+                for(i in pfile.dirObject){
+                    if(pfile.dirObject[i].name == data){
+                       x.id = i;
+                        break;
+                    }
+                }
+                L2x1.send(clientID, sID.returnUserId, JSON.stringify(x));
                 break;          
             default: 
                 error.report(2,"static id $id not given or wrong");

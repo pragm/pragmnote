@@ -520,17 +520,18 @@ pragmApp.controller('filesController', function($scope, $location) {
         };
     
         $scope.pushsharedata =  function(){
-            if($scope.addname.length == 10 && $scope.addname.substr(0,1) == "5"){
-                if($scope.addname == "5GUESTUSER" && $scope.addvalue > 1){
+            var id = $scope.resolveId($scope.addname) || "s";
+            if($scope.addname.length > 2 && id.length == 10 && id[0] == "5"){
+                if($scope.addname == "Guest" && $scope.addvalue > 1){
                     $scope.addvalue = 1;
                     uiControl.alert("Guest can not be admin!");
                 }
-                $scope.dirObject[$scope.fileinfoid].share[$scope.addname] = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[id] = $scope.addvalue;
                 $scope.getProposals();
                 $scope.loadfileshare();
                 L3.setFileInfo('share', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].share);
             } else {
-                uiControl.alert("ID '"+$scope.addname+"' is invalid!");
+                uiControl.alert("Username is invalid!");
             }
         };
         
@@ -568,8 +569,18 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.resolveName = function(id){
             return data.getUserName(id);
         };
+        $scope.resolveId = function(name){
+            return data.getUserId(name);
+        };
     
         data.databind('nameCache', function(x){
+          $scope.updateShare();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+    
+        data.databind('idCache', function(x){
           $scope.updateShare();
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -620,8 +631,12 @@ pragmApp.controller('filesController', function($scope, $location) {
         });
         
         $scope.showGuestLink = function(){
-            if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
-                return false;
+            if($scope.fileinfoid && $scope.dirObject && $scope.dirObject[$scope.fileinfoid] && $scope.dirObject[$scope.fileinfoid].share && $scope.dirObject[$scope.fileinfoid].share[data.guestUser]){
+                if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
                 return true;
             }

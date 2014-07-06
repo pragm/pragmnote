@@ -1,4 +1,4 @@
-var clientversion = "0.2.2394";
+var clientversion = "0.2.2404";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -728,6 +728,7 @@ var sID_typ = function sID_typ() {
     this.createInviteKey = "2001000013";
     this.chPassword = "2001000014";
     this.chUserConfig = "2001000015";
+    this.getUserId = "2001000016";
 
 
     //GET_FROM_SERVER
@@ -742,6 +743,7 @@ var sID_typ = function sID_typ() {
     this.returnUserName = "2000000014";
     this.fileRigths = "2000000015"; //Server sends userlist of a file to client
     this.ownclientID = "2000000017";
+    this.returnUserId = "2000000018";
 
     /*
     	LEGITIMATION ID: Idee: 
@@ -2189,17 +2191,18 @@ pragmApp.controller('filesController', function($scope, $location) {
         };
     
         $scope.pushsharedata =  function(){
-            if($scope.addname.length == 10 && $scope.addname.substr(0,1) == "5"){
-                if($scope.addname == "5GUESTUSER" && $scope.addvalue > 1){
+            var id = $scope.resolveId($scope.addname) || "s";
+            if($scope.addname.length > 2 && id.length == 10 && id[0] == "5"){
+                if($scope.addname == "Guest" && $scope.addvalue > 1){
                     $scope.addvalue = 1;
                     uiControl.alert("Guest can not be admin!");
                 }
-                $scope.dirObject[$scope.fileinfoid].share[$scope.addname] = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[id] = $scope.addvalue;
                 $scope.getProposals();
                 $scope.loadfileshare();
                 L3.setFileInfo('share', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].share);
             } else {
-                uiControl.alert("ID '"+$scope.addname+"' is invalid!");
+                uiControl.alert("Username is invalid!");
             }
         };
         
@@ -2237,8 +2240,18 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.resolveName = function(id){
             return data.getUserName(id);
         };
+        $scope.resolveId = function(name){
+            return data.getUserId(name);
+        };
     
         data.databind('nameCache', function(x){
+          $scope.updateShare();
+            if(!$scope.$$phase) {
+                $scope.$apply();
+            }
+        });
+    
+        data.databind('idCache', function(x){
           $scope.updateShare();
             if(!$scope.$$phase) {
                 $scope.$apply();
@@ -2289,8 +2302,12 @@ pragmApp.controller('filesController', function($scope, $location) {
         });
         
         $scope.showGuestLink = function(){
-            if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
-                return false;
+            if($scope.fileinfoid && $scope.dirObject && $scope.dirObject[$scope.fileinfoid] && $scope.dirObject[$scope.fileinfoid].share && $scope.dirObject[$scope.fileinfoid].share[data.guestUser]){
+                if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
                 return true;
             }
@@ -2721,6 +2738,7 @@ var data_typ = function data_typ(){
     this.userDir   = "4ROOTFOLDR";
     this.dirFile   = "DirIndexFile";
     this.nameCache = {"5GUESTUSER": "Guest"};
+    this.idCache = {"Guest": "5GUESTUSER"};
     this.readonlycb = false;
     this.fileUserList = [];
     this.readonly = true;
@@ -2856,6 +2874,30 @@ var data_typ = function data_typ(){
                 }
             }
             return this.nameCache[id];
+        }
+    };
+    
+    this.getUserId = function(name){
+        if(name.length < 3){
+            return "-";
+        } else {
+            if(name in this.idCache){
+            } else {
+                var id = "";
+                for(i in this.dirObject){
+                    if(name == this.dirObject[i].name){
+                        id = i;
+                        break;
+                    }
+                }
+                if(id != ""){
+                    this.idCache[name] = id;       
+                } else {
+                    L2.send(sID.getUserId, name);
+                    this.idCache[name] = "resolving name...";
+                }
+            }
+            return this.idCache[name];
         }
     };
     
@@ -5136,6 +5178,12 @@ var L3_typ = function L3_typ(){
                 var dataobject = JSON.parse(daten);
                 data.nameCache[dataobject.id] = dataobject.name;
                 data.update('nameCache');
+                break;
+                
+            case sID.returnUserId:
+                var dataobject = JSON.parse(daten);
+                data.idCache[dataobject.name] = dataobject.id;
+                data.update('idCache');
                 break;
                 
             default:

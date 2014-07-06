@@ -55,6 +55,7 @@ var sID_typ = function sID_typ() {
     this.createInviteKey = "2001000013";
     this.chPassword = "2001000014";
     this.chUserConfig = "2001000015";
+    this.getUserId = "2001000016";
 
 
     //GET_FROM_SERVER
@@ -69,6 +70,7 @@ var sID_typ = function sID_typ() {
     this.returnUserName = "2000000014";
     this.fileRigths = "2000000015"; //Server sends userlist of a file to client
     this.ownclientID = "2000000017";
+    this.returnUserId = "2000000018";
 
     /*
     	LEGITIMATION ID: Idee: 
