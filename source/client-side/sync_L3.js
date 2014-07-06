@@ -216,8 +216,8 @@ var L3_typ = function L3_typ(){
             case sID.createAccount:
                 var x = JSON.parse(daten);
                 if(x.value){
-                    uiControl.alert("User created with id "+x.userID+"<br>please wait...");
-                    setTimeout('location.href = location.origin+"/pragm/";',2000);
+                    uiControl.alert("User created with id "+x.userID+" please wait...");
+                    setTimeout('location.href = location.href.split("#")[0]";',2000);
                 } else {
                     uiControl.alert(x.text);
                 }

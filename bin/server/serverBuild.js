@@ -1,5 +1,5 @@
-//Server-Build Version: BETA => 0.2.2360
-console.log("pragm-Websocket-Server => BUILD 0.2.2360 BETA");/******************************************************************************************
+//Server-Build Version: BETA => 0.2.2386
+console.log("pragm-Websocket-Server => BUILD 0.2.2386 BETA");/******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
 #
@@ -819,10 +819,16 @@ var global_typ = function global_typ(){
     this.firewall[this.mGuest] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, '1');
     this.firewall[this.mNoLogin] = new Array(sID.Login, sID.userName, sID.userPassword, sID.clientName, sID.createAccount, sID.ownclientID);
     
-    //this.config = { };
+    this.config = { };
     //log(fs.readFileSync('config.json', 'UTF8'));
-    this.config = JSON.parse(fs.readFileSync('config.json', 'UTF8'));
-    log("CONFIG: "+JSON.stringify(this.config));
+    this.loadConfigFile = function(file){
+        try{
+            this.config = JSON.parse(fs.readFileSync(file, 'UTF8'));
+            log("CONFIG: "+JSON.stringify(this.config));
+        } catch(e) {
+            log("ERROR: Cannot Load Config file "+this.config);
+        }
+    }
     //this = 9343;
     //this.config.dir = "./data/";
 
@@ -3112,7 +3118,7 @@ function recreateObjects(){
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
-process.argv.forEach(function (val, index, array) {
+/*process.argv.forEach(function (val, index, array) {
   //console.log(index + ': ' + val);
     if(val.substr(0,5) == "#conf"){
         console.log("CONFIG ARGUMENTS: "+val.substr(5));
@@ -3120,7 +3126,30 @@ process.argv.forEach(function (val, index, array) {
         //console.log(val.substr(5));
         global.config = JSON.parse(val.substr(5));
     }
+});*/
+var templast = "nix";
+var args ={};
+
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+    switch(templast){
+        case "-c":
+            args.config = val;
+            break;
+        case "-p":
+            args.port = parseInt(val);
+            break;
+        case "-d":
+            args.dir = val;
+            break;
+        default:
+            var bgs = val;
+            break;
+    }
+    templast = bgs;
 });
+
+console.log(JSON.stringify(args));
  
 process.stdin.on('data', function (chunk) {
     chunk = chunk.substr(0, 5);
@@ -3228,17 +3257,30 @@ function printMemoryUsage(){
     console.log("==========MEMORY USAGE END==========");
 };
 function startPrint(){
-    setInterval(printMemoryUsage, 30000);
+    //setInterval(printMemoryUsage, 30000);
 }
 //setTimeout(startPrint, 2000);
 // ==========================
 
 // Port where we'll run the websocket server
-if(!global.config.port){
-    var webSocketsServerPort = 8080;
+if(args.config){
+    global.loadConfigFile(args.config);
 } else {
+    global.loadConfigFile('config.json');
+}
+var webSocketsServerPort = 8080;
+if(global.config.port){
     var webSocketsServerPort = global.config.port;
 }
+if(args.port){
+    var webSocketsServerPort = args.port;
+    global.config.port = args.port;
+}
+if(args.dir){
+    global.config.dir = args.dir;
+}
+
+console.log("  USING CONFIG: "+JSON.stringify(global.config));
 
 var timeStatCounter = 0;
 var timeStat = new Array();

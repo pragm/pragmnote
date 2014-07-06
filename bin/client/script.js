@@ -1,4 +1,4 @@
-var clientversion = "0.2.2360";
+var clientversion = "0.2.2386";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1308,8 +1308,8 @@ pragmApp.controller('accountController', function($scope, $location) {
                 uiControl.alert("Lastname needs to have 2-32 chars!");
                 return;
             }
-            if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 20)){
-                uiControl.alert("Passwords needs to have 8-20 chars!");
+            if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 32)){
+                uiControl.alert("Passwords needs to have 8-32 chars!");
                 return;
             }
             if(!(y.invitekey.length == 32)){
@@ -1568,11 +1568,13 @@ pragmApp.controller('editorController', function($scope, $location, dataService)
                 if(x.length <=1){
                     $scope.ecomode = true;
                     data.ecoMode = true;
+                    textbox.ecoMode(true);
                 } else {
                     if($scope.ecoMode == true || data.ecoMode == true){
                         $scope.ecomode = false;
                         data.ecoMode = false;
-                        textbox.deactivateEcoMode();
+                        textbox.ecoMode(false);
+                        //textbox.deactivateEcoMode();
                     }
                 }
               $scope.fileUserList = x;
@@ -2217,7 +2219,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         }
         
         $scope.getLink = function(){
-            return location.origin+"/pragm/#/editor/"+$scope.fileinfoid+"/?login=guest";
+            return location.href.split("#")[0]+"#/editor/"+$scope.fileinfoid+"/?login=guest";
         }
         
         //$scope.loadfileshare();
@@ -2285,6 +2287,14 @@ pragmApp.controller('filesController', function($scope, $location) {
                 $scope.$apply();
             }
         });
+        
+        $scope.showGuestLink = function(){
+            if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
+                return false;
+            } else {
+                return true;
+            }
+        };
         
         // Tab Handler
         tab.deactivateAll();
@@ -4099,6 +4109,20 @@ var textbox_typ = function textbox_typ(){
         }
     };
     
+    this.ecoModeIntervall;
+    
+    this.ecoMode = function(b){
+        if(b){
+            if(this.ecoModeIntervall){
+                clearInterval(this.ecoModeIntervall);
+            }
+            this.ecoModeIntervall = setInterval(this.deactivateEcoMode, 15000);
+        } else {
+            clearInterval(this.ecoModeIntervall);
+            this.deactivateEcoMode();
+        }    
+    }
+    
     this.deactivateEcoMode = function(){
         for(i in this.catchNoSave){
             this.saveid(this.catchNoSave[i], true);
@@ -5039,8 +5063,8 @@ var L3_typ = function L3_typ(){
             case sID.createAccount:
                 var x = JSON.parse(daten);
                 if(x.value){
-                    uiControl.alert("User created with id "+x.userID+"<br>please wait...");
-                    setTimeout('location.href = location.origin+"/pragm/";',2000);
+                    uiControl.alert("User created with id "+x.userID+" please wait...");
+                    setTimeout('location.href = location.href.split("#")[0]";',2000);
                 } else {
                     uiControl.alert(x.text);
                 }

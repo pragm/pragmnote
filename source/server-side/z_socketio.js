@@ -26,7 +26,7 @@
 process.stdin.resume();
 process.stdin.setEncoding('utf8');
 
-process.argv.forEach(function (val, index, array) {
+/*process.argv.forEach(function (val, index, array) {
   //console.log(index + ': ' + val);
     if(val.substr(0,5) == "#conf"){
         console.log("CONFIG ARGUMENTS: "+val.substr(5));
@@ -34,7 +34,30 @@ process.argv.forEach(function (val, index, array) {
         //console.log(val.substr(5));
         global.config = JSON.parse(val.substr(5));
     }
+});*/
+var templast = "nix";
+var args ={};
+
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
+    switch(templast){
+        case "-c":
+            args.config = val;
+            break;
+        case "-p":
+            args.port = parseInt(val);
+            break;
+        case "-d":
+            args.dir = val;
+            break;
+        default:
+            var bgs = val;
+            break;
+    }
+    templast = bgs;
 });
+
+console.log(JSON.stringify(args));
  
 process.stdin.on('data', function (chunk) {
     chunk = chunk.substr(0, 5);
@@ -142,17 +165,30 @@ function printMemoryUsage(){
     console.log("==========MEMORY USAGE END==========");
 };
 function startPrint(){
-    setInterval(printMemoryUsage, 30000);
+    //setInterval(printMemoryUsage, 30000);
 }
 //setTimeout(startPrint, 2000);
 // ==========================
 
 // Port where we'll run the websocket server
-if(!global.config.port){
-    var webSocketsServerPort = 8080;
+if(args.config){
+    global.loadConfigFile(args.config);
 } else {
+    global.loadConfigFile('config.json');
+}
+var webSocketsServerPort = 8080;
+if(global.config.port){
     var webSocketsServerPort = global.config.port;
 }
+if(args.port){
+    var webSocketsServerPort = args.port;
+    global.config.port = args.port;
+}
+if(args.dir){
+    global.config.dir = args.dir;
+}
+
+console.log("  USING CONFIG: "+JSON.stringify(global.config));
 
 var timeStatCounter = 0;
 var timeStat = new Array();
