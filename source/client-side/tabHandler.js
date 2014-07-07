@@ -30,6 +30,7 @@ var tab_typ = function tab_typ(){
     this.tabArrayHTML = new Array();
     this.active;
     this.showElemNum = 7;
+    this.lastTab = "";
     
     this.fileOpened = function(oFile){
         /*var oFile = oFile.toString();
@@ -105,6 +106,7 @@ var tab_typ = function tab_typ(){
     }
     
     this.position = function(key){
+        this.lastTab = key;
         switch(key){
             case "slideOut":
                 document.getElementById('fileTabs').style.display = "block";

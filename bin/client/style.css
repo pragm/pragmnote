@@ -217,7 +217,7 @@
     height: 10px;
     right: 0px;
     background: #333;
-    z-index: 10;
+    z-index: 16;
     transition: all 0.3s ease-in-out;
     /*overflow: hidden;*/
 }
@@ -2219,7 +2219,7 @@ weis {
 }
 .shareUserDelete {
     position: absolute;
-    left: 520px;
+    left: 490px;
 }
 .deleteInput {
     margin-top: -4px;
@@ -2754,5 +2754,122 @@ background-position:100px 50%;*/
     right: -30px;
     height: 20px;
     width: 20px;
+}
+
+.shareUserAccept {
+    position: absolute;
+    right: 10px;
+}
+
+.notificationNumber {
+    position: absolute;
+    bottom: 0px;
+    height: 38px;
+    width: 50px;
+    right: 0px;
+    /*background: #FF4700;*/
+    color: #fff;
+    font-family: 'Open Sans';
+    text-align: center;
+    font-size: 8px;
+    padding-top: 12px;
+}
+.notificationNumber:hover {
+    color: #00F53B; /* 00F53B FF4700 */
+}
+
+.notificationContainer {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    border-top: 0px solid #FF4700;
+    width: 300px;
+    /*height: 0px;*/
+    outline: none;
+    overflow: hidden;
+    background: rgba(0, 122, 255, 0.77);
+    /* box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.32); */
+    -webkit-transition: ease-in-out 0.2s;
+    z-index: 17;
+    border-bottom-left-radius: 5px;
+}
+
+.notificationUl {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-family: 'Open Sans';
+    font-size: 13px;
+}
+.notificationFont{
+    position: absolute;
+    left: 70px;
+}
+.notificationUl li {
+    position: relative;
+    padding: 10px;
+    padding-left: 20px;
+    color: #fff;
+    cursor: pointer;
+    -webkit-transition: ease-in-out 0.2s;
+    overflow: hidden;
+}
+.notificationUl li:hover {
+    /*color: #000; FF4700*/
+    color: #00F53B;
+    background: rgba(255, 255, 255, 0.17);
+}
+
+.notifyNew {
+    font-size: 5px;
+}
+
+.notifyNumber {
+    position: absolute;
+    bottom: 35px;
+    right: 0px;
+    width: 20px;
+    text-align: left;
+}
+
+.notificationWrapper {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+.notificationBg {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    filter: blur(5px);
+        -webkit-filter: blur(5px);
+        -moz-filter: blur(5px);
+        -o-filter: blur(5px);
+        -ms-filter: blur(5px);
+    margin: -5px -10px -10px -5px;
+    background: rgba(0, 122, 255, 0.77);
+}
+
+#unfocus {
+    position: fixed;
+    top: -20px;
+    right: -20px;
+}
+
+.newNoti {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    padding: 12px;
+    background: rgba(0, 122, 255, 0.77);
+    border-radius: 5px;
+    z-index: 16;
+    font-family: 'Open Sans';
+    font-size: 16px;
+    color: #fff;
+    -webkit-transition: ease-in-out 0.2s;
 }
 

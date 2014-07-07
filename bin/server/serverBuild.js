@@ -1,6 +1,6 @@
-//Server-Build Version: BETA => 0.2.2410
-console.log("pragm-Websocket-Server => BUILD 0.2.2410 BETA");
- var pragmbuildversion = "Welcome to Pragm! Version: 0.2.2410";
+//Server-Build Version: BETA => 0.2.2489
+console.log("pragm-Websocket-Server => BUILD 0.2.2489 BETA");
+ var pragmbuildversion = "Welcome to Pragm! Version: 0.2.2489";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1248,11 +1248,17 @@ var fileSystemControl_typ = function fileSystemControl(){
         var c = true;
         var deadObjects = [];
         for (i in fobj) {
-            if (typeof fobj[i].share == 'array' || fobj[i].share instanceof Array) {
+            //if (fobj[i].share != {}) {
+                for(j in fobj[i].share){
+                    if(typeof fobj[i].share[j] == 'string'){
+                        var s = {"r":fobj[i].share[j],"a":"y"};
+                        console.log("    Change Share to "+JSON.stringify(s));
+                    }
+                }
                 //fobj[i].share = { };
                 //console.log('    SET SHARE TO OBJECT');
                 //change = true;
-            }
+            //}
             if (i[0] == "5") {
                 //fobj[i].maxStorageScore = 200000;
                 //console.log('    SET maxStorageScore TO 1000');

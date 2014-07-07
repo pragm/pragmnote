@@ -16,6 +16,7 @@
                         <font class="shareUserName">USER ID</font>
                         <font class="shareUserRights">RIGHTS</font>
                         <font class="shareUserDelete">DELETE</font>
+                        <font class="shareUserAccept" title="ACCEPTED"><i class="fa fa-group" title="ACCEPTED"></i></font>
                         </li>
                     </ul>
                 <ul class="shareconfigul">
@@ -24,6 +25,7 @@
                         <font class="shareUserName">{{data.id}}</font>
                         <font class="shareUserRights"><input ng-model="data.value" ng-change="shareUpdater();" class="rangeInput" type="range" min="0" max="2" ng-value="data.value" step="1"> {{rightinfo[data.value]}}</font>
                         <font class="shareUserDelete"><input class="deleteInput" type="button" value="DELETE" ng-click="deleteshare($index);"></font>
+                        <font class="shareUserAccept"><i class="fa fa-check"></i></font>
                     </li>
                     <li class="shareconfigulli">
                         <font class="shareUserId">
@@ -35,6 +37,7 @@
                         <font class="shareUserName">{{resolveId(addname);}}</font>
                         <font class="shareUserRights"><input ng-model="addvalue" class="rangeInput" type="range" min="0" max="2" ng-value="addvalue" step="1"> {{rightinfo[addvalue]}}</font>
                         <font class="shareUserDelete"><input class="deleteInput" type="button" value="ADD" ng-click="pushsharedata();"></font>
+                        <font class="shareUserAccept"><i class="fa fa-check"></i></font>
                     </li>
                 </ul>
             <br>
@@ -43,7 +46,8 @@
     </div>
 
     <div class="loginoverlay" style="display:{{loadshow}};">
-        <div class="loginwait">{{loadinginfo}}<div class="loadicon"></div>
+        <div class="loginwait">{{loadinginfo}}<br><br>
+            <i class="fa fa-refresh fa-spin" style="font-size: 26px;"></i>
             <div class="loadingslideIN" id="loadingslide"></div>
         </div>
     </div>

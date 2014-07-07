@@ -21,11 +21,17 @@ var fileSystemControl_typ = function fileSystemControl(){
         var c = true;
         var deadObjects = [];
         for (i in fobj) {
-            if (typeof fobj[i].share == 'array' || fobj[i].share instanceof Array) {
+            //if (fobj[i].share != {}) {
+                for(j in fobj[i].share){
+                    if(typeof fobj[i].share[j] == 'string'){
+                        var s = {"r":fobj[i].share[j],"a":"y"};
+                        console.log("    Change Share to "+JSON.stringify(s));
+                    }
+                }
                 //fobj[i].share = { };
                 //console.log('    SET SHARE TO OBJECT');
                 //change = true;
-            }
+            //}
             if (i[0] == "5") {
                 //fobj[i].maxStorageScore = 200000;
                 //console.log('    SET maxStorageScore TO 1000');

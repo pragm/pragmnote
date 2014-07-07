@@ -1,4 +1,4 @@
-var clientversion = "0.2.2410";
+var clientversion = "0.2.2489";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1302,12 +1302,12 @@ pragmApp.controller('accountController', function($scope, $location) {
                 uiControl.alert("Username needs to have 3-20 chars!");
                 return;
             }
-            if(!('firstname' in y && y.firstname.length >= 2 && y.firstname.length <= 32)){
-                uiControl.alert("Firstname needs to have 2-32 chars! ");
+            if(!('firstname' in y && y.firstname.length >= 1 && y.firstname.length <= 32)){
+                uiControl.alert("Firstname needs to have 1-32 chars! ");
                 return;
             }
-            if(!('lastname' in y && y.lastname.length >= 2 && y.lastname.length <= 32)){
-                uiControl.alert("Lastname needs to have 2-32 chars!");
+            if(!('lastname' in y && y.lastname.length >= 1 && y.lastname.length <= 32)){
+                uiControl.alert("Lastname needs to have 1-32 chars!");
                 return;
             }
             if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 32)){
@@ -2338,6 +2338,7 @@ pragmApp.controller('globalController', function ($scope) {
         }
     });
 
+
     $scope.getFileName = function (key) {
         if ('dirObject' in data && key in data.dirObject) {
             return data.dirObject[key].name;
@@ -2346,6 +2347,72 @@ pragmApp.controller('globalController', function ($scope) {
 
     $scope.openFile = function (key) {
         uiControl.loadFile(key);
+    };
+
+    // Notifications
+
+    $scope.notiPad = "0";
+    $scope.notiMax = "30px";
+    $scope.notiColor = "";
+    $scope.notiColorActive = "#00F53B";
+    $scope.notiColorInActive = "";
+    $scope.notiHeight = "0px";
+    $scope.lastTab = "slide10In";
+    $scope.notifications = [{
+        "icon": "fa-group",
+        "label": "NEWI",
+        "text": "Johannes has kicked you!"
+    }, {
+        "icon": "fa-exclamation-triangle",
+        "label": "NEWS",
+        "text": "Johannes has not kicked you!"
+    }];
+    $scope.notifications = [];
+
+    $scope.notiout = function () {
+        console.log("out");
+    };
+
+    $scope.showNotifications = function () {
+        $scope.hideNewNoti();
+        $scope.notiHeight = $scope.notiMax;
+        $scope.notiPad = "";
+        $scope.notiColor = $scope.notiColorActive;
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+        $scope.lastTab = tab.lastTab;
+        tab.position("slideOut");
+        document.getElementById('unfocus').focus();
+    };
+
+    $scope.hideNotifications = function () {
+        tab.position($scope.lastTab);  
+        $scope.notiPad = "0";
+        $scope.notiColor = $scope.notiColorInActive;
+        $scope.notiHeight = "0px";
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    };
+    
+    $scope.newNotiPad = "0";
+    $scope.newNotiMax = "-46px";
+    
+    $scope.showNewNoti = function(){
+        $scope.newNotiPad = "1";
+        $scope.newNotiMax = "60px";
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    };
+    
+    $scope.hideNewNoti = function(){
+        $scope.newNotiPad = "0";
+        $scope.newNotiMax = "-46px";
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
     };
 });
 pragmApp.controller('loadingController', function($scope) {
@@ -3609,8 +3676,18 @@ var globalEvent_typ = function globalEvent_typ(){
         }
     };
     
+    this.blur = function(event){
+        var key = event.keyCode;
+        globalEvent.deactivateKeys(key);
+    };
+    
     this.keyup = function(event){
         var key = event.keyCode;
+        globalEvent.deactivateKeys(key);
+        console.log(event);
+    };
+    
+    this.deactivateKeys = function(key){
         switch(key){
                 case 17:
                     global.ctrl = false;
@@ -3739,6 +3816,7 @@ var globalEvent = new globalEvent_typ();
 
 window.onkeydown = globalEvent.keydown;
 window.onkeyup = globalEvent.keyup;
+window.onblur = globalEvent.blur;
 window.onmousedown = globalEvent.mousedown;
 window.onmouseup = globalEvent.mouseup;
 
@@ -5434,6 +5512,7 @@ var tab_typ = function tab_typ(){
     this.tabArrayHTML = new Array();
     this.active;
     this.showElemNum = 7;
+    this.lastTab = "";
     
     this.fileOpened = function(oFile){
         /*var oFile = oFile.toString();
@@ -5509,6 +5588,7 @@ var tab_typ = function tab_typ(){
     }
     
     this.position = function(key){
+        this.lastTab = key;
         switch(key){
             case "slideOut":
                 document.getElementById('fileTabs').style.display = "block";

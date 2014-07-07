@@ -104,6 +104,20 @@
         </nobr>
         <div class="TabsIn1" onclick="uiControl.unloadFile(); tab.deactivateTab();"></div>
         <div class="TabsIn2"></div>
+        <div class="notificationNumber" ng-click="showNotifications()" style="color: {{notiColor}};"><i class="fa fa-bell" style="font-size: 26px;"></i><font class="notifyNumber">{{notifications.length}}</font>
+        </div>
+        <div class="notificationWrapper">
+            <div class="notificationContainer" ng-mouseout="notiout()">
+                <ul class="notificationUl">
+                    <li ng-repeat="(key, value) in notifications" style="max-height: {{notiHeight}}; padding: {{notiPad}};"><i class="fa {{value.icon}}"></i><font class="notifyNew"> {{value.label}}</font>
+                        <font class="notificationFont">{{value.text}}</font>
+                    </li>
+                    <li style="max-height: {{notiHeight}}; padding: {{notiPad}};" ng-hide="notifications.length > 0"><i class="fa fa-frown-o"></i><font class="notifyNew"> </font>
+                        <font class="notificationFont">NO NOTIFICATIONS</font>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <!--<ul class="draweditul" id="draweditul" style="">
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add rect (out of work)"><input class="unselectinput" type="button" onclick="addrect();"><img src="img/doc/rect.png"></li>
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="add circle (out of work)"><input class="unselectinput" type="button" onclick="addline(3,3);"><img src="img/doc/circle.png"></li>
@@ -113,7 +127,8 @@
         <li class="draweditli" style="min-width: 31px;" unselectable="on" title="delete element (out of work)"><input class="unselectinput" type="button" onclick="killfocusline();"><img src="img/doc/delete.png"></li>
      </ul>-->
     </div>
-
+    <input type="button" ng-blur="hideNotifications()" id="unfocus">
+<div class="newNoti" style="top: {{newNotiMax}}; opacity: {{newNotiPad}};" ng-mouseover="hideNewNoti()"><i class="fa fa-bell"></i> NEW NOTIFICATION</div>
     <div class="angularView" ng-controller="loginController" ng-view></div>
     <!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>

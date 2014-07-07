@@ -31,12 +31,12 @@ pragmApp.controller('accountController', function($scope, $location) {
                 uiControl.alert("Username needs to have 3-20 chars!");
                 return;
             }
-            if(!('firstname' in y && y.firstname.length >= 2 && y.firstname.length <= 32)){
-                uiControl.alert("Firstname needs to have 2-32 chars! ");
+            if(!('firstname' in y && y.firstname.length >= 1 && y.firstname.length <= 32)){
+                uiControl.alert("Firstname needs to have 1-32 chars! ");
                 return;
             }
-            if(!('lastname' in y && y.lastname.length >= 2 && y.lastname.length <= 32)){
-                uiControl.alert("Lastname needs to have 2-32 chars!");
+            if(!('lastname' in y && y.lastname.length >= 1 && y.lastname.length <= 32)){
+                uiControl.alert("Lastname needs to have 1-32 chars!");
                 return;
             }
             if(!('passwordA' in y && y.passwordA.length >= 8 && y.passwordA.length <= 32)){

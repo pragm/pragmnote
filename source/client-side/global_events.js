@@ -109,8 +109,18 @@ var globalEvent_typ = function globalEvent_typ(){
         }
     };
     
+    this.blur = function(event){
+        var key = event.keyCode;
+        globalEvent.deactivateKeys(key);
+    };
+    
     this.keyup = function(event){
         var key = event.keyCode;
+        globalEvent.deactivateKeys(key);
+        console.log(event);
+    };
+    
+    this.deactivateKeys = function(key){
         switch(key){
                 case 17:
                     global.ctrl = false;
@@ -239,5 +249,6 @@ var globalEvent = new globalEvent_typ();
 
 window.onkeydown = globalEvent.keydown;
 window.onkeyup = globalEvent.keyup;
+window.onblur = globalEvent.blur;
 window.onmousedown = globalEvent.mousedown;
 window.onmouseup = globalEvent.mouseup;
