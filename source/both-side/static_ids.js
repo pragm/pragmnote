@@ -56,6 +56,7 @@ var sID_typ = function sID_typ() {
     this.chPassword = "2001000014";
     this.chUserConfig = "2001000015";
     this.getUserId = "2001000016";
+    this.deleteNotification = "2001000017";
 
 
     //GET_FROM_SERVER

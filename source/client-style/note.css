@@ -1151,7 +1151,7 @@ weis {
 }
 .filenameDir:hover {
     color: #00f;
-    text-decoration: underline;
+    /*text-decoration: underline;*/
     cursor: pointer;
 }
 .gearIcon {
@@ -2118,6 +2118,7 @@ background-position:100px 50%;*/
 }
 .notificationNumber:hover {
     color: #00F53B; /* 00F53B FF4700 */
+    cursor: pointer;
 }
 
 .notificationContainer {
@@ -2213,4 +2214,97 @@ background-position:100px 50%;*/
     font-size: 16px;
     color: #fff;
     -webkit-transition: ease-in-out 0.2s;
+}
+
+.showNoti {
+    position: fixed;
+    top: 50px;
+    right: 50%;
+    margin-right: -160px;
+    width: 320px;
+    height: 120px;
+    overflow: hidden;
+    background: rgba(0, 122, 255, 0.77);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    z-index: 16;
+    font-family: 'Open Sans';
+    font-size: 16px;
+    color: #fff;
+    -webkit-transition: ease-in-out 0.2s;
+}
+
+.showNoteWrapper {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+    height: 100px;
+}
+
+.acceptButtonNoti {
+    position: absolute;
+    top: 60px;
+    right: 0px;
+    padding: 5px;
+    background: #2AD500;
+    color: #FFFFFF;
+    border-radius: 2px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+.acceptButtonNoti:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.declineButtonNoti {
+    position: absolute;
+    top: 60px;
+    right: 79px;
+    padding: 5px;
+    background: #FF5200;
+    color: #FFFFFF;
+    border-radius: 2px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+.declineButtonNoti:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.closeButtonNoti {
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    padding: 5px;
+    background: #414141;
+    color: #FFFFFF;
+    border-radius: 2px;
+    font-size: 12px;
+    opacity: 0.8;
+}
+.closeButtonNoti:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.notiObjIco {
+    position: relative;
+    left: 20px;
+}
+
+.changeNameEdit {
+    background: #fff;
+    color: #000;
+    padding: 4px;
+    -webkit-transition: margin 0.3s ease-in 0s;
+}
+
+.changeNameInactive {
+    background: transparent;
+    border: 0;
+    outline: none;
+    -webkit-transition: margin 0.3s ease-in 0s;
 }

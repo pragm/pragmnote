@@ -1,4 +1,4 @@
-var clientversion = "0.2.2489";
+var clientversion = "0.2.2597";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -729,6 +729,7 @@ var sID_typ = function sID_typ() {
     this.chPassword = "2001000014";
     this.chUserConfig = "2001000015";
     this.getUserId = "2001000016";
+    this.deleteNotification = "2001000017";
 
 
     //GET_FROM_SERVER
@@ -1774,15 +1775,15 @@ pragmApp.controller('filesController', function($scope, $location) {
             return "fileListUlli";
         }
         
-        $scope.setactive = function(key){
+        $scope.setactive = function(key, event){
             if($scope.draganddropactive != true){
-                if(!global.ctrl && !global.shift){
+                if(!event.ctrlKey && !event.metaKey && !event.shiftKey){
                     $scope.lastactivate = null;
                     $scope.lastactivate;
                     $scope.activeArray = null;
                     $scope.activeArray = [];
                 }
-                if($scope.activeArray != [] && global.shift){
+                if($scope.activeArray != [] && event.shiftKey){
                     if($scope.lastactivate){
                         var i = $scope.getPos(key);
                         var k = $scope.getPos($scope.lastactivate);
@@ -1802,7 +1803,7 @@ pragmApp.controller('filesController', function($scope, $location) {
                         $scope.lastactivate = key;
                     }
                 }
-                if(!global.shift){
+                if(!event.shiftKey){
                     if($scope.activeArray[key]){
                         $scope.activeArray[key] = false;
                     } else {
@@ -1835,8 +1836,8 @@ pragmApp.controller('filesController', function($scope, $location) {
             return i;   
         }
         
-        $scope.setinactive = function(){
-            if(!global.ctrl && !global.shift){
+        $scope.setinactive = function(event){
+            if(!event.ctrlKey && !event.metaKey && !event.shiftKey){
                 $scope.forceinactiv();
             }
         }
@@ -1846,6 +1847,7 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.lastactivate;
             $scope.activeArray = null;
             $scope.activeArray = [];
+            $scope.changeNameOff();
             var selectionarray = [];
             var activecount = 0;
             for(i in $scope.activeArray){
@@ -2112,6 +2114,43 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.chpw.new2 = "";
         };
         
+        // Change FileName handler =============================================
+        
+        $scope.changeNameId = "";
+        
+        $scope.changeNameE = function(key){
+            if(data.selectionarray.indexOf(key) >= 0){
+                $scope.changeNameId = key;
+                document.getElementById('chNa'+key).select();
+                setTimeout("document.getElementById('chNa"+key+"').focus();",100);
+                //dada.select();
+            }
+        };
+        
+        $scope.changeNameOff = function(){
+            $scope.changeNameId = '';
+        }
+        
+        $scope.changeNameClass = function(key){
+            if($scope.changeNameId == key){
+                return "changeNameEdit";
+            } else {
+                return "changeNameInactive";
+            }
+        };
+        
+        $scope.changeNameDisa = function(key){
+            if($scope.changeNameId == key){
+                return false;
+            } else {
+                return true;
+            }
+        };
+        
+        $scope.changeNameUpdate = function(key){
+            L3.setFileInfo('name', key, $scope.dirObject[key].name);
+        };
+        
         
         // Share Popup handler ------------------------------------------
         
@@ -2135,13 +2174,27 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.sharedata = [];
             if($scope.dirObject[$scope.fileinfoid]){
                 for(key in $scope.dirObject[$scope.fileinfoid].share){
-                    $scope.sharedata.push({"id": key, "value": $scope.dirObject[$scope.fileinfoid].share[key]});
+                    $scope.sharedata.push({"id": key, "value": $scope.dirObject[$scope.fileinfoid].share[key].r, "accept": $scope.dirObject[$scope.fileinfoid].share[key].a});
                 }
                 console.log(JSON.stringify($scope.sharedata));
             } else {
                 $scope.shareclose();
             }
         };
+        
+        $scope.getacceptClass = function(a){
+            switch(a){
+               case "y":
+                    return "fa-check";
+                    break;
+               case "n":
+                    return "fa-circle-o-notch fa-spin";
+                    break;
+                default:
+                    return "fa-warning";
+                    break;
+            }
+        }
         
         $scope.updateShare = function(){
             //console.log("Update Angular "+$scope.alertinfo);
@@ -2180,7 +2233,9 @@ pragmApp.controller('filesController', function($scope, $location) {
                     $scope.sharedata[key].value = 1;
                     uiControl.alert("Guest can not be admin!");
                 }
-                out[$scope.sharedata[key].id] = $scope.sharedata[key].value;
+                out[$scope.sharedata[key].id] = {};
+                out[$scope.sharedata[key].id].r = $scope.sharedata[key].value;
+                out[$scope.sharedata[key].id].a = "n";
                 
                 console.log("KEY=>"+key);
             };
@@ -2193,11 +2248,15 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.pushsharedata =  function(){
             var id = $scope.resolveId($scope.addname) || "s";
             if($scope.addname.length > 2 && id.length == 10 && id[0] == "5"){
+                var da = "n";
                 if($scope.addname == "Guest" && $scope.addvalue > 1){
                     $scope.addvalue = 1;
+                    da = "y";
                     uiControl.alert("Guest can not be admin!");
                 }
-                $scope.dirObject[$scope.fileinfoid].share[id] = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[id] = {};
+                $scope.dirObject[$scope.fileinfoid].share[id].r = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[id].a = da;
                 $scope.getProposals();
                 $scope.loadfileshare();
                 L3.setFileInfo('share', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].share);
@@ -2316,7 +2375,7 @@ pragmApp.controller('filesController', function($scope, $location) {
         // Tab Handler
         tab.deactivateAll();
         
-        tab.position("slideOut");
+        
     }
 });
 pragmApp.controller('globalController', function ($scope) {
@@ -2352,6 +2411,9 @@ pragmApp.controller('globalController', function ($scope) {
     // Notifications
 
     $scope.notiPad = "0";
+    $scope.notiObj = {"l1": "fa-group", "l2":"fa-file-text", "t1": "NO DATA", "t2": "NO DATA"};
+    $scope.notiData = {};
+    $scope.showNotiHeight = "0px";
     $scope.notiMax = "30px";
     $scope.notiColor = "";
     $scope.notiColorActive = "#00F53B";
@@ -2372,6 +2434,7 @@ pragmApp.controller('globalController', function ($scope) {
     $scope.notiout = function () {
         console.log("out");
     };
+    $scope.lastNotiNumber = 0;
 
     $scope.showNotifications = function () {
         $scope.hideNewNoti();
@@ -2387,7 +2450,7 @@ pragmApp.controller('globalController', function ($scope) {
     };
 
     $scope.hideNotifications = function () {
-        tab.position($scope.lastTab);  
+        tab.position($scope.lastTab);
         $scope.notiPad = "0";
         $scope.notiColor = $scope.notiColorInActive;
         $scope.notiHeight = "0px";
@@ -2395,25 +2458,128 @@ pragmApp.controller('globalController', function ($scope) {
             $scope.$apply();
         }
     };
-    
+
     $scope.newNotiPad = "0";
     $scope.newNotiMax = "-46px";
-    
-    $scope.showNewNoti = function(){
+
+    $scope.showNewNoti = function () {
         $scope.newNotiPad = "1";
         $scope.newNotiMax = "60px";
         if (!$scope.$$phase) {
             $scope.$apply();
         }
     };
-    
-    $scope.hideNewNoti = function(){
+
+    $scope.hideNewNoti = function () {
         $scope.newNotiPad = "0";
         $scope.newNotiMax = "-46px";
         if (!$scope.$$phase) {
             $scope.$apply();
         }
     };
+
+    $scope.resolveName = function (id) {
+        return data.getUserName(id);
+    };
+    
+    $scope.rightinfo = ['readonly', 'write', 'admin'];
+
+    $scope.showNotiInfo = function (noti) {
+        var id = noti.id;
+        var type = noti.type;
+        var who = noti.who;
+        var text = $scope.resolveName(who) + " invited you to " + $scope.dirObject[id].name + "!";
+        switch (type) {
+        case "shareadd":
+            $scope.notiObj.l1 = "fa-group";
+            if(id[0]=="3"){
+                $scope.notiObj.l2 = "fa-file-text";
+            } else {
+                $scope.notiObj.l2 = "fa-folder";
+            }
+            $scope.notiObj.t1 = $scope.resolveName(who) + " invited you to:";
+            var right = $scope.rightinfo[$scope.dirObject[id].share[data.login.userID].r];
+            $scope.notiObj.t2 = "'"+$scope.dirObject[id].name + "' - Right: "+right.toUpperCase();
+            $scope.notiData = noti;
+            break;
+        default:
+
+            break;
+        }
+        $scope.showNotiHeight = "";
+    };
+
+    $scope.hideNotiInfo = function () {
+        $scope.showNotiHeight = "0px";
+    };
+    
+    $scope.notiAccept = function(){
+        $scope.hideNotiInfo();
+        $scope.notiData.accept = true;
+        L2.send(sID.deleteNotification, JSON.stringify($scope.notiData));
+    };
+    
+    $scope.notiDecline = function(){
+        $scope.hideNotiInfo();
+        $scope.notiData.accept = false;
+        L2.send(sID.deleteNotification, JSON.stringify($scope.notiData));
+    };
+
+    $scope.dirObject = {};
+
+    $scope.refreshNoti = function () {
+        var n = $scope.dirObject[data.login.userID].notifications;
+        console.log(JSON.stringify(n));
+        var y = [];
+        var text = "";
+        var id = "";
+        var type = "";
+        var who = "";
+        for (i in n) {
+            id = n[i].id;
+            type = n[i].type;
+            who = n[i].who;
+            text = $scope.resolveName(who) + " invited you to " + $scope.dirObject[id].name + "!";
+            switch (type) {
+            case "shareadd":
+                y.push({
+                    "icon": "fa-group",
+                    "label": "NEW",
+                    "text": text,
+                    "data": n[i]
+                });
+                break;
+            default:
+
+                break;
+            }
+        }
+        $scope.notifications = y;
+    };
+
+    data.databindHard('nameCache', function (x) {
+        if (data.login) {
+            $scope.refreshNoti();
+        }
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });
+
+    data.databindHard('dirObject', function (x) {
+        $scope.dirObject = x;
+        if (data.login) {
+            $scope.refreshNoti();
+            if ($scope.notifications.length > $scope.lastNotiNumber) {
+                $scope.showNewNoti();
+            }
+            $scope.lastNotiNumber = $scope.notifications.length;
+        }
+
+        if (!$scope.$$phase) {
+            $scope.$apply();
+        }
+    });
 });
 pragmApp.controller('loadingController', function($scope) {
 		data.unbindCallbacks();
@@ -3590,160 +3756,160 @@ var fRights = new fRights_typ();
 ******************************************************************************************/
 
 
-var globalEvent_typ = function globalEvent_typ(){
+var globalEvent_typ = function globalEvent_typ() {
 
     //function update_websocketstate(){
-	//   stateupdate();
+    //   stateupdate();
     //}
     this.ctrl = {};
-    
-    this.ctrlbind = function(i, callback){
+
+    this.ctrlbind = function (i, callback) {
         globalEvent.ctrl[i] = callback;
     };
-    
-    this.unbindAll = function(){
+
+    this.unbindAll = function () {
         this.ctrl = null;
         this.ctrl = {};
     }
-    
-    this.keydown = function(event){  // X=88 C=67 V=86 A=65
+
+    this.keydown = function (event) { // X=88 C=67 V=86 A=65
+        //console.log(event);
         var key = event.keyCode;
-        switch(key){
-                case 17:
-                    global.ctrl = true;
-                break;
-                case 91:
-                    global.ctrl = true;
-                break;
-                case 93:
-                    global.ctrl = true;
-                break;
-                case 224:
-                    global.ctrl = true;
-                break;
-                case 16:
-                    global.shift = true;                
-                break;
-                case 88:
-                    if(global.ctrl){
-                        if(globalEvent.ctrl.X){
-                            globalEvent.ctrl.X();
-                        }
-                    }
-                break;
-                case 86:
-                    if(global.ctrl){
-                        if(globalEvent.ctrl.V){
-                            globalEvent.ctrl.V();
-                        }
-                    }
-                break;
-                case 67:
-                    if(global.ctrl){
-                        if(globalEvent.ctrl.C){
-                            globalEvent.ctrl.C();
-                        }
-                    }
-                break;
-                case 65:
-                    if(global.ctrl){
-                        if(globalEvent.ctrl.A){
-                            globalEvent.ctrl.A();
-                        }
-                    }
-                break;
-                case 80:
-                    if(global.ctrl){
-                        if(globalEvent.ctrl.P){
-                            globalEvent.ctrl.P();
-                            return false;
-                        }
-                    }
-                break;
-                case 9:
-                    if(global.shift){
-                        if(globalEvent.ctrl.outdent){
-                            globalEvent.ctrl.outdent();
-                            return false;
-                        }
-                    } else {
-                        if(globalEvent.ctrl.indent){
-                            globalEvent.ctrl.indent();
-                            return false;
-                        }
-                    }
-                break;
+        switch (key) {
+        case 17:
+            global.ctrl = true;
+            break;
+        case 91:
+            global.ctrl = true;
+            break;
+        case 93:
+            global.ctrl = true;
+            break;
+        case 224:
+            global.ctrl = true;
+            break;
+        case 16:
+            global.shift = true;
+            break;
+        case 88:
+            if (event.ctrlKey || event.metaKey) {
+                if (globalEvent.ctrl.X) {
+                    globalEvent.ctrl.X();
+                }
+            }
+            break;
+        case 86:
+            if (event.ctrlKey || event.metaKey) {
+                if (globalEvent.ctrl.V) {
+                    globalEvent.ctrl.V();
+                }
+            }
+            break;
+        case 67:
+            if (event.ctrlKey || event.metaKey) {
+                if (globalEvent.ctrl.C) {
+                    globalEvent.ctrl.C();
+                }
+            }
+            break;
+        case 65:
+            if (event.ctrlKey || event.metaKey) {
+                if (globalEvent.ctrl.A) {
+                    globalEvent.ctrl.A();
+                }
+            }
+            break;
+        case 80:
+            if (event.ctrlKey || event.metaKey) {
+                if (globalEvent.ctrl.P) {
+                    globalEvent.ctrl.P();
+                    return false;
+                }
+            }
+            break;
+        case 9:
+            if (event.shiftKey) {
+                if (globalEvent.ctrl.outdent) {
+                    globalEvent.ctrl.outdent();
+                    return false;
+                }
+            } else {
+                if (globalEvent.ctrl.indent) {
+                    globalEvent.ctrl.indent();
+                    return false;
+                }
+            }
+            break;
         }
     };
-    
-    this.blur = function(event){
+
+    this.blur = function (event) {
         var key = event.keyCode;
         globalEvent.deactivateKeys(key);
     };
-    
-    this.keyup = function(event){
+
+    this.keyup = function (event) {
         var key = event.keyCode;
         globalEvent.deactivateKeys(key);
-        console.log(event);
     };
-    
-    this.deactivateKeys = function(key){
-        switch(key){
-                case 17:
-                    global.ctrl = false;
-                break;
-                case 91:
-                    global.ctrl = false;
-                break;
-                case 93:
-                    global.ctrl = false;
-                break;
-                case 224:
-                    global.ctrl = false;
-                break;
-                case 16:
-                    global.shift = false;                
-                break;
+
+    this.deactivateKeys = function (key) {
+        switch (key) {
+        case 17:
+            global.ctrl = false;
+            break;
+        case 91:
+            global.ctrl = false;
+            break;
+        case 93:
+            global.ctrl = false;
+            break;
+        case 224:
+            global.ctrl = false;
+            break;
+        case 16:
+            global.shift = false;
+            break;
         }
     };
-    
-    this.mousedown = function(){
+
+    this.mousedown = function () {
         global.mousedown = true;
     };
-    
-    this.mouseup = function(){
+
+    this.mouseup = function () {
         global.mousedown = false;
     };
-    
+
     this.fpsTimer = false;
     this.fpsTimer2 = false;
     this.fpsControl = false;
     this.stateTimer = false;
 
-    this.mousemove = function (){
-        if(globalEvent.fpsControl) {
-            if(!globalEvent.fpsTimer){
+    this.mousemove = function () {
+        if (globalEvent.fpsControl) {
+            if (!globalEvent.fpsTimer) {
                 clearTimeout(globalEvent.fpsTimer2);
                 globalEvent.mousemove_fps();
-                globalEvent.fpsTimer = setTimeout("globalEvent.fpsTimer = false;", 1000/global.fps);
-                globalEvent.fpsTimer2 = setTimeout("globalEvent.mousemove_fps();", 1100/global.fps);
+                globalEvent.fpsTimer = setTimeout("globalEvent.fpsTimer = false;", 1000 / global.fps);
+                globalEvent.fpsTimer2 = setTimeout("globalEvent.mousemove_fps();", 1100 / global.fps);
             }
         } else {
             globalEvent.mousemove_fps();
         }
     };
 
-    this.mousemove_fps = function (){
+    this.mousemove_fps = function () {
         globalEvent.fpsTimer = false;
         textbox.mousemove();
     };
-        
-    this.onload = function (){
+
+    this.onload = function () {
         //this.updateMainFieldPosition();
         //this.setDefaultNotecon();
         //setTimeout("globalEvent.lateload();", 1000);
         //document.getElementById('displayBlocker').style.display = "none";
-        
+
         //document.getElementById('madebyinfo').innerHTML = "Version: "+clientversion+" | "+document.getElementById('madebyinfo').innerHTML;
         //document.getElementById('noteconBackground').style.display = "none";
         //uiControl.view('start');
@@ -3751,19 +3917,19 @@ var globalEvent_typ = function globalEvent_typ(){
         //uiControl.view("start");
         this.checkBrowser();
     };
-    
-    this.onConnect = function (){
+
+    this.onConnect = function () {
         //setTimeout('L3.loadFile("3aaaaaaaaa");', 1000);
     };
-    
+
     this.drop = function () {
         //slidestop();
         //drawmouseup();
         textbox.drop();
     };
-    
-    this.checkBrowser = function(){
-        if(navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1) && navigator.userAgent.search("OPR") == -1){
+
+    this.checkBrowser = function () {
+        if (navigator.userAgent.search("AppleWebKit") > -1 && (navigator.userAgent.search("Safari") > -1 || navigator.userAgent.search("Chrome") > -1) && navigator.userAgent.search("OPR") == -1) {
             // true
             document.getElementById("browserfail").style.display = "none";
         } else {
@@ -3771,43 +3937,43 @@ var globalEvent_typ = function globalEvent_typ(){
             document.getElementById("browserfail").style.display = "block";
         }
     };
-        
-    this.updateMainFieldPosition = function (){
-	   global.chY = document.getElementById("notecon").offsetTop;
-	   global.chX = document.getElementById("notecon").offsetLeft;
+
+    this.updateMainFieldPosition = function () {
+        global.chY = document.getElementById("notecon").offsetTop;
+        global.chX = document.getElementById("notecon").offsetLeft;
     };
-        
-    this.onclick = function (){
+
+    this.onclick = function () {
         //drawunfocus();
     };
 
-    this.state = function (n){
+    this.state = function (n) {
         // Rot: #f92d4d Gruen: #67d200
         clearTimeout(this.stateTimer);
-        switch(n){
-            case 0:
-                //document.getElementById("pragmico1").src = "img/doc/pragm_1.png";
-                document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_retina_white.png')";
-                //document.getElementById('fileTabs').style.height = "";
-                //document.getElementById('noteconBackground').style.display = "none";
-                break;
-            case 1:
-                //document.getElementById("pragmico1").src = "img/doc/pragm_1_green.png";
-                //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_lightgreen.png')";
-                //this.stateTimer = setTimeout('globalEvent.state(0)', 1000);
-                break;
-            case 2:
-                //document.getElementById("pragmico1").src = "img/doc/pragm_1_red.png";
-                //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_red.png')";
-                //document.getElementById('fileTabs').style.height = "50px";
-                //document.getElementById('noteconBackground').style.display = "";
-                break;
-            case 3:
-                //document.getElementById("pragmico1").src = "img/doc/pragm_1_yellow.png";
-                //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_yellow.png')";
-                //document.getElementById('fileTabs').style.height = "50px";
-                //document.getElementById('noteconBackground').style.display = "";
-                break;
+        switch (n) {
+        case 0:
+            //document.getElementById("pragmico1").src = "img/doc/pragm_1.png";
+            document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_retina_white.png')";
+            //document.getElementById('fileTabs').style.height = "";
+            //document.getElementById('noteconBackground').style.display = "none";
+            break;
+        case 1:
+            //document.getElementById("pragmico1").src = "img/doc/pragm_1_green.png";
+            //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_lightgreen.png')";
+            //this.stateTimer = setTimeout('globalEvent.state(0)', 1000);
+            break;
+        case 2:
+            //document.getElementById("pragmico1").src = "img/doc/pragm_1_red.png";
+            //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_red.png')";
+            //document.getElementById('fileTabs').style.height = "50px";
+            //document.getElementById('noteconBackground').style.display = "";
+            break;
+        case 3:
+            //document.getElementById("pragmico1").src = "img/doc/pragm_1_yellow.png";
+            //document.getElementById("pragmico2").style.backgroundImage = "url('img/doc/pragm_1_yellow.png')";
+            //document.getElementById('fileTabs').style.height = "50px";
+            //document.getElementById('noteconBackground').style.display = "";
+            break;
         }
     }
 };
@@ -3819,7 +3985,6 @@ window.onkeyup = globalEvent.keyup;
 window.onblur = globalEvent.blur;
 window.onmousedown = globalEvent.mousedown;
 window.onmouseup = globalEvent.mouseup;
-
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner

@@ -109,7 +109,7 @@
         <div class="notificationWrapper">
             <div class="notificationContainer" ng-mouseout="notiout()">
                 <ul class="notificationUl">
-                    <li ng-repeat="(key, value) in notifications" style="max-height: {{notiHeight}}; padding: {{notiPad}};"><i class="fa {{value.icon}}"></i><font class="notifyNew"> {{value.label}}</font>
+                    <li ng-repeat="(key, value) in notifications" style="max-height: {{notiHeight}}; padding: {{notiPad}};" ng-click="showNotiInfo(value.data)"><i class="fa {{value.icon}}"></i><font class="notifyNew"> {{value.label}}</font>
                         <font class="notificationFont">{{value.text}}</font>
                     </li>
                     <li style="max-height: {{notiHeight}}; padding: {{notiPad}};" ng-hide="notifications.length > 0"><i class="fa fa-frown-o"></i><font class="notifyNew"> </font>
@@ -128,7 +128,21 @@
      </ul>-->
     </div>
     <input type="button" ng-blur="hideNotifications()" id="unfocus">
-<div class="newNoti" style="top: {{newNotiMax}}; opacity: {{newNotiPad}};" ng-mouseover="hideNewNoti()"><i class="fa fa-bell"></i> NEW NOTIFICATION</div>
+    <div class="newNoti" style="top: {{newNotiMax}}; opacity: {{newNotiPad}};" ng-mouseover="hideNewNoti()"><i class="fa fa-bell"></i> NEW NOTIFICATION</div>
+
+    <div class="showNoti" style="height: {{showNotiHeight}};" ng-mouseover="hideNewNoti()">
+        <div class="showNoteWrapper">
+            <i class="fa notiObjIco {{notiObj.l1}}"></i><font class="notificationFont">{{notiObj.t1}}</font>
+            <br>
+            <i class="fa notiObjIco {{notiObj.l2}}"></i><font class="notificationFont">{{notiObj.t2}}</font>
+            <nobr>
+            <p class="acceptButtonNoti" ng-click="notiAccept();"><i class="fa fa-check"></i> ACCEPT</p>
+            <p class="declineButtonNoti" ng-click="notiDecline();"><i class="fa fa-times"></i> DECLINE</p>
+            <p class="closeButtonNoti" ng-click="hideNotiInfo()"><i class="fa fa-caret-square-o-up"></i> CLOSE</p>
+                </nobr>
+        </div>
+    </div>
+
     <div class="angularView" ng-controller="loginController" ng-view></div>
     <!--<ul class="editul" id="editarea" unselectable="on">
  <li onmouseout="rich.unshowtitle();" onmouseover="rich.showtitle(this.offsetWidth, this.offsetLeft, 'pragm');" class="editli" style="min-width: 31px;" unselectable="on"><input class="unselectinput" type="button" unselectable="on" onclick="uiControl.unloadFile();"><img src="img/doc/pragm_1.png" id="pragmico1" unselectable="on" style="margin-top: -5px;"></li>

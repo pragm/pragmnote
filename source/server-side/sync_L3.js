@@ -162,6 +162,9 @@ var L3_typ = function L3_typ(){
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){
                     manager.chUserConfig(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 }
+                break;      
+            case sID.deleteNotification:
+                pfile.acceptFileShare(clientID, L3.users[clientID]['userID'], JSON.parse(data));
                 break;        
             case sID.createInviteKey:
                 if(L3.users[clientID]['userID'] == pfile.systemUsr){

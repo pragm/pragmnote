@@ -103,15 +103,15 @@ pragmApp.controller('filesController', function($scope, $location) {
             return "fileListUlli";
         }
         
-        $scope.setactive = function(key){
+        $scope.setactive = function(key, event){
             if($scope.draganddropactive != true){
-                if(!global.ctrl && !global.shift){
+                if(!event.ctrlKey && !event.metaKey && !event.shiftKey){
                     $scope.lastactivate = null;
                     $scope.lastactivate;
                     $scope.activeArray = null;
                     $scope.activeArray = [];
                 }
-                if($scope.activeArray != [] && global.shift){
+                if($scope.activeArray != [] && event.shiftKey){
                     if($scope.lastactivate){
                         var i = $scope.getPos(key);
                         var k = $scope.getPos($scope.lastactivate);
@@ -131,7 +131,7 @@ pragmApp.controller('filesController', function($scope, $location) {
                         $scope.lastactivate = key;
                     }
                 }
-                if(!global.shift){
+                if(!event.shiftKey){
                     if($scope.activeArray[key]){
                         $scope.activeArray[key] = false;
                     } else {
@@ -164,8 +164,8 @@ pragmApp.controller('filesController', function($scope, $location) {
             return i;   
         }
         
-        $scope.setinactive = function(){
-            if(!global.ctrl && !global.shift){
+        $scope.setinactive = function(event){
+            if(!event.ctrlKey && !event.metaKey && !event.shiftKey){
                 $scope.forceinactiv();
             }
         }
@@ -175,6 +175,7 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.lastactivate;
             $scope.activeArray = null;
             $scope.activeArray = [];
+            $scope.changeNameOff();
             var selectionarray = [];
             var activecount = 0;
             for(i in $scope.activeArray){
@@ -441,6 +442,43 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.chpw.new2 = "";
         };
         
+        // Change FileName handler =============================================
+        
+        $scope.changeNameId = "";
+        
+        $scope.changeNameE = function(key){
+            if(data.selectionarray.indexOf(key) >= 0){
+                $scope.changeNameId = key;
+                document.getElementById('chNa'+key).select();
+                setTimeout("document.getElementById('chNa"+key+"').focus();",100);
+                //dada.select();
+            }
+        };
+        
+        $scope.changeNameOff = function(){
+            $scope.changeNameId = '';
+        }
+        
+        $scope.changeNameClass = function(key){
+            if($scope.changeNameId == key){
+                return "changeNameEdit";
+            } else {
+                return "changeNameInactive";
+            }
+        };
+        
+        $scope.changeNameDisa = function(key){
+            if($scope.changeNameId == key){
+                return false;
+            } else {
+                return true;
+            }
+        };
+        
+        $scope.changeNameUpdate = function(key){
+            L3.setFileInfo('name', key, $scope.dirObject[key].name);
+        };
+        
         
         // Share Popup handler ------------------------------------------
         
@@ -464,13 +502,27 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.sharedata = [];
             if($scope.dirObject[$scope.fileinfoid]){
                 for(key in $scope.dirObject[$scope.fileinfoid].share){
-                    $scope.sharedata.push({"id": key, "value": $scope.dirObject[$scope.fileinfoid].share[key]});
+                    $scope.sharedata.push({"id": key, "value": $scope.dirObject[$scope.fileinfoid].share[key].r, "accept": $scope.dirObject[$scope.fileinfoid].share[key].a});
                 }
                 console.log(JSON.stringify($scope.sharedata));
             } else {
                 $scope.shareclose();
             }
         };
+        
+        $scope.getacceptClass = function(a){
+            switch(a){
+               case "y":
+                    return "fa-check";
+                    break;
+               case "n":
+                    return "fa-circle-o-notch fa-spin";
+                    break;
+                default:
+                    return "fa-warning";
+                    break;
+            }
+        }
         
         $scope.updateShare = function(){
             //console.log("Update Angular "+$scope.alertinfo);
@@ -509,7 +561,9 @@ pragmApp.controller('filesController', function($scope, $location) {
                     $scope.sharedata[key].value = 1;
                     uiControl.alert("Guest can not be admin!");
                 }
-                out[$scope.sharedata[key].id] = $scope.sharedata[key].value;
+                out[$scope.sharedata[key].id] = {};
+                out[$scope.sharedata[key].id].r = $scope.sharedata[key].value;
+                out[$scope.sharedata[key].id].a = "n";
                 
                 console.log("KEY=>"+key);
             };
@@ -522,11 +576,15 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.pushsharedata =  function(){
             var id = $scope.resolveId($scope.addname) || "s";
             if($scope.addname.length > 2 && id.length == 10 && id[0] == "5"){
+                var da = "n";
                 if($scope.addname == "Guest" && $scope.addvalue > 1){
                     $scope.addvalue = 1;
+                    da = "y";
                     uiControl.alert("Guest can not be admin!");
                 }
-                $scope.dirObject[$scope.fileinfoid].share[id] = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[id] = {};
+                $scope.dirObject[$scope.fileinfoid].share[id].r = $scope.addvalue;
+                $scope.dirObject[$scope.fileinfoid].share[id].a = da;
                 $scope.getProposals();
                 $scope.loadfileshare();
                 L3.setFileInfo('share', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].share);
@@ -645,6 +703,6 @@ pragmApp.controller('filesController', function($scope, $location) {
         // Tab Handler
         tab.deactivateAll();
         
-        tab.position("slideOut");
+        
     }
 });

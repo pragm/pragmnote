@@ -3,12 +3,14 @@
 var fileSystemControl_typ = function fileSystemControl(){
     
     this.checkKillLink = function(clientID, userID, checkObject){
-        if(!(checkObject.linkID in pfile.dirObject)){
+        dlog("Remove Dead Link "+checkObject.linkID+" "+checkObject.folderID);
+        if(!((checkObject.linkID in pfile.dirObject) && (userID in pfile.dirObject[checkObject.linkID].share))){
             if(pfile.dirObject[checkObject.folderID].content.indexOf(checkObject.linkID) != -1){
                 dlog("REMOVED DEAD LINK: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
                 pfile.removeLink(checkObject.folderID, checkObject.linkID);
             }
             pfile.generateUserFilelist(clientID, userID);
+            pfile.saveDirObject(false);
             dlog("ALL OK => JUST UPDATE: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
         } else {
             dlog("ALL OK: "+checkObject.linkID+" IN FOLDER "+checkObject.folderID);
@@ -22,10 +24,14 @@ var fileSystemControl_typ = function fileSystemControl(){
         var deadObjects = [];
         for (i in fobj) {
             //if (fobj[i].share != {}) {
-                for(j in fobj[i].share){
-                    if(typeof fobj[i].share[j] == 'string'){
-                        var s = {"r":fobj[i].share[j],"a":"y"};
-                        console.log("    Change Share to "+JSON.stringify(s));
+                if(fobj[i].share){
+                    for(j in fobj[i].share){
+                        if(typeof fobj[i].share[j] == 'string'){
+                            var s = {"r":fobj[i].share[j],"a":"y"};
+                            fobj[i].share[j] = s;
+                            console.log("    Change Share to "+JSON.stringify(s));
+                            change = true;
+                        }
                     }
                 }
                 //fobj[i].share = { };
@@ -33,6 +39,10 @@ var fileSystemControl_typ = function fileSystemControl(){
                 //change = true;
             //}
             if (i[0] == "5") {
+                if(!fobj[i].notifications){
+                    fobj[i].notifications = [];
+                    change = true;
+                }
                 //fobj[i].maxStorageScore = 200000;
                 //console.log('    SET maxStorageScore TO 1000');
                 //fobj[i].active = true;

@@ -25,7 +25,7 @@
                         <font class="shareUserName">{{data.id}}</font>
                         <font class="shareUserRights"><input ng-model="data.value" ng-change="shareUpdater();" class="rangeInput" type="range" min="0" max="2" ng-value="data.value" step="1"> {{rightinfo[data.value]}}</font>
                         <font class="shareUserDelete"><input class="deleteInput" type="button" value="DELETE" ng-click="deleteshare($index);"></font>
-                        <font class="shareUserAccept"><i class="fa fa-check"></i></font>
+                        <font class="shareUserAccept"><i class="fa {{getacceptClass(data.accept)}}"></i></font>
                     </li>
                     <li class="shareconfigulli">
                         <font class="shareUserId">
@@ -134,16 +134,18 @@ elmleft             = {{elmleft}}
         </ul>
         </div>    
     <ul class="fileListUl" id="fileListUl">
-        <li id="filelistHeadline" ng-click="setinactive();" ng-mouseover="mouseout();">
+        <li id="filelistHeadline" ng-click="setinactive($event);" ng-mouseover="mouseout();">
             <div class="selectcounter">{{activenum}}</div>
             <font style="position: relative; left: 48px;">TITLE</font>
             <div class="ownerFile">OWNER</div>
             <div class="lastChange">LAST MODIFIED</div>
         </li>
-        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key);" ng-mousedown="mousedown(key, $event);" ng-mouseover="mouseover(key);" ng-dblclick="configFile(key);">
+        <li ng-repeat="key in dirShow" class="{{getactive(key)}}" ng-mouseup="setactive(key, $event);" ng-mousedown="mousedown(key, $event);" ng-mouseover="mouseover(key);" ng-dblclick="openFileAngu(key);">
             <!--<div class="ico{{key.substr(0,1);}}"></div>-->
             <i class="{{getIconClass(key.substr(0,1))}} fileexplorericon"></i>
-            <font class="filenameDir" style="position: relative; left: 30px;" ng-click="openFileAngu(key);">{{dirObject[key].name}}
+            <font class="filenameDir" style="position: relative; left: 30px;" ng-mouseup="changeNameE(key, this);">
+                <!--<span contenteditable="{{changeNameContent(key)}}" class="{{changeNameClass(key)}}">{{dirObject[key].name}}</span>-->
+                <input ng-blur="changeNameOff();" ng-model="dirObject[key].name" type="text" ng-value="dirObject[key].name" ng-change="changeNameUpdate(key)" class="{{changeNameClass(key)}}" ng-disabled="changeNameDisa(key)" id="chNa{{key}}" size="{{dirObject[key].name.length}}">
                 <font class="privateFile">{{sharedinfo(key)}}
                 </font>
             </font>

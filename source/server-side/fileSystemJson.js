@@ -180,10 +180,11 @@ var pfile_typ = function pfile_typ() {
                 this.dirObject[id].parent = dir;
                 this.dirObject[id].name = name;
                 this.dirObject[id].content = [];
-                this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-                if (this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)) {
-                    this.dirObject[id].share[this.dirObject[dir].owner] = 2;
-                }
+                this.dirObject[id].share = this.generateSubFileShare(dir); // JSON.parse(JSON.stringify(this.dirObject[dir].share))
+                /*if (this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)) {
+                    this.dirObject[id].share[this.dirObject[dir].owner].r = 2;
+                    this.dirObject[id].share[this.dirObject[dir].owner].a = "y";
+                }*/
                 this.dirObject[id].lastmod = new Date().getTime();
                 this.addLink(dir, id);
             } else {
@@ -198,10 +199,11 @@ var pfile_typ = function pfile_typ() {
                 this.dirObject[id].owner = userID;
                 this.dirObject[id].parent = dir;
                 this.dirObject[id].name = name;
-                this.dirObject[id].share = JSON.parse(JSON.stringify(this.dirObject[dir].share));
-                if (this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)) {
-                    this.dirObject[id].share[this.dirObject[dir].owner] = 2;
-                }
+                this.dirObject[id].share = this.generateSubFileShare(dir); // JSON.parse(JSON.stringify(this.dirObject[dir].share))
+                /*if (this.dirObject[dir].owner != userID && !(this.dirObject[dir].owner in this.dirObject[dir].share)) {
+                    this.dirObject[id].share[this.dirObject[dir].owner].r = 2;
+                    this.dirObject[id].share[this.dirObject[dir].owner].a = "y";
+                }*/
                 this.dirObject[id].lastmod = new Date().getTime();
                 this.addLink(dir, id);
                 pfile.writeStr(id, 'newfile', name);
@@ -256,6 +258,7 @@ var pfile_typ = function pfile_typ() {
             this.dirObject[id].userRight = 3;
             this.dirObject[id].content = [];
             this.dirObject[id].share = {};
+            this.dirObject[id].notifications = [];
             this.dirObject[id].storageScore = 0;
             this.dirObject[id].maxStorageScore = 200000;
             this.addLink(dir, id);
@@ -357,7 +360,7 @@ var pfile_typ = function pfile_typ() {
             this.editDirObject = true;
 
             for (i in moveObject.files) {
-                this.moveFile(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid);
+                this.moveFileNew(clientID, userID, moveObject.files[i], moveObject.toid, moveObject.fromid);
             }
 
             // UNBLOCK DirObject Save
@@ -384,10 +387,9 @@ var pfile_typ = function pfile_typ() {
         var r = fRights.isUserAllowedTo(id, userID, 'read');
         var s = this.isSubOrdered(toid, id);
         var d = userID == pfile.systemUsr && fromid == toid && toid == pfile.deleteDir;
-        log("D:"+d);
-        
-        if ((((w || (p && r))) && !s) || d) {
+        log("D:" + d);
 
+        if ((((w || (p && r))) && !s) || d) {
             this.removeLink(fromid, id);
             if (this.dirObject[id].parent == fromid && !d && toid != pfile.deleteDir) {
                 this.dirObject[id].parent = toid;
@@ -396,11 +398,11 @@ var pfile_typ = function pfile_typ() {
                 if (toid == pfile.deleteDir) {
                     if (!d) {
                         var k = 0;
-                        for(i in this.dirObject[id].share){
+                        for (i in this.dirObject[id].share) {
                             k++;
                             break;
                         }
-                        log("Sharelenght = "+k);
+                        log("Sharelenght = " + k);
                         if (k == 0) {
                             this.dirObject[id].parent = pfile.toid;
                             this.addLink(toid, id);
@@ -410,7 +412,7 @@ var pfile_typ = function pfile_typ() {
                         }
                     } else {
                         delete this.dirObject[id];
-                        if(id[0] == "3"){
+                        if (id[0] == "3") {
                             this.deleteFileOnDisc(id);
                         }
                     }
@@ -426,6 +428,104 @@ var pfile_typ = function pfile_typ() {
                     L2x1.send(clientID, sID.message, "Moving file abort! Destination directory is subordinate to source directory!");
                 } else {
                     L2x1.send(clientID, sID.message, "Moving file abort! Unknown Error! Please contact your server administrator!");
+                }
+            }
+        }
+    };
+
+    this.getObjectSize = function (obj) {
+        var k = 0;
+        for (i in obj) {
+            k++;
+        }
+        return k;
+    };
+
+    this.hasFileAdmin = function (obj) {
+        var k = 0;
+        var id = "";
+        for (i in obj) {
+            if (obj[i].r == 2) {
+                k++;
+                id = i;
+            }
+        }
+        return {"num":k,"id":id};
+    };
+    
+    this.searchFileLinkFromUserId = function(id, userid){
+        for(i in this.dirObject){
+            if((i[0] == "4" || i[0] == "5") && (this.dirObject[i].owner == userid || this.dirObject[i].share[userid]) && this.dirObject[i].content.indexOf(id) >= 0){
+                return i;
+            }
+        }
+        return false;
+    };
+
+    this.moveFileNew = function (clientID, userID, id, toid, fromid) {
+        var canWrite = fRights.isUserAllowedTo(id, userID, 'write');
+        var parentIsFrom = this.dirObject[id].parent == fromid;
+        var canRead = fRights.isUserAllowedTo(id, userID, 'read');
+        var isSubOrdered = this.isSubOrdered(toid, id);
+        var canDelete = userID == pfile.systemUsr && fromid == toid && toid == pfile.deleteDir;
+        var isToDelete = toid == pfile.deleteDir;
+        var ownFile = this.dirObject[id].owner == userID;
+
+        if (!isSubOrdered) {
+            if (isToDelete) {
+                if (canDelete) {
+                    this.removeLink(fromid, id);
+                    delete this.dirObject[id];
+                    if (id[0] == "3") {
+                        this.deleteFileOnDisc(id);
+                    }
+                } else {
+                    if (ownFile) {
+                        if (this.dirObject[id].share[userID]) {
+                            delete this.dirObject[id].share[userID];
+                        }
+                        if (this.getObjectSize(this.dirObject[id].share) > 0) {
+                            var hasFileAdmin = this.hasFileAdmin(this.dirObject[id].share);
+                            if(hasFileAdmin.num==1){
+                                var temp = this.searchFileLinkFromUserId(id, hasFileAdmin.id);
+                                if(temp && this.dirObject[id].parent == fromid){
+                                    this.dirObject[id].owner = hasFileAdmin.id;
+                                    this.dirObject[id].parent = temp;
+                                } else {
+                                    log("Delete Error!");
+                                    log(JSON.stringify(temp));
+                                    log(JSON.stringify([this.dirObject[id].parent, fromid]));
+                                   L2x1.send(clientID, sID.message, "Deleting file abort! Internal Error! Cannot find next Admin Link or Parent not From!"); 
+                                }
+                            } else {
+                                L2x1.send(clientID, sID.message, "Deleting file abort! Please define exact one admin before deleting a shared file/folder!");
+                            }
+                        } else {
+                            this.removeLink(fromid, id);
+                            if(this.dirObject[id].parent == fromid){
+                                this.dirObject[id].parent = toid;
+                                this.addLink(toid, id);
+                            } else {
+                                L2x1.send(clientID, sID.message, "ERROR #0001! Please inform your admin!");
+                            }
+                        }
+                    } else {
+                        if(fRights.isUserAllowedTo(fromid, userID, 'write')){
+                            this.removeLink(fromid, id);
+                            delete this.dirObject[id].share[userID];
+                             if (this.getObjectSize(this.dirObject[id].share) == 0) {
+                                 this.addLink(toid, id);
+                             }
+                        }
+                    }
+                }
+            } else {
+                if(fRights.isUserAllowedTo(fromid, userID, 'write') && fRights.isUserAllowedTo(toid, userID, 'write')){
+                    this.removeLink(fromid, id);
+                    if(this.dirObject[id].parent == fromid && fRights.isUserAllowedTo(id, userID, 'write')){
+                        this.dirObject[id].parent = toid;
+                    }
+                    this.addLink(toid, id);
                 }
             }
         }
@@ -478,7 +578,7 @@ var pfile_typ = function pfile_typ() {
                 this.dirObject[id].parent = copylist[i].parent;
                 this.dirObject[id].name = copylist[i].name;
                 this.dirObject[id].content = [];
-                this.dirObject[id].share = JSON.parse(JSON.stringify(copylist[i].share));
+                this.dirObject[id].share = this.generateSubFileShare(copylist[i].parent);
                 this.dirObject[id].lastmod = copylist[i].lastmod;
             }
             if (copylist[i].job == 'addfile') {
@@ -487,7 +587,7 @@ var pfile_typ = function pfile_typ() {
                 this.dirObject[id].owner = copylist[i].owner;
                 this.dirObject[id].parent = copylist[i].parent;
                 this.dirObject[id].name = copylist[i].name;
-                this.dirObject[id].share = JSON.parse(JSON.stringify(copylist[i].share));
+                this.dirObject[id].share = this.generateSubFileShare(copylist[i].parent);
                 this.dirObject[id].lastmod = copylist[i].lastmod;
                 this.copyFileOnDisc(copylist[i].oldid, id);
             }
@@ -529,7 +629,7 @@ var pfile_typ = function pfile_typ() {
                 } else {
                     x.name = this.dirObject[id].name;
                 }
-                x.share = JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
+                x.share = this.generateSubFileShare(toid);//JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
                 x.lastmod = new Date().getTime();
 
                 var y = {};
@@ -572,7 +672,7 @@ var pfile_typ = function pfile_typ() {
                     x.name = this.dirObject[id].name;
                 }
                 x.content = [];
-                x.share = JSON.parse(JSON.stringify(this.dirObject[id].share)); // probably problematic when share = object
+                x.share = this.generateSubFileShare(toid); // probably problematic when share = object
                 x.lastmod = new Date().getTime();
 
                 var y = {};
@@ -620,6 +720,14 @@ var pfile_typ = function pfile_typ() {
             error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:removeLink]");
         }
     };
+    
+    this.generateSubFileShare = function(superID){
+        if(this.dirObject[superID].share['*']){
+            return {'*': JSON.parse(JSON.stringify(this.dirObject[superID].share['*']))};
+        } else {
+            return {};
+        }
+    };
 
     this.generateUserFilelist = function (clientID, userID) {
         this.generateUserFilelistJSON(clientID, userID);
@@ -658,7 +766,7 @@ var pfile_typ = function pfile_typ() {
             if (fRights.isUserAllowedTo(key, userID, 'read')) {
                 temp = JSON.stringify(this.dirObject[key]);
                 output[key] = JSON.parse(temp); // Makes a Copy of the Object
-                if (this.dirObject[key].parent != this.deleteDir) {
+                if (this.dirObject[key].share[userID] && this.dirObject[key].share[userID].a != "n" && this.dirObject[key].parent != this.deleteDir) {
                     switch (key[0]) {
                     case "4":
                         score += temp.length;
@@ -723,30 +831,89 @@ var pfile_typ = function pfile_typ() {
         }
         if ('share' in fileInfo) {
             if (fRights.isUserAllowedTo(fileInfo.id, userID, 'perm')) {
-                var list1 = pfile.getFileClients(fileInfo.id);
-                this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
-                this.dirObject[fileInfo.id].share = fileInfo.share;
-                //log("SHARE => "+JSON.stringify(fileInfo));
-                var list2 = pfile.getFileClients(fileInfo.id);
-
-                //log("Client "+clientID);
-                var list = this.joinArrays(list1, list2);
-                //log("LIST After "+JSON.stringify(list));
-                for (key in list) {
-                    if (list[key] != clientID) {
-                        if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
-                            this.generateUserFilelist(list[key], L3.users[list[key]].userID);
+                if((this.dirObject[fileInfo.id].share['*'] && this.dirObject[fileInfo.id].share['*'].f == fileInfo.id) || this.getObjectSize(this.dirObject[fileInfo.id].share) == 0){
+                    var list1 = pfile.getFileClients(fileInfo.id);
+                    for (i in fileInfo.share) {
+                        if (!this.dirObject[fileInfo.id].share[i]) {
+                            if(i == userID){
+                                fileInfo.share[i].a = "y";
+                            } else {
+                                fileInfo.share[i].a = "w";
+                            }
+                        } else {
+                            fileInfo.share[i].a = this.dirObject[fileInfo.id].share[i].a;
                         }
                     }
+                    var linkexists = this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
+                    this.dirObject[fileInfo.id].share = fileInfo.share;
+                    for (i in this.dirObject[fileInfo.id].share) {
+                        if ((this.dirObject[fileInfo.id].share[i].a == "w" || linkexists[i] == true) && i != pfile.guestUser) { // linkexists[i] == true Means Link does not exists
+                            this.dirObject[fileInfo.id].share[i].a = "n"
+                            this.dirObject[i].notifications.push({
+                                "type": "shareadd",
+                                "who": userID,
+                                "id": fileInfo.id
+                            });
+                        }
+                    }
+                    var list2 = pfile.getFileClients(fileInfo.id);
+                    var list = this.joinArrays(list1, list2);
+                    for (key in list) {
+                        if (list[key] != clientID) {
+                            if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
+                                this.generateUserFilelist(list[key], L3.users[list[key]].userID);
+                            }
+                        }
+                    }
+                    L3.updateFileRightsOfFile(fileInfo.id);
+                    pfile.saveDirObject(false);
+                } else {
+                    
                 }
-                L3.updateFileRightsOfFile(fileInfo.id);
-                pfile.saveDirObject(false);
             } else {
                 this.generateUserFilelist(clientID, userID);
                 L2x1.send(clientID, sID.message, "Change file config abort! Permission Denied!");
             }
         }
         //this.generateUserFilelist(clientID, userID);
+    };
+
+    this.acceptFileShare = function (clientID, userID, obj) {
+        switch (obj.type) {
+        case "shareadd":
+            var list = pfile.getFileClients(obj.id + "");
+            if (obj.accept == true) {
+                this.addLinkAnywhere(clientID, userID, obj.id);
+                this.dirObject[obj.id].share[userID].a = "y";
+            } else {
+                delete this.dirObject[obj.id].share[userID];
+            }
+            delete obj.accept;
+            this.deleteNotification(clientID, userID, obj);
+            for (key in list) {
+                if (list[key] in L3.users && 'userID' in L3.users[list[key]]) {
+                    this.generateUserFilelist(list[key], L3.users[list[key]].userID);
+                }
+            }
+            break;
+        }
+        pfile.saveDirObject(false);
+    };
+
+    this.deleteNotification = function (clientID, userID, obj) {
+        switch (obj.type) {
+        case "shareadd":
+            var kill = [];
+            for (i in this.dirObject[userID].notifications) {
+                if (JSON.stringify(this.dirObject[userID].notifications[i]) == JSON.stringify(obj)) {
+                    kill.push(i);
+                }
+            }
+            for (i in kill) {
+                this.dirObject[userID].notifications.splice(kill[i], 1);
+            }
+            break;
+        }
     };
 
     this.makeid = function (type) {
@@ -802,6 +969,7 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.checkLinkExists = function (o, n, id) {
+        var out = {};
         var l = [];
         for (i in n) {
             if (!(i in o)) {
@@ -818,9 +986,15 @@ var pfile_typ = function pfile_typ() {
                 }
             }
             if (!found) {
-                this.addLink(l[i], id);
+                out[l[i]] = true;
+                //this.addLink(l[i], id);
             }
         }
+        return out;
+    };
+
+    this.addLinkAnywhere = function (clientID, userID, id) {
+        this.addLink(userID, id);
     };
 
     this.getUserStorageScore = function (clientID, userID) {
