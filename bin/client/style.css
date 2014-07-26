@@ -1094,18 +1094,22 @@
     background: #f9f9f9;
     /*fff095   transparent*/
     opacity: 0.9;
-    box-shadow: inset 0px 5px 5px -5px #B6B6B6, inset 5px 0px 0px 0px #999, inset 5px -5px 5px -5px #B6B6B6, inset 0px 0px 5px 0px #CECECE;
     padding-left: 15px;
-    border-radius: 5px;
+    /*box-shadow: inset 0px 5px 5px -5px #B6B6B6, inset 5px 0px 0px 0px #999, inset 5px -5px 5px -5px #B6B6B6, inset 0px 0px 5px 0px #CECECE;
+    border-radius: 5px;*/
+    box-shadow: inset 0px 1px 1px -1px #B6B6B6, inset 5px 0px 0px 0px #999, inset 1px -1px 1px -1px #B6B6B6, inset 0px 0px 1px 0px #CECECE;
+    border-radius: 2px;
 }
 .editareax:focus {
     /*box-shadow: 0px 0px 8px #bcbcbc;*/
     background: #f9f9f9;
     /*fff095   transparent*/
     opacity: 0.9;
-    box-shadow: inset 0px 5px 5px -5px #9B9B9B, inset 5px 0px 0px 0px #333, inset 5px -5px 5px -5px #9B9B9B, inset 0px 0px 5px 0px #CECECE;
     padding-left: 15px;
-    border-radius: 5px;
+    /*box-shadow: inset 0px 5px 5px -5px #9B9B9B, inset 5px 0px 0px 0px #333, inset 5px -5px 5px -5px #9B9B9B, inset 0px 0px 5px 0px #CECECE;
+    border-radius: 5px;*/
+    box-shadow: inset 0px 1px 1px -1px #9B9B9B, inset 5px 0px 0px 0px #333, inset 1px -1px 1px -1px #9B9B9B, inset 0px 0px 1px 0px #CECECE;
+    border-radius: 2px;
 }
 .editareaBlock {
     position: absolute;
@@ -1148,9 +1152,11 @@
     /*box-shadow: 0px 0px 8px #bcbcbc;*/
     /*border: 1px solid #bcbcbc;*/
     opacity: 0.9;
-    box-shadow: inset 0px 5px 5px -5px #9B9B9B, inset 5px 0px 0px 0px #333, inset 5px -5px 5px -5px #9B9B9B, inset 0px 0px 5px 0px #CECECE;
     padding-left: 15px;
-    border-radius: 5px;
+    /*box-shadow: inset 0px 5px 5px -5px #9B9B9B, inset 5px 0px 0px 0px #333, inset 5px -5px 5px -5px #9B9B9B, inset 0px 0px 5px 0px #CECECE;
+    border-radius: 5px;*/
+    box-shadow: inset 0px 1px 1px -1px #9B9B9B, inset 5px 0px 0px 0px #333, inset 1px -1px 1px -1px #9B9B9B, inset 0px 0px 1px 0px #CECECE;
+    border-radius: 2px;
 }
 .inarea {
     position: absolute;

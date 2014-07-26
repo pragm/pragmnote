@@ -261,7 +261,7 @@ var textbox_typ = function textbox_typ(){
     this.saveid = function (id, force){
         id = id.split("editing")[1];
         var force = force || false;
-        if(data.ecoMode == false || force == true){
+        if(data.ecoMode == false || force == true || data.fileRights.write == false){
             if(document.getElementById('editing'+id) && document.getElementById('editarea'+id)){
                 textbox.content		=	document.getElementById('editing'+id).innerHTML;
                 textbox.posX 		=	document.getElementById('editarea'+id).style.left; // 4^0

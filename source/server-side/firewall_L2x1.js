@@ -46,6 +46,7 @@ var L2x1_typ = function L2x1_typ(){
             console.log("=> FIREWALL CRASH SEND=> ClientID="+clientID+" ID="+id);
             console.log("=> FIREWALL CRASH SEND=> Mandant="+JSON.stringify(secure.check(clientID))+" Firewall="+JSON.stringify(global.firewall[secure.check(clientID)]));
             console.log(e);
+            console.error("FIRE SEND");
         }
      };
 	
@@ -66,6 +67,7 @@ var L2x1_typ = function L2x1_typ(){
             console.log("=> FIREWALL CRASH RESS=> ClientID="+clientID+" ID="+id);
             console.log("=> FIREWALL CRASH RESS=> Mandant="+JSON.stringify(secure.check(clientID))+" Firewall="+JSON.stringify(global.firewall[secure.check(clientID)]));
             console.log(e);
+            console.error("FIRE RESS");
         }
 	 };
 };

@@ -702,22 +702,30 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.addLink = function (id, linkID) {
-        if (this.dirObject[id]) {
+        if (this.dirObject[id] && this.dirObject[linkID]) {
             var key = this.dirObject[id].content.indexOf(linkID);
             if (key == -1) {
                 this.dirObject[id].content.push(linkID);
             }
+            key = null;
+            var key = this.dirObject[linkID].links.indexOf(id);
+            if (key == -1) {
+                this.dirObject[linkID].links.push(id);
+            }
         } else {
-            error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:addLink]");
+            error.report(6, "ID '" + id + "' or '"+linkID+"' does not exist in dirObject! [fileSystemJson:addLink]");
         }
     };
 
     this.removeLink = function (id, linkID) {
-        if (this.dirObject[id]) {
+        if (this.dirObject[id] && this.dirObject[linkID]) {
             var key = this.dirObject[id].content.indexOf(linkID);
             this.dirObject[id].content.splice(key, 1);
+            key = null;
+            var key = this.dirObject[linkID].links.indexOf(id);
+            this.dirObject[linkID].links.splice(key, 1);
         } else {
-            error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:removeLink]");
+            error.report(6, "ID '" + id + "' or '"+linkID+"' does not exist in dirObject! [fileSystemJson:removeLink]");
         }
     };
     
@@ -841,7 +849,11 @@ var pfile_typ = function pfile_typ() {
                                 fileInfo.share[i].a = "w";
                             }
                         } else {
-                            fileInfo.share[i].a = this.dirObject[fileInfo.id].share[i].a;
+                            if(i != '*'){
+                                fileInfo.share[i].a = this.dirObject[fileInfo.id].share[i].a;
+                            } else {
+                                fileInfo.share[i].f = this.dirObject[fileInfo.id].share[i].f;
+                            }
                         }
                     }
                     var linkexists = this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);

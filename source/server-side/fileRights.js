@@ -49,6 +49,9 @@ var fRights_typ = function fRights_typ(){
                 out.read = true, out.write = pfile.dirObject[fileID].share[pfile.guestUser].r > 0, out.perm = pfile.dirObject[fileID].share[pfile.guestUser].r > 1;
                 return out;
             }
+            if('*' in pfile.dirObject[fileID].share && pfile.dirObject[fileID].share['*'].f in pfile.dirObject && pfile.dirObject[fileID].share['*'].f != fileID){
+                return this.getUserFilePermissions(pfile.dirObject[fileID].share['*'].f, userID);
+            }
             var out = { };
             out.read = false, out.write = false, out.perm = false;
             return out;

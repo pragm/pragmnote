@@ -1,6 +1,6 @@
-//Server-Build Version: BETA => 0.2.2597
-console.log("pragm-Websocket-Server => BUILD 0.2.2597 BETA");
- var pragmbuildversion = "Welcome to Pragm! Version: 0.2.2597";
+//Server-Build Version: BETA => 0.2.2648
+console.log("pragm-Websocket-Server => BUILD 0.2.2648 BETA");
+ var pragmbuildversion = "Welcome to Pragm! Version: 0.2.2648";
 /******************************************************************************************
 #
 #       Copyright 2014 Dustin Robert Hoffner
@@ -1206,6 +1206,9 @@ var fRights_typ = function fRights_typ(){
                 out.read = true, out.write = pfile.dirObject[fileID].share[pfile.guestUser].r > 0, out.perm = pfile.dirObject[fileID].share[pfile.guestUser].r > 1;
                 return out;
             }
+            if('*' in pfile.dirObject[fileID].share && pfile.dirObject[fileID].share['*'].f in pfile.dirObject && pfile.dirObject[fileID].share['*'].f != fileID){
+                return this.getUserFilePermissions(pfile.dirObject[fileID].share['*'].f, userID);
+            }
             var out = { };
             out.read = false, out.write = false, out.perm = false;
             return out;
@@ -2012,22 +2015,30 @@ var pfile_typ = function pfile_typ() {
     };
 
     this.addLink = function (id, linkID) {
-        if (this.dirObject[id]) {
+        if (this.dirObject[id] && this.dirObject[linkID]) {
             var key = this.dirObject[id].content.indexOf(linkID);
             if (key == -1) {
                 this.dirObject[id].content.push(linkID);
             }
+            key = null;
+            var key = this.dirObject[linkID].links.indexOf(id);
+            if (key == -1) {
+                this.dirObject[linkID].links.push(id);
+            }
         } else {
-            error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:addLink]");
+            error.report(6, "ID '" + id + "' or '"+linkID+"' does not exist in dirObject! [fileSystemJson:addLink]");
         }
     };
 
     this.removeLink = function (id, linkID) {
-        if (this.dirObject[id]) {
+        if (this.dirObject[id] && this.dirObject[linkID]) {
             var key = this.dirObject[id].content.indexOf(linkID);
             this.dirObject[id].content.splice(key, 1);
+            key = null;
+            var key = this.dirObject[linkID].links.indexOf(id);
+            this.dirObject[linkID].links.splice(key, 1);
         } else {
-            error.report(6, "ID " + id + " does not exist in dirObject! [fileSystemJson:removeLink]");
+            error.report(6, "ID '" + id + "' or '"+linkID+"' does not exist in dirObject! [fileSystemJson:removeLink]");
         }
     };
     
@@ -2151,7 +2162,11 @@ var pfile_typ = function pfile_typ() {
                                 fileInfo.share[i].a = "w";
                             }
                         } else {
-                            fileInfo.share[i].a = this.dirObject[fileInfo.id].share[i].a;
+                            if(i != '*'){
+                                fileInfo.share[i].a = this.dirObject[fileInfo.id].share[i].a;
+                            } else {
+                                fileInfo.share[i].f = this.dirObject[fileInfo.id].share[i].f;
+                            }
                         }
                     }
                     var linkexists = this.checkLinkExists(this.dirObject[fileInfo.id].share, fileInfo.share, fileInfo.id);
@@ -2415,6 +2430,7 @@ var L2x1_typ = function L2x1_typ(){
             console.log("=> FIREWALL CRASH SEND=> ClientID="+clientID+" ID="+id);
             console.log("=> FIREWALL CRASH SEND=> Mandant="+JSON.stringify(secure.check(clientID))+" Firewall="+JSON.stringify(global.firewall[secure.check(clientID)]));
             console.log(e);
+            console.error("FIRE SEND");
         }
      };
 	
@@ -2435,6 +2451,7 @@ var L2x1_typ = function L2x1_typ(){
             console.log("=> FIREWALL CRASH RESS=> ClientID="+clientID+" ID="+id);
             console.log("=> FIREWALL CRASH RESS=> Mandant="+JSON.stringify(secure.check(clientID))+" Firewall="+JSON.stringify(global.firewall[secure.check(clientID)]));
             console.log(e);
+            console.error("FIRE RESS");
         }
 	 };
 };

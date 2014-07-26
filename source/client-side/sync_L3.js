@@ -111,8 +111,11 @@ var L3_typ = function L3_typ(){
                 }
                 data.fileList = daten;
                 data.set('dirObject', tempdir);
-                if(this.file!=""){
-                    data.set('readonly', !fRights.isUserAllowedTo(this.file, 'write'));
+                if(this.file!=false && this.file!=""){
+                    //data.set('readonly', !fRights.isUserAllowedTo(this.file, 'write'));
+                    data.set('fileRights', fRights.getUserFilePermissions(this.file));
+                } else {
+                    console.log("NOT SET READONLY");
                 }
                 //dirCreator.setDir(daten);
                 console.log("Beforeevent => "+this.beforeEvent);

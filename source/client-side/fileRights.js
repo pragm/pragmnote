@@ -29,6 +29,7 @@ var fRights_typ = function fRights_typ(){
     };
     
     this.getUserFilePermissions = function(fileID){
+        console.log("getFilePermissions "+fileID);
         if(fileID in data.dirObject){
             if(data.dirObject[fileID].owner == data.login.userID || data.login.userID == data.systemUsr){
                 var out = { };
@@ -37,16 +38,20 @@ var fRights_typ = function fRights_typ(){
             }
             if(data.login.userID in data.dirObject[fileID].share){
                 var out = { };
-                out.read = true, out.write = data.dirObject[fileID].share[data.login.userID] > 0, out.perm = data.dirObject[fileID].share[data.login.userID] > 1;
+                out.read = true, out.write = data.dirObject[fileID].share[data.login.userID].r > 0, out.perm = data.dirObject[fileID].share[data.login.userID].r > 1;
                 if(data.guestUser in data.dirObject[fileID].share){
-                    out.write = data.dirObject[fileID].share[data.guestUser] > 0 || out.write;
+                    out.write = data.dirObject[fileID].share[data.guestUser].r > 0 || out.write;
                 }
                 return out;
             }
             if(data.guestUser in data.dirObject[fileID].share){
                 var out = { };
-                out.read = true, out.write = data.dirObject[fileID].share[data.guestUser] > 0, out.perm = data.dirObject[fileID].share[data.guestUser] > 1;
+                out.read = true, out.write = data.dirObject[fileID].share[data.guestUser].r > 0, out.perm = data.dirObject[fileID].share[data.guestUser].r > 1;
                 return out;
+            }
+            if('*' in data.dirObject[fileID].share && data.dirObject[fileID].share['*'].f != fileID){
+                console.log("Selfcall");
+                return this.getUserFilePermissions(data.dirObject[fileID].share['*'].f);
             }
             var out = { };
             out.read = false, out.write = false, out.perm = false;

@@ -145,13 +145,13 @@ elmleft             = {{elmleft}}
             <i class="{{getIconClass(key.substr(0,1))}} fileexplorericon"></i>
             <font class="filenameDir" style="position: relative; left: 30px;" ng-mouseup="changeNameE(key, this);">
                 <!--<span contenteditable="{{changeNameContent(key)}}" class="{{changeNameClass(key)}}">{{dirObject[key].name}}</span>-->
-                <input ng-blur="changeNameOff();" ng-model="dirObject[key].name" type="text" ng-value="dirObject[key].name" ng-change="changeNameUpdate(key)" class="{{changeNameClass(key)}}" ng-disabled="changeNameDisa(key)" id="chNa{{key}}" size="{{dirObject[key].name.length}}">
+                <span ng-blur="changeNameOff(); changeNameUpdate(key);" ng-keydown="chKeyDown(key, $event)" ng-model="dirObject[key].name" class="{{changeNameClass(key)}}" contenteditable="{{changeNameDisa(key)}}" id="chNa{{key}}">{{dirObject[key].name}}</span>
                 <font class="privateFile">{{sharedinfo(key)}}
                 </font>
             </font>
             <div class="ownerFile" style="top:10px;">{{resolveName(dirObject[key].owner);}}</div>
             <div class="lastChange" style="top:10px;">{{dirObject[key].lastmodform}} 
-                <div class="shareopendiv" ng-click="configFile(key);"><i class="fa fa-bars shareopen"></i></div>
+                <div class="shareopendiv" ng-click="configFile(key);" ng-hide="showConfigFile(key)"><i class="fa fa-bars shareopen"></i></div>
             </div>
             <!--<img src="img/gear.png" class="gearIcon">
             <img src="img/share.png" class="shareIcon"></li>-->

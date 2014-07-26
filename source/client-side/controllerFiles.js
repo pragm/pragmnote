@@ -1,127 +1,127 @@
-pragmApp.controller('filesController', function($scope, $location) {
+pragmApp.controller('filesController', function ($scope, $location) {
     data.unbindCallbacks();
     var run = true;
-    if('login' in data){
-        if('userRight' in data.login){
-            if(data.login.userRight > 4){
+    if ('login' in data) {
+        if ('userRight' in data.login) {
+            if (data.login.userRight > 4) {
                 run = false;
             }
         } else {
-        run = false;
+            run = false;
         }
     } else {
         run = false;
     }
 
-    if(!run){
+    if (!run) {
         $location.path('/');
     } else {
-    
-        
-		$scope.lan = 'cool';
-        
+
+
+        $scope.lan = 'cool';
+
         // Load Handler ----------------------------
-		$scope.loadinginfo = "";
-		$scope.loadshow = 'none';
-        $scope.updateLoad = function(){
-            if($scope.loadinginfo==""){
-		      $scope.loadshow = 'none';
+        $scope.loadinginfo = "";
+        $scope.loadshow = 'none';
+        $scope.updateLoad = function () {
+            if ($scope.loadinginfo == "") {
+                $scope.loadshow = 'none';
                 tab.position("slide10In");
             } else {
-		      $scope.loadshow = 'block';
+                $scope.loadshow = 'block';
                 tab.position("slideOut");
-              document.getElementById('loadingslide').className = 'loadingslideIN';
+                document.getElementById('loadingslide').className = 'loadingslideIN';
             }
         }
-        data.databind('loadinginfo', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.loadinginfo = x;
-          $scope.updateLoad();
-            if(!$scope.$$phase) {
+        data.databind('loadinginfo', function (x) {
+            //console.log("Data: "+JSON.stringify(x));
+            $scope.loadinginfo = x;
+            $scope.updateLoad();
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-        
+
         // Alert handler   ---------------------------------------------------------
-		$scope.alertinfo = "";
-		$scope.alertshow = 'none';
-        $scope.updateAlert = function(){
+        $scope.alertinfo = "";
+        $scope.alertshow = 'none';
+        $scope.updateAlert = function () {
             //console.log("Update Angular "+$scope.alertinfo);
-            if($scope.alertinfo==""){
-		      $scope.alertshow = 'none';
-                if(!$scope.shareshowbool){
+            if ($scope.alertinfo == "") {
+                $scope.alertshow = 'none';
+                if (!$scope.shareshowbool) {
                     tab.position("slideOut");
                 }
             } else {
-		      $scope.alertshow = 'block';
+                $scope.alertshow = 'block';
                 tab.position("slideIn");
             }
         }
-        data.databind('alertinfo', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.alertinfo = x;
-          $scope.updateAlert();
-            if(!$scope.$$phase) {
+        data.databind('alertinfo', function (x) {
+            //console.log("Data: "+JSON.stringify(x));
+            $scope.alertinfo = x;
+            $scope.updateAlert();
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-        
-        $scope.unalert = function(){
+
+        $scope.unalert = function () {
             data.alertinfo = "";
             $scope.alertinfo = "";
             $scope.updateAlert();
-            if(!$scope.$$phase) {
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         }
-        
+
         // Something else -------------------------------------------
-		$scope.dirObject = { };
-        if(data.acutalDir != ""){
+        $scope.dirObject = {};
+        if (data.acutalDir != "") {
             $scope.actualDir = data.acutalDir;
         } else {
             $scope.actualDir = data.login.userID;
             data.acutalDir = data.login.userID;
         }
         $scope.mainDir = data.login.userID;
-        $scope.dirShow = [ ];
-        $scope.superFolder = [ ];
+        $scope.dirShow = [];
+        $scope.superFolder = [];
         $scope.activeObject = {};
         $scope.activeArray = [];
         $scope.actactive = "";
         $scope.inactivetimer;
         $scope.lastactivate;
         $scope.activenum = 0;
-        
+
         addFile.AddFile = false;
         addFile.AddFileChoice = false;
-        
-        $scope.getactive = function(key){
-            if($scope.activeArray[key]){
+
+        $scope.getactive = function (key) {
+            if ($scope.activeArray[key]) {
                 return "fileListUlactive";
-            } 
+            }
             return "fileListUlli";
         }
-        
-        $scope.setactive = function(key, event){
-            if($scope.draganddropactive != true){
-                if(!event.ctrlKey && !event.metaKey && !event.shiftKey){
+
+        $scope.setactive = function (key, event) {
+            if ($scope.draganddropactive != true) {
+                if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
                     $scope.lastactivate = null;
                     $scope.lastactivate;
                     $scope.activeArray = null;
                     $scope.activeArray = [];
                 }
-                if($scope.activeArray != [] && event.shiftKey){
-                    if($scope.lastactivate){
+                if ($scope.activeArray != [] && event.shiftKey) {
+                    if ($scope.lastactivate) {
                         var i = $scope.getPos(key);
                         var k = $scope.getPos($scope.lastactivate);
                         //console.log("von "+i+" nach "+k);
-                        if(i>k){
+                        if (i > k) {
                             var o = i;
                             i = k;
                             k = o;
                         }
-                        while(i<=k){
+                        while (i <= k) {
                             //console.log("count"+i);
                             $scope.activeArray[$scope.dirShow[i]] = true;
                             i++;
@@ -131,8 +131,8 @@ pragmApp.controller('filesController', function($scope, $location) {
                         $scope.lastactivate = key;
                     }
                 }
-                if(!event.shiftKey){
-                    if($scope.activeArray[key]){
+                if (!event.shiftKey) {
+                    if ($scope.activeArray[key]) {
                         $scope.activeArray[key] = false;
                     } else {
                         $scope.activeArray[key] = true;
@@ -141,8 +141,8 @@ pragmApp.controller('filesController', function($scope, $location) {
                 }
                 var selectionarray = [];
                 var activecount = 0;
-                for(i in $scope.activeArray){
-                    if($scope.activeArray[i] == true){
+                for (i in $scope.activeArray) {
+                    if ($scope.activeArray[i] == true) {
                         activecount++;
                         selectionarray.push(i);
                     }
@@ -150,27 +150,27 @@ pragmApp.controller('filesController', function($scope, $location) {
                 data.selectionarray = selectionarray;
                 selectionarray = null;
                 $scope.activenum = activecount;
-                if(!$scope.$$phase) {
+                if (!$scope.$$phase) {
                     $scope.$apply();
                 }
             }
         }
-        
-        $scope.getPos = function(key){
+
+        $scope.getPos = function (key) {
             var i = 0;
-            while($scope.dirShow[i] != key && $scope.dirShow.length >= i){
+            while ($scope.dirShow[i] != key && $scope.dirShow.length >= i) {
                 i++;
             }
-            return i;   
+            return i;
         }
-        
-        $scope.setinactive = function(event){
-            if(!event.ctrlKey && !event.metaKey && !event.shiftKey){
+
+        $scope.setinactive = function (event) {
+            if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
                 $scope.forceinactiv();
             }
         }
-        
-        $scope.forceinactiv = function(){
+
+        $scope.forceinactiv = function () {
             $scope.lastactivate = null;
             $scope.lastactivate;
             $scope.activeArray = null;
@@ -178,8 +178,8 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.changeNameOff();
             var selectionarray = [];
             var activecount = 0;
-            for(i in $scope.activeArray){
-                if($scope.activeArray[i] == true){
+            for (i in $scope.activeArray) {
+                if ($scope.activeArray[i] == true) {
                     activecount++;
                     selectionarray.push(i);
                 }
@@ -188,127 +188,127 @@ pragmApp.controller('filesController', function($scope, $location) {
             selectionarray = null;
             $scope.activenum = activecount;
         };
-    
-        $scope.getServerAddress = function(){
+
+        $scope.getServerAddress = function () {
             return global.config.serveraddress;
         };
-        
+
         // Drag and Drop -----------------------------------------------
-        
+
         $scope.draganddrop = false;
         $scope.draganddropactive = false;
-        $scope.elmdisplay  = "none";
-        $scope.moveto  = "none";
-        $scope.movetofile  = "";
+        $scope.elmdisplay = "none";
+        $scope.moveto = "none";
+        $scope.movetofile = "";
         $scope.movefromdir = "";
-        $scope.elmtop  = 300;
-        $scope.elmleft  = 300;
-        
-        $scope.clog = function(){
+        $scope.elmtop = 300;
+        $scope.elmleft = 300;
+
+        $scope.clog = function () {
             //console.log('mousemove cLOG');
         }
-        
-        $scope.mousedown = function(key, $event){
-            if($scope.activeArray[key] == true){
+
+        $scope.mousedown = function (key, $event) {
+            if ($scope.activeArray[key] == true) {
                 //$scope.elmtop   = $event.clientY-global.chY;
                 //$scope.elmleft  = $event.clientX;
-                $scope.draganddrop = true;  // INCOMMENT
+                $scope.draganddrop = true; // INCOMMENT
                 //$scope.elmdisplay = "block";
             }
         };
-        
-        $scope.mouseup = function(){
-            if($scope.draganddrop == true && $scope.movetofile != "" && $scope.movetofile != $scope.actualDir){
-                console.log("Move files "+JSON.stringify(data.selectionarray)+" to "+$scope.movetofile);
+
+        $scope.mouseup = function () {
+            if ($scope.draganddrop == true && $scope.movetofile != "" && $scope.movetofile != $scope.actualDir) {
+                //console.log("Move files " + JSON.stringify(data.selectionarray) + " to " + $scope.movetofile);
                 L3.moveFileList(data.selectionarray, $scope.movetofile, $scope.actualDir);
             }
             $scope.draganddrop = false;
             $scope.elmdisplay = "none";
             $scope.draganddropactive = false;
         };
-        
-        $scope.mousemove = function($event){
-            if($scope.draganddrop == true){
-                $scope.elmtop   = $event.clientY-global.chY;
-                $scope.elmleft  = $event.clientX+5;
+
+        $scope.mousemove = function ($event) {
+            if ($scope.draganddrop == true) {
+                $scope.elmtop = $event.clientY - global.chY;
+                $scope.elmleft = $event.clientX + 5;
                 $scope.elmdisplay = "block";
                 $scope.draganddropactive = true;
             }
         };
-        
-        $scope.mouseover = function(key){
-            if($scope.activeArray[key] == true || key.substr(0,1) == 3){
+
+        $scope.mouseover = function (key) {
+            if ($scope.activeArray[key] == true || key.substr(0, 1) == 3) {
                 $scope.moveto = "...";
-                $scope.movetofile  = "";
+                $scope.movetofile = "";
             } else {
-                if($scope.dirObject[key]){
+                if ($scope.dirObject[key]) {
                     $scope.moveto = $scope.dirObject[key].name;
                 } else {
-                    if(key == "4DELETED00"){
+                    if (key == "4DELETED00") {
                         $scope.moveto = "DELETED";
                     } else {
                         $scope.moveto = "NO NAME FOUND";
                     }
                 }
-                $scope.movetofile  = key;
+                $scope.movetofile = key;
             }
         };
-        
-        $scope.mouseout = function(){
+
+        $scope.mouseout = function () {
             $scope.moveto = "...";
-            $scope.movetofile  = "";
+            $scope.movetofile = "";
         };
-        
-        
+
+
         // Move / Copy  ---------------------------------------------
-        
+
         $scope.moveclipboard;
         $scope.cilpboardaction;
-        
-        globalEvent.ctrlbind('X', function(){
-            if(uiControl.lastview == 'files'){
-                console.log("CRTL+X");
+
+        globalEvent.ctrlbind('X', function () {
+            if (uiControl.lastview == 'files') {
+                //console.log("CRTL+X");
                 $scope.moveclipboard = data.selectionarray;
                 $scope.cilpboardaction = 'move';
                 $scope.movefromdir = $scope.actualDir;
                 //data.set('alertinfo', 'Saved to clipboard!');
             }
         });
-        
-        globalEvent.ctrlbind('C', function(){
-            if(uiControl.lastview == 'files'){
-                console.log("CRTL+C");
+
+        globalEvent.ctrlbind('C', function () {
+            if (uiControl.lastview == 'files') {
+                //console.log("CRTL+C");
                 $scope.moveclipboard = data.selectionarray;
                 $scope.cilpboardaction = 'copy';
                 $scope.movefromdir = $scope.actualDir;
                 //data.set('alertinfo', 'Saved to clipboard!');
             }
         });
-        
-        globalEvent.ctrlbind('V', function(){
-            if(uiControl.lastview == 'files'){
-                console.log("CRTL+V");
-                if($scope.cilpboardaction == 'move'){
-                    console.log("Move files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+
+        globalEvent.ctrlbind('V', function () {
+            if (uiControl.lastview == 'files') {
+                //console.log("CRTL+V");
+                if ($scope.cilpboardaction == 'move') {
+                    //console.log("Move files " + JSON.stringify($scope.moveclipboard) + " to " + $scope.actualDir);
                     L3.moveFileList($scope.moveclipboard, $scope.actualDir, $scope.movefromdir);
                 }
-                if($scope.cilpboardaction == 'copy'){
-                    console.log("Copy files "+JSON.stringify($scope.moveclipboard)+" to "+$scope.actualDir);
+                if ($scope.cilpboardaction == 'copy') {
+                    //console.log("Copy files " + JSON.stringify($scope.moveclipboard) + " to " + $scope.actualDir);
                     L3.copyFileList($scope.moveclipboard, $scope.actualDir, $scope.movefromdir);
                 }
                 $scope.cilpboardaction = '';
             }
         });
-        
-        globalEvent.ctrlbind('A', function(){
-            console.log("CRTL+A");
-            for(i in $scope.dirShow){
+
+        globalEvent.ctrlbind('A', function () {
+            //console.log("CRTL+A");
+            for (i in $scope.dirShow) {
                 $scope.activeArray[$scope.dirShow[i]] = true;
             }
             var selectionarray = [];
             var activecount = 0;
-            for(i in $scope.activeArray){
-                if($scope.activeArray[i] == true){
+            for (i in $scope.activeArray) {
+                if ($scope.activeArray[i] == true) {
                     activecount++;
                     selectionarray.push(i);
                 }
@@ -316,54 +316,54 @@ pragmApp.controller('filesController', function($scope, $location) {
             data.selectionarray = selectionarray;
             selectionarray = null;
             $scope.activenum = activecount;
-            if(!$scope.$$phase) {
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-        
-        $scope.deleteSelection = function(){
+
+        $scope.deleteSelection = function () {
             L3.moveFileList(data.selectionarray, data.deleteDir, $scope.actualDir);
         };
-        
-        
+
+
         // Filelist creation --------------------------------------------
         $scope.update = function () {
             $scope.forceinactiv();
             var id = $scope.actualDir;
             var tempdir = $scope.dirObject[id].content;
-            if(tempdir[0]==""){
+            if (tempdir[0] == "") {
                 tempdir = [];
             }
             var tempdirX = [];
-            for(i in tempdir){
-                if(!(tempdir[i] in $scope.dirObject)){
+            for (i in tempdir) {
+                if (!(tempdir[i] in $scope.dirObject)) {
                     tempdirX.push(tempdir[i]);
-                    tempdir.splice(i,1);
+                    tempdir.splice(i, 1);
                 }
             }
-            for(i in tempdirX){
+            for (i in tempdirX) {
                 L3.checkKillLink(id, tempdirX[i]);
             }
             $scope.dirShow = tempdir;
             //console.log($scope.dirShow);
-            var temparray = [ ];
+            var temparray = [];
             temparray.push(id);
-            while(id != $scope.mainDir){
-                if(id in $scope.dirObject){
-                    if($scope.dirObject[id].parent in $scope.dirObject){
+            while (id != $scope.mainDir) {
+                if (id in $scope.dirObject) {
+                    if ($scope.dirObject[id].parent in $scope.dirObject) {
                         id = $scope.dirObject[id].parent;
                     } else {
                         id = dirCreator.searchParent(id);
-                        if(!id){
+                        if (!id) {
                             id = $scope.mainDir;
                         }
                     }
                 } else {
-                    console.log("Search "+id);
+                    //console.log("Search " + id);
                     //id = dirCreator.searchParent(id);
-                    console.log("Found  "+id);
-                    if(!id){
-                    //    id = $scope.mainDir;
+                    //console.log("Found  " + id);
+                    if (!id) {
+                        //    id = $scope.mainDir;
                     }
                 }
                 temparray.push(id);
@@ -373,115 +373,136 @@ pragmApp.controller('filesController', function($scope, $location) {
             $scope.superFolder = temparray;
             temparray = null;
         };
-        
+
         $scope.openFileAngu = function (id) {
-            console.log("Openfile: "+id);
-            switch(id.substr(0,1)){
-                case "3":
-                    //Datei Oeffnen
-                    $scope.cilpboardaction = '';
-                    uiControl.loadFile(id);
-                    break;
-                case "4":
-                    $scope.forceinactiv();
-                    $scope.actualDir = id;
-                    data.acutalDir = id;
-                    $scope.update();
-                      $scope.update();
-                        if(!$scope.$$phase) {
-                            $scope.$apply();
-                        }
-                    
-                    //this.showDir(id);
-                    //this.generateFileSuperPath(id);
-                    //this.lastDir = id;
-                    break;
-                case "5":
-                    $scope.forceinactiv();
-                    $scope.actualDir = id;
-                    data.acutalDir = id;
-                    $scope.update();
-                      $scope.update();
-                        if(!$scope.$$phase) {
-                            $scope.$apply();
-                        }
-                    //this.showDir(id);
-                    //this.generateFileSuperPath(id);
-                    //this.lastDir = id;
-                    break;
+            //console.log("Openfile: " + id);
+            switch (id.substr(0, 1)) {
+            case "3":
+                //Datei Oeffnen
+                $scope.cilpboardaction = '';
+                uiControl.loadFile(id);
+                break;
+            case "4":
+                $scope.forceinactiv();
+                $scope.actualDir = id;
+                data.acutalDir = id;
+                $scope.update();
+                $scope.update();
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+
+                //this.showDir(id);
+                //this.generateFileSuperPath(id);
+                //this.lastDir = id;
+                break;
+            case "5":
+                $scope.forceinactiv();
+                $scope.actualDir = id;
+                data.acutalDir = id;
+                $scope.update();
+                $scope.update();
+                if (!$scope.$$phase) {
+                    $scope.$apply();
+                }
+                //this.showDir(id);
+                //this.generateFileSuperPath(id);
+                //this.lastDir = id;
+                break;
             }
         };
-    
-        $scope.getIconClass = function(suffix){
-            switch(suffix){
-                case "3":
-                    return "fa fa-file-text";
-                    break;
-                case "4":
-                    return "fa fa-folder";
-                    break;
-                case "5":
-                    return "fa fa-user";
-                    break;
+
+        $scope.getIconClass = function (suffix) {
+            switch (suffix) {
+            case "3":
+                return "fa fa-file-text";
+                break;
+            case "4":
+                return "fa fa-folder";
+                break;
+            case "5":
+                return "fa fa-user";
+                break;
             };
         };
-        
+
+        $scope.showConfigFile = function (key) {
+            if ('*' in $scope.dirObject[key].share && $scope.dirObject[key].share['*'].f != key) {
+                return true;
+            } else {
+                return false;
+            }
+        };
+
         // Change Password handler ===========================================
-        
-        
+
+
         $scope.chpw = {};
         $scope.chpw.old = "";
         $scope.chpw.new = "";
         $scope.chpw.new2 = "";
-        
-        $scope.chpass = function(){
-            console.log($scope.chpw);
+
+        $scope.chpass = function () {
+            //console.log($scope.chpw);
             L2.send(sID.chPassword, JSON.stringify($scope.chpw));
             $scope.chpw.old = "";
             $scope.chpw.new = "";
             $scope.chpw.new2 = "";
         };
-        
+
         // Change FileName handler =============================================
-        
+
         $scope.changeNameId = "";
-        
-        $scope.changeNameE = function(key){
-            if(data.selectionarray.indexOf(key) >= 0){
+
+        $scope.changeNameE = function (key) {
+            if (data.selectionarray.indexOf(key) >= 0) {
                 $scope.changeNameId = key;
-                document.getElementById('chNa'+key).select();
-                setTimeout("document.getElementById('chNa"+key+"').focus();",100);
+                //document.getElementById('chNa'+key).select();
+                //document.execCommand('selectAll',false,null);
+                setTimeout("document.getElementById('chNa" + key + "').focus();", 100);
+                setTimeout("document.execCommand('selectAll',false,null);", 120);
                 //dada.select();
             }
         };
-        
-        $scope.changeNameOff = function(){
+
+        $scope.changeNameOff = function () {
             $scope.changeNameId = '';
         }
-        
-        $scope.changeNameClass = function(key){
-            if($scope.changeNameId == key){
+
+        $scope.changeNameClass = function (key) {
+            if ($scope.changeNameId == key) {
                 return "changeNameEdit";
             } else {
                 return "changeNameInactive";
             }
         };
-        
-        $scope.changeNameDisa = function(key){
-            if($scope.changeNameId == key){
-                return false;
-            } else {
+
+        $scope.changeNameDisa = function (key) {
+            if ($scope.changeNameId == key) {
                 return true;
+            } else {
+                return false;
             }
         };
-        
-        $scope.changeNameUpdate = function(key){
+
+        $scope.changeNameUpdate = function (key) {
+            $scope.dirObject[key].name = document.getElementById('chNa' + key).innerText;
+            document.getElementById('chNa' + key).innerHTML = $scope.dirObject[key].name;
+            //console.log("NEWNAME = " + $scope.dirObject[key].name);
             L3.setFileInfo('name', key, $scope.dirObject[key].name);
         };
-        
-        
+
+        $scope.chKeyDown = function (key, e) {
+            if (e.keyCode == 13) {
+                $scope.changeNameOff();
+                $scope.changeNameUpdate(key);
+                return false;
+            }
+        };
+
+
         // Share Popup handler ------------------------------------------
-        
+
         $scope.shareshow = 'none';
         $scope.shareshowbool = false;
         //if($scope.sharedata == undefined){$scope.sharedata = [];}
@@ -496,88 +517,97 @@ pragmApp.controller('filesController', function($scope, $location) {
         $scope.addname = "no name";
         $scope.storageScore = 0;
         $scope.maxStorageScore = 0;
-    
-        $scope.loadfileshare = function(){
+
+        $scope.loadfileshare = function () {
             $scope.sharedata = null;
             $scope.sharedata = [];
-            if($scope.dirObject[$scope.fileinfoid]){
-                for(key in $scope.dirObject[$scope.fileinfoid].share){
-                    $scope.sharedata.push({"id": key, "value": $scope.dirObject[$scope.fileinfoid].share[key].r, "accept": $scope.dirObject[$scope.fileinfoid].share[key].a});
+            if ($scope.dirObject[$scope.fileinfoid]) {
+                for (key in $scope.dirObject[$scope.fileinfoid].share) {
+                    if ('*' != key) {
+                        $scope.sharedata.push({
+                            "id": key,
+                            "value": $scope.dirObject[$scope.fileinfoid].share[key].r,
+                            "accept": $scope.dirObject[$scope.fileinfoid].share[key].a
+                        });
+                    }
                 }
-                console.log(JSON.stringify($scope.sharedata));
+                //console.log(JSON.stringify($scope.sharedata));
             } else {
                 $scope.shareclose();
             }
         };
-        
-        $scope.getacceptClass = function(a){
-            switch(a){
-               case "y":
-                    return "fa-check";
-                    break;
-               case "n":
-                    return "fa-circle-o-notch fa-spin";
-                    break;
-                default:
-                    return "fa-warning";
-                    break;
+
+        $scope.getacceptClass = function (a) {
+            switch (a) {
+            case "y":
+                return "fa-check";
+                break;
+            case "n":
+                return "fa-circle-o-notch fa-spin";
+                break;
+            default:
+                return "fa-warning";
+                break;
             }
         }
-        
-        $scope.updateShare = function(){
+
+        $scope.updateShare = function () {
             //console.log("Update Angular "+$scope.alertinfo);
-            if(!$scope.shareshowbool){
-		      $scope.shareshow = 'none';
+            if (!$scope.shareshowbool) {
+                $scope.shareshow = 'none';
                 tab.position("slideOut");
-                console.log("deactivate bboo");
+                //console.log("deactivate bboo");
             } else {
                 $scope.getProposals();
-		        $scope.shareshow = 'block';
+                $scope.shareshow = 'block';
                 tab.position("fastIn");
                 $scope.loadfileshare();
             }
         }
-        
-        $scope.shareclose = function(){
-            if(true){
+
+        $scope.shareclose = function () {
+            if (true) {
                 data.set('shareshow', false);
             }
         };
-        
-        data.databind('shareshow', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-          $scope.shareshowbool = x;
-          $scope.updateShare();
-            if(!$scope.$$phase) {
+
+        data.databind('shareshow', function (x) {
+            //console.log("Data: "+JSON.stringify(x));
+            $scope.shareshowbool = x;
+            $scope.updateShare();
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-    
 
-        $scope.shareUpdater = function(){
+
+        $scope.shareUpdater = function () {
             var out = {};
-            for(key in $scope.sharedata){
-                if($scope.sharedata[key].id == "5GUESTUSER" && $scope.sharedata[key].value > 1){
+            for (key in $scope.sharedata) {
+                if ($scope.sharedata[key].id == "5GUESTUSER" && $scope.sharedata[key].value > 1) {
                     $scope.sharedata[key].value = 1;
                     uiControl.alert("Guest can not be admin!");
                 }
                 out[$scope.sharedata[key].id] = {};
                 out[$scope.sharedata[key].id].r = $scope.sharedata[key].value;
                 out[$scope.sharedata[key].id].a = "n";
-                
-                console.log("KEY=>"+key);
+
+                //console.log("KEY=>" + key);
             };
-            console.log(JSON.stringify($scope.sharedata));
-            console.log(JSON.stringify(out));
+            //console.log(JSON.stringify($scope.sharedata));
+            //console.log(JSON.stringify(out));
+            if ('*' in $scope.dirObject[$scope.fileinfoid].share) {
+                out['*'] = JSON.parse(JSON.stringify($scope.dirObject[$scope.fileinfoid].share['*']));
+            }
             $scope.dirObject[$scope.fileinfoid].share = out;
             L3.setFileInfo('share', $scope.fileinfoid, out);
         };
-    
-        $scope.pushsharedata =  function(){
+
+        $scope.pushsharedata = function () {
             var id = $scope.resolveId($scope.addname) || "s";
-            if($scope.addname.length > 2 && id.length == 10 && id[0] == "5"){
+            if ($scope.addname.length > 2 && id.length == 10 && id[0] == "5") {
                 var da = "n";
-                if($scope.addname == "Guest" && $scope.addvalue > 1){
+                if ($scope.addname == "Guest" && $scope.addvalue > 1) {
                     $scope.addvalue = 1;
                     da = "y";
                     uiControl.alert("Guest can not be admin!");
@@ -592,76 +622,82 @@ pragmApp.controller('filesController', function($scope, $location) {
                 uiControl.alert("Username is invalid!");
             }
         };
-        
-        $scope.changeName = function(){
+
+        $scope.changeName = function () {
             L3.setFileInfo('name', $scope.fileinfoid, $scope.dirObject[$scope.fileinfoid].name);
         };
-        
-        $scope.deleteshare = function(index){
-            $scope.sharedata.splice(index,1);
+
+        $scope.deleteshare = function (index) {
+            $scope.sharedata.splice(index, 1);
             $scope.shareUpdater();
         };
-    
-        $scope.configFile = function(id){
+
+        $scope.configFile = function (id) {
             $scope.fileinfoid = id;
             $scope.filedata = data.dirObject[$scope.fileinfoid];
             data.set('shareshow', true);
         }
-        
-        $scope.getLink = function(){
-            return location.href.split("#")[0]+"#/editor/"+$scope.fileinfoid+"/?login=guest";
+
+        $scope.getLink = function () {
+            return location.href.split("#")[0] + "#/editor/" + $scope.fileinfoid + "/?login=guest";
         }
-        
+
         //$scope.loadfileshare();
-    
-        $scope.sharedinfo = function(key){
-            if(!$scope.isEmpty($scope.dirObject[key].share)){
+
+        $scope.sharedinfo = function (key) {
+            if (!$scope.isEmpty($scope.dirObject[key].share)) {
                 return "Shared";
             }
             return "";
         };
-        
-        $scope.isEmpty = function(value){
+
+        $scope.isEmpty = function (value) {
             return Boolean(value && typeof value == 'object') && !Object.keys(value).length;
         };
-        $scope.resolveName = function(id){
+        $scope.resolveName = function (id) {
             return data.getUserName(id);
         };
-        $scope.resolveId = function(name){
+        $scope.resolveId = function (name) {
             return data.getUserId(name);
         };
-    
-        data.databind('nameCache', function(x){
-          $scope.updateShare();
-            if(!$scope.$$phase) {
+
+        data.databind('nameCache', function (x) {
+            $scope.updateShare();
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-    
-        data.databind('idCache', function(x){
-          $scope.updateShare();
-            if(!$scope.$$phase) {
+
+        data.databind('idCache', function (x) {
+            $scope.updateShare();
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-        
+
         $scope.proposals = ["5GUESTUSER"];
-        
-        $scope.getProposals = function(){
-            if($scope.dirObject[$scope.fileinfoid]){
-                var obj = {"5GUESTUSER":true};
-                for(i in $scope.dirObject){
-                    for(j in $scope.dirObject[i].share){
-                        obj[j] = true;
+
+        $scope.getProposals = function () {
+            if ($scope.dirObject[$scope.fileinfoid]) {
+                var obj = {
+                    "5GUESTUSER": true
+                };
+                for (i in $scope.dirObject) {
+                    for (j in $scope.dirObject[i].share) {
+                        if (j != '*') {
+                            obj[j] = true;
+                        }
                     }
                     obj[$scope.dirObject[i].owner] = true;
                 }
-                for(i in $scope.dirObject[$scope.fileinfoid].share){
-                    obj[i] = true;
+                for (i in $scope.dirObject[$scope.fileinfoid].share) {
+                    if (i != '*') {
+                        obj[i] = true;
+                    }
                 }
                 var arr = [];
-                for(i in obj){
-                    if(i!="undefined"){
+                for (i in obj) {
+                    if (i != "undefined") {
                         arr.push(i);
                     }
                 }
@@ -674,23 +710,23 @@ pragmApp.controller('filesController', function($scope, $location) {
                 uiControl.alert("You are kicked!");
             }
         };
-        
-        data.databind('dirObject', function(x){
-          //console.log("Data: "+JSON.stringify(x));
-		  $scope.dirObject = x;
-          $scope.storagePercent = Math.round($scope.dirObject.storageScore/$scope.dirObject.maxStorageScore*100);
-          $scope.update();
-          $scope.filedata = data.dirObject[$scope.fileinfoid];
-          $scope.updateShare();
+
+        data.databind('dirObject', function (x) {
+            //console.log("Data: "+JSON.stringify(x));
+            $scope.dirObject = x;
+            $scope.storagePercent = Math.round($scope.dirObject.storageScore / $scope.dirObject.maxStorageScore * 100);
+            $scope.update();
+            $scope.filedata = data.dirObject[$scope.fileinfoid];
+            $scope.updateShare();
             //$scope.getProposals();
-            if(!$scope.$$phase) {
+            if (!$scope.$$phase) {
                 $scope.$apply();
             }
         });
-        
-        $scope.showGuestLink = function(){
-            if($scope.fileinfoid && $scope.dirObject && $scope.dirObject[$scope.fileinfoid] && $scope.dirObject[$scope.fileinfoid].share && $scope.dirObject[$scope.fileinfoid].share[data.guestUser]){
-                if($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3"){
+
+        $scope.showGuestLink = function () {
+            if ($scope.fileinfoid && $scope.dirObject && $scope.dirObject[$scope.fileinfoid] && $scope.dirObject[$scope.fileinfoid].share && $scope.dirObject[$scope.fileinfoid].share[data.guestUser]) {
+                if ($scope.dirObject[$scope.fileinfoid].share[data.guestUser] && $scope.fileinfoid[0] == "3") {
                     return false;
                 } else {
                     return true;
@@ -699,10 +735,10 @@ pragmApp.controller('filesController', function($scope, $location) {
                 return true;
             }
         };
-        
+
         // Tab Handler
         tab.deactivateAll();
-        
-        
+
+
     }
 });
