@@ -1,3 +1,8 @@
+# DON'T USE!
+
+Hi there,
+this is one of my first coding projects. The code-quality could not be worse! Please don't use!
+
 Pragm Note
 ====
 ###Bored? Want fun?
